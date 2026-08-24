@@ -292,14 +292,14 @@ impl AppLinkView {
     fn action_labels(&self) -> Vec<&'static str> {
         if self.is_auth_suggestion() {
             return match self.screen {
-                AppLinkScreen::Link => vec!["Open sign-in URL", "Back"],
-                AppLinkScreen::InstallConfirmation => vec!["I already signed in", "Back"],
+                AppLinkScreen::Link => vec!["打开登录 URL", "返回"],
+                AppLinkScreen::InstallConfirmation => vec!["I already signed in", "返回"],
             };
         }
         if self.is_external_action_suggestion() {
             return match self.screen {
-                AppLinkScreen::Link => vec!["Open link", "Back"],
-                AppLinkScreen::InstallConfirmation => vec!["I finished", "Back"],
+                AppLinkScreen::Link => vec!["Open link", "返回"],
+                AppLinkScreen::InstallConfirmation => vec!["I finished", "返回"],
             };
         }
 
@@ -313,13 +313,13 @@ impl AppLinkView {
                         } else {
                             "Enable app"
                         },
-                        "Back",
+                        "返回",
                     ]
                 } else {
-                    vec!["Install on ChatGPT", "Back"]
+                    vec!["Install on ChatGPT", "返回"]
                 }
             }
-            AppLinkScreen::InstallConfirmation => vec!["I already Installed it", "Back"],
+            AppLinkScreen::InstallConfirmation => vec!["I already Installed it", "返回"],
         }
     }
 
@@ -1066,7 +1066,7 @@ mod tests {
 
         assert_eq!(
             view.action_labels(),
-            vec!["Manage on ChatGPT", "Disable app", "Back"]
+            vec!["Manage on ChatGPT", "Disable app", "返回"]
         );
     }
 
@@ -1217,7 +1217,7 @@ mod tests {
 
         assert_eq!(
             view.action_labels(),
-            vec!["Manage on ChatGPT", "Enable app", "Back"]
+            vec!["Manage on ChatGPT", "Enable app", "返回"]
         );
     }
 
