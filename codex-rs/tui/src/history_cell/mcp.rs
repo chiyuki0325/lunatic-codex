@@ -138,9 +138,9 @@ impl McpToolCallCell {
             .unwrap_or_else(|| "•".dim()),
         };
         let header_text = if status.is_some() {
-            "Called"
+            "已调用"
         } else {
-            "Calling"
+            "正在调用"
         };
 
         let invocation_line = if compact {
@@ -232,7 +232,7 @@ impl McpToolCallCell {
                     }
                 }
                 Err(err) => {
-                    let err_text = format!("Error: {err}");
+                    let err_text = format!("错误：{err}");
                     let err_text = if node_repl && mode == McpToolCallRenderMode::Transcript {
                         err_text
                     } else {
@@ -278,9 +278,9 @@ impl HistoryCell for McpToolCallCell {
 
     fn raw_lines(&self) -> Vec<Line<'static>> {
         let header_text = if self.success().is_some() {
-            "Called"
+            "已调用"
         } else {
-            "Calling"
+            "正在调用"
         };
         let mut lines = vec![Line::from(format!(
             "{header_text} {}",
@@ -295,7 +295,7 @@ impl HistoryCell for McpToolCallCell {
                         lines.extend(raw_lines_from_source(&text));
                     }
                 }
-                Err(err) => lines.push(Line::from(format!("Error: {err}"))),
+                Err(err) => lines.push(Line::from(format!("错误：{err}"))),
             }
         }
 
