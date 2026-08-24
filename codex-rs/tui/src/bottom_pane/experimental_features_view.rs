@@ -289,15 +289,15 @@ impl Renderable for ExperimentalFeaturesView {
 
 fn experimental_popup_hint_line(keymap: &ListKeymap) -> Line<'static> {
     let mut spans = vec![
-        "Press ".into(),
+        "按下 ".into(),
         key_hint::plain(KeyCode::Char(' ')).into(),
-        " to select".into(),
+        " 以选择".into(),
     ];
     if let Some(accept) = keymap.primary_hint(ListAction::Accept) {
         spans.extend([
-            " or ".into(),
+            "，或按下 ".into(),
             accept.into(),
-            " to save for next conversation".into(),
+            " 以保存至下次对话".into(),
         ]);
     }
     Line::from(spans)
