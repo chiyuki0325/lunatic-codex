@@ -643,21 +643,21 @@ impl ChatWidget {
     ) -> SelectionViewParams {
         let mut header = ColumnRenderable::new();
         header.push(Line::from("插件".bold()));
-        header.push(Line::from("Failed to remove marketplace.".dim()));
+        header.push(Line::from("无法移除市场。".dim()));
 
         let marketplace_name = marketplace_name.to_string();
         let marketplace_display_name = marketplace_display_name.to_string();
         let mut items = vec![
             SelectionItem {
                 name: "市场移除失败".to_string(),
-                description: Some("Failed to remove the selected marketplace.".to_string()),
+                description: Some("无法移除所选市场。".to_string()),
                 is_disabled: true,
                 ..Default::default()
             },
             SelectionItem {
                 name: "重试".to_string(),
-                description: Some("Review the confirmation prompt again.".to_string()),
-                selected_description: Some("Review the confirmation prompt again.".to_string()),
+                description: Some("再次查看确认提示。".to_string()),
+                selected_description: Some("再次查看确认提示。".to_string()),
                 actions: vec![Box::new(move |tx| {
                     tx.send(AppEvent::OpenMarketplaceRemoveConfirm {
                         marketplace_name: marketplace_name.clone(),
@@ -700,7 +700,7 @@ impl ChatWidget {
     ) -> SelectionViewParams {
         let mut header = ColumnRenderable::new();
         header.push(Line::from("插件".bold()));
-        header.push(Line::from("Failed to load plugin details.".dim()));
+        header.push(Line::from("无法加载插件详情。".dim()));
 
         let mut items = vec![SelectionItem {
             name: "插件详情不可用".to_string(),
@@ -1301,16 +1301,16 @@ fn plugins_popup_hint_line(
 ) -> Line<'static> {
     match (can_remove_marketplace, can_upgrade_marketplace) {
         (true, true) => Line::from(
-            "ctrl + u upgrade · ctrl + r remove · space toggle · ←/→ tabs · enter details · esc close",
+            "ctrl + u 升级 · ctrl + r 移除 · space 切换 · ←/→ 选项卡 · enter 详情 · esc 关闭",
         ),
         (true, false) => {
-            Line::from("ctrl + r remove · space toggle · ←/→ tabs · enter details · esc close")
+            Line::from("ctrl + r 移除 · space 切换 · ←/→ 选项卡 · enter 详情 · esc 关闭")
         }
         (false, true) => {
-            Line::from("ctrl + u upgrade · space toggle · ←/→ tabs · enter details · esc close")
+            Line::from("ctrl + u 升级 · space 切换 · ←/→ 选项卡 · enter 详情 · esc 关闭")
         }
         (false, false) => Line::from(
-            "space enable/disable · ←/→ select marketplace · enter view details · esc close",
+            "space 启用/禁用 · ←/→ 选择市场 · enter 查看详情 · esc 关闭",
         ),
     }
 }
