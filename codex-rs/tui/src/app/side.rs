@@ -609,7 +609,7 @@ impl App {
         }) {
             SIDE_NO_STARTED_CONVERSATION_MESSAGE.to_string()
         } else {
-            format!("Failed to start side conversation: {err}")
+            format!("启动侧边对话失败：{err}")
         }
     }
 
@@ -714,7 +714,7 @@ impl App {
                         .await;
                     self.restore_side_user_message(user_message.take());
                     self.chat_widget.add_error_message(format!(
-                        "Failed to prepare side conversation {child_thread_id}: {err}"
+                        "准备侧边对话 {child_thread_id} 失败：{err}"
                     ));
                     return Ok(AppRunControl::Continue);
                 }
@@ -737,7 +737,7 @@ impl App {
                     }
                     self.restore_side_user_message(user_message.take());
                     self.chat_widget.add_error_message(format!(
-                        "Failed to switch into side conversation {child_thread_id}: {err}"
+                        "切换到侧边对话 {child_thread_id} 失败：{err}"
                     ));
                     return Ok(AppRunControl::Continue);
                 }
@@ -752,7 +752,7 @@ impl App {
                         .await;
                     self.restore_side_user_message(user_message.take());
                     self.chat_widget.add_error_message(format!(
-                        "Failed to switch into side conversation {child_thread_id}."
+                        "未能切换到侧边对话 {child_thread_id}。"
                     ));
                 }
             }
