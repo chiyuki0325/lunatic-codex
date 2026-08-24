@@ -58,8 +58,8 @@ use crate::render::renderable::Renderable;
 use crate::text_formatting::format_json_compact;
 use crate::text_formatting::truncate_text;
 
-const ANSWER_PLACEHOLDER: &str = "Type your answer";
-const OPTIONAL_ANSWER_PLACEHOLDER: &str = "Type your answer (optional)";
+const ANSWER_PLACEHOLDER: &str = "输入答案";
+const OPTIONAL_ANSWER_PLACEHOLDER: &str = "输入答案（可选）";
 const FOOTER_SEPARATOR: &str = " | ";
 const MIN_COMPOSER_HEIGHT: u16 = 3;
 const MIN_OVERLAY_HEIGHT: u16 = 8;
