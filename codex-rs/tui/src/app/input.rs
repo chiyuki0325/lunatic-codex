@@ -317,7 +317,7 @@ impl App {
         {
             if let Err(err) = self.toggle_side_conversation(tui, app_server).await {
                 self.chat_widget
-                    .add_error_message(format!("Failed to switch side conversation: {err}"));
+                    .add_error_message(format!("切换侧边对话失败：{err}"));
             }
             return;
         }
@@ -397,7 +397,7 @@ impl App {
                 if let Err(err) = self.clear_terminal_ui(tui, /*redraw_header*/ false) {
                     tracing::warn!(error = %err, "failed to clear terminal UI");
                     self.chat_widget
-                        .add_error_message(format!("Failed to clear terminal UI: {err}"));
+                        .add_error_message(format!("清除终端界面失败：{err}"));
                 } else {
                     self.reset_app_ui_state_after_clear();
                     self.queue_clear_ui_header(tui);
