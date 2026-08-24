@@ -393,7 +393,7 @@ async fn queued_slash_menu_cancel_drains_next_input() {
     .await;
     assert_cancelled_queued_menu_drains_next_input(
         "/permissions",
-        "Update Model Permissions",
+        "更新模型权限",
         KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL),
     )
     .await;

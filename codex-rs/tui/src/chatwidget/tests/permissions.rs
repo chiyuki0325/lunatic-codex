@@ -194,7 +194,7 @@ async fn profile_permissions_selection_emits_named_profile_event_only() {
             approval_policy: Some(AskForApproval::OnRequest),
             approvals_reviewer: Some(ApprovalsReviewer::User),
             display_label,
-        }) if profile_id == ":workspace" && display_label == "Ask for approval"
+        }) if profile_id == ":workspace" && display_label == "请求审批"
     ));
 }
 
@@ -260,7 +260,7 @@ async fn profile_permissions_selection_emits_auto_review_mode_event() {
             approval_policy: Some(AskForApproval::OnRequest),
             approvals_reviewer: Some(ApprovalsReviewer::AutoReview),
             display_label,
-        }) if profile_id == ":workspace" && display_label == "Approve for me"
+        }) if profile_id == ":workspace" && display_label == "由我审批"
     ));
 }
 
@@ -290,7 +290,7 @@ async fn profile_permissions_full_access_always_opens_confirmation() {
             }),
         } if preset.id == "full-access"
             && profile_id == BUILT_IN_PERMISSION_PROFILE_DANGER_FULL_ACCESS
-            && display_label == "Full Access"
+            && display_label == "完全访问"
     ));
 }
 
@@ -307,7 +307,7 @@ async fn approvals_selection_popup_snapshot_windows_degraded_sandbox() {
 
     let popup = render_bottom_popup(&chat, /*width*/ 80);
     assert!(
-        popup.contains("Ask for approval (non-admin sandbox)"),
+        popup.contains("请求审批（非管理员沙箱）"),
         "expected degraded sandbox label in approvals popup: {popup}"
     );
     assert!(
@@ -315,7 +315,7 @@ async fn approvals_selection_popup_snapshot_windows_degraded_sandbox() {
         "expected setup hint in approvals popup: {popup}"
     );
     assert!(
-        popup.contains("non-admin sandbox"),
+        popup.contains("非管理员沙箱"),
         "expected degraded sandbox note in approvals popup: {popup}"
     );
 }
@@ -336,7 +336,7 @@ async fn preset_matching_accepts_workspace_write_with_extra_roots() {
             cwd.as_path(),
             &preset
         ),
-        "WorkspaceWrite with extra roots should still match the Ask for approval preset"
+        "WorkspaceWrite with extra roots should still match the 请求审批 preset"
     );
     assert!(
         !ChatWidget::preset_matches_current(
@@ -710,7 +710,7 @@ async fn approvals_popup_navigation_skips_disabled() {
     // Ensure the popup remains open and no selection actions were sent.
     let screen = render_bottom_popup(&chat, /*width*/ 80);
     assert!(
-        screen.contains("Update Model Permissions"),
+        screen.contains("更新模型权限"),
         "popup should remain open after selecting a disabled entry"
     );
     assert!(
@@ -774,7 +774,7 @@ async fn permissions_selection_emits_history_cell_when_selection_changes() {
     assert!(lines_to_single_string(&cells[0]).contains("Ran printf before"));
     let rendered = lines_to_single_string(&cells[1]);
     assert!(
-        rendered.contains("Permissions updated to"),
+        rendered.contains("权限已更新为"),
         "expected permissions selection history message, got: {rendered}"
     );
 }
@@ -837,7 +837,7 @@ async fn permissions_selection_history_snapshot_full_access_to_default() {
     chat.open_permissions_popup();
     let popup = render_bottom_popup(&chat, /*width*/ 120);
     chat.handle_key_event(KeyEvent::from(KeyCode::Up));
-    if popup.contains("Approve for me") {
+    if popup.contains("由我审批") {
         chat.handle_key_event(KeyEvent::from(KeyCode::Up));
     }
     chat.handle_key_event(KeyEvent::from(KeyCode::Enter));
@@ -887,7 +887,7 @@ async fn permissions_selection_emits_history_cell_when_current_is_selected() {
     );
     let rendered = lines_to_single_string(&cells[0]);
     assert!(
-        rendered.contains("Permissions updated to"),
+        rendered.contains("权限已更新为"),
         "expected permissions update history message, got: {rendered}"
     );
 }
@@ -905,8 +905,8 @@ async fn permissions_selection_hides_auto_review_when_feature_disabled() {
     let popup = render_bottom_popup(&chat, /*width*/ 120);
 
     assert!(
-        !popup.contains("Approve for me"),
-        "expected Approve for me to stay hidden until the feature is enabled: {popup}"
+        !popup.contains("由我审批"),
+        "expected 由我审批 to stay hidden until the feature is enabled: {popup}"
     );
 }
 
@@ -935,8 +935,8 @@ async fn permissions_selection_hides_auto_review_when_feature_disabled_even_if_a
     let popup = render_bottom_popup(&chat, /*width*/ 120);
 
     assert!(
-        !popup.contains("Approve for me"),
-        "expected Approve for me to stay hidden when the feature is disabled: {popup}"
+        !popup.contains("由我审批"),
+        "expected 由我审批 to stay hidden when the feature is disabled: {popup}"
     );
 }
 
@@ -980,8 +980,8 @@ async fn permissions_selection_marks_auto_review_current_after_session_configure
     let popup = render_bottom_popup(&chat, /*width*/ 120);
 
     assert!(
-        popup.contains("Approve for me (current)"),
-        "expected Approve for me to be current after SessionConfigured sync: {popup}"
+        popup.contains("由我审批 (current)"),
+        "expected 由我审批 to be current after SessionConfigured sync: {popup}"
     );
 }
 
@@ -1029,8 +1029,8 @@ async fn permissions_selection_marks_auto_review_current_with_custom_workspace_w
     let popup = render_bottom_popup(&chat, /*width*/ 120);
 
     assert!(
-        popup.contains("Approve for me (current)"),
-        "expected Approve for me to be current even with custom workspace-write details: {popup}"
+        popup.contains("由我审批 (current)"),
+        "expected 由我审批 to be current even with custom workspace-write details: {popup}"
     );
 }
 
@@ -1064,7 +1064,7 @@ async fn permissions_selection_can_disable_auto_review() {
             event,
             AppEvent::UpdateApprovalsReviewer(ApprovalsReviewer::User)
         )),
-        "expected selecting Ask for approval from Approve for me to switch back to manual approval review: {events:?}"
+        "expected selecting 请求审批 from 由我审批 to switch back to manual approval review: {events:?}"
     );
     assert!(
         !events
@@ -1108,8 +1108,8 @@ async fn permissions_selection_sends_approvals_reviewer_in_override_turn_context
     assert!(
         popup
             .lines()
-            .any(|line| line.contains("Approve for me") && line.contains('›')),
-        "expected one Down from Ask for approval to select Approve for me: {popup}"
+            .any(|line| line.contains("由我审批") && line.contains('›')),
+        "expected one Down from 请求审批 to select 由我审批: {popup}"
     );
     chat.handle_key_event(KeyEvent::from(KeyCode::Enter));
 
@@ -1199,7 +1199,7 @@ async fn permissions_full_access_history_cell_emitted_only_after_confirmation() 
 
     let popup = render_bottom_popup(&chat, /*width*/ 80);
     assert!(
-        popup.contains("Enable full access?"),
+        popup.contains("启用完全访问？"),
         "expected full access confirmation popup, got: {popup}"
     );
 
@@ -1216,7 +1216,7 @@ async fn permissions_full_access_history_cell_emitted_only_after_confirmation() 
         lines_to_single_string(&cells_after_confirmation[0])
     };
     assert!(
-        rendered.contains("Permissions updated to Full Access"),
+        rendered.contains("权限已更新为完全访问"),
         "expected full access update history message, got: {rendered}"
     );
 }
