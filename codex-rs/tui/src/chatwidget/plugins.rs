@@ -847,12 +847,12 @@ impl ChatWidget {
         let current = flow.next_app_index + 1;
         let is_installed = self.plugin_install_auth_app_is_installed(app.id.as_str());
         let status_label = if is_installed {
-            "Already installed in this session."
+            "已在本次会话中安装。"
         } else {
-            "Install the required Apps in ChatGPT to continue:"
+            "请在 ChatGPT 中安装所需应用以继续："
         };
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Plugins".bold()));
+        header.push(Line::from("插件".bold()));
         header.push(Line::from(
             format!("{} plugin installed.", flow.plugin_display_name).bold(),
         ));
