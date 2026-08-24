@@ -16,8 +16,8 @@ use codex_app_server_protocol::ThreadGoalStatus;
 use codex_protocol::ThreadId;
 
 const EPHEMERAL_THREAD_GOAL_ERROR_MESSAGE: &str = concat!(
-    "Goals need a saved session. This session is temporary.\n",
-    "Run `codex` to start a saved session, or `codex resume` / `/resume` to reopen one.",
+    "目标需要已保存的会话。此会话是临时的。\n",
+    "运行 `codex` 创建已保存的会话，或使用 `codex resume` / `/resume` 重新打开会话。",
 );
 
 impl App {
