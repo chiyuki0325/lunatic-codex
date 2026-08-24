@@ -24,25 +24,25 @@ impl HistoryCell for UpdateAvailableHistoryCell {
         use ratatui_macros::line;
         use ratatui_macros::text;
         let update_instruction = if let Some(update_action) = self.update_action {
-            line!["Run ", update_action.command_str().cyan(), " to update."]
+            line!["运行 ", update_action.command_str().cyan(), " 以更新。"]
         } else {
             line![
-                "See ",
+                "查看 ",
                 "https://github.com/openai/codex".cyan().underlined(),
-                " for installation options."
+                " 了解安装方式。"
             ]
         };
 
         let content = text![
             line![
                 "✨\u{200A}".bold().cyan(),
-                "Update available!".bold().cyan(),
+                "有可用更新！".bold().cyan(),
                 " ",
                 format!("{CODEX_CLI_VERSION} -> {}", self.latest_version).bold(),
             ],
             update_instruction,
             "",
-            "See full release notes:",
+            "查看完整发行说明：",
             "https://github.com/openai/codex/releases/latest"
                 .cyan()
                 .underlined(),
@@ -58,16 +58,16 @@ impl HistoryCell for UpdateAvailableHistoryCell {
 
     fn raw_lines(&self) -> Vec<Line<'static>> {
         let update_instruction = if let Some(update_action) = self.update_action {
-            format!("Run {} to update.", update_action.command_str())
+            format!("运行 {} 以更新。", update_action.command_str())
         } else {
-            "See https://github.com/openai/codex for installation options.".to_string()
+            "查看 https://github.com/openai/codex 了解安装方式。".to_string()
         };
         vec![
-            Line::from("Update available!"),
+            Line::from("有可用更新！"),
             Line::from(format!("{CODEX_CLI_VERSION} -> {}", self.latest_version)),
             Line::from(update_instruction),
             Line::from(""),
-            Line::from("See full release notes:"),
+            Line::from("查看完整发行说明："),
             Line::from("https://github.com/openai/codex/releases/latest"),
         ]
     }
@@ -91,19 +91,19 @@ pub(crate) struct SafetyAccessBlockCell {
     trusted_access_url: &'static str,
 }
 
-const SAFETY_ACCESS_BLOCK_TITLE: &str = "This content can't be shown";
+const SAFETY_ACCESS_BLOCK_TITLE: &str = "无法显示此内容";
 const SAFETY_ACCESS_BLOCK_LEARN_MORE_URL: &str = "https://help.openai.com/en/articles/20001326";
 
 pub(crate) fn new_safety_access_block_event() -> SafetyAccessBlockCell {
     SafetyAccessBlockCell {
-        body: "We take extra caution with requests involving biological research and applications that could pose safety risks. Eligible researchers can apply for Trusted Access.",
+        body: "对于涉及生物研究及可能造成安全风险的应用请求，我们会格外谨慎。符合条件的研究人员可申请受信任访问权限。",
         trusted_access_url: "https://www.openai.com/form/trusted-access-for-biology-research/",
     }
 }
 
 pub(crate) fn new_cyber_policy_error_event() -> SafetyAccessBlockCell {
     SafetyAccessBlockCell {
-        body: "We take extra caution with cybersecurity requests. If you’re a security professional, you may be able to apply for Trusted Access.",
+        body: "对于网络安全请求，我们会格外谨慎。如果您是安全专业人员，可能可以申请受信任访问权限。",
         trusted_access_url: "https://openai.com/form/enterprise-trusted-access-for-cyber/",
     }
 }
@@ -128,8 +128,8 @@ impl HistoryCell for SafetyAccessBlockCell {
         lines.extend(plain_hyperlink_lines(wrapped_body));
 
         for (label, url) in [
-            ("Trusted Access", self.trusted_access_url),
-            ("Learn more", SAFETY_ACCESS_BLOCK_LEARN_MORE_URL),
+            ("受信任访问", self.trusted_access_url),
+            ("了解更多", SAFETY_ACCESS_BLOCK_LEARN_MORE_URL),
         ] {
             let source = crate::terminal_hyperlinks::annotate_web_urls_in_line(
                 vec![format!("  {label}: ").dim(), url.cyan().underlined()].into(),
@@ -153,8 +153,8 @@ impl HistoryCell for SafetyAccessBlockCell {
         vec![
             Line::from(SAFETY_ACCESS_BLOCK_TITLE),
             Line::from(self.body),
-            Line::from(format!("Trusted Access: {trusted_access_url}")),
-            Line::from(format!("Learn more: {SAFETY_ACCESS_BLOCK_LEARN_MORE_URL}")),
+            Line::from(format!("受信任访问：{trusted_access_url}")),
+            Line::from(format!("了解更多：{SAFETY_ACCESS_BLOCK_LEARN_MORE_URL}")),
         ]
     }
 

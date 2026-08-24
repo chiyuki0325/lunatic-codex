@@ -102,8 +102,8 @@ async fn app_server_cyber_policy_error_renders_dedicated_notice() {
     let cells = drain_insert_history(&mut rx);
     assert_eq!(cells.len(), 1);
     let rendered = lines_to_single_string(&cells[0]);
-    assert!(rendered.contains("This content can't be shown"));
-    assert!(rendered.contains("extra caution with cybersecurity requests"));
+    assert!(rendered.contains("无法显示此内容"));
+    assert!(rendered.contains("对于网络安全请求，我们会格外谨慎"));
     assert!(!rendered.contains("server fallback message"));
 }
 
