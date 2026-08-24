@@ -503,9 +503,9 @@ pub(crate) fn feedback_upload_consent_params(
 
     // Build header listing files that would be sent if user consents.
     let mut header_lines: Vec<Box<dyn crate::render::renderable::Renderable>> = vec![
-        Line::from("Upload logs?".bold()).into(),
+        Line::from("上传日志？".bold()).into(),
         Line::from("").into(),
-        Line::from("The following files will be sent:".dim()).into(),
+        Line::from("将发送以下文件：".dim()).into(),
         Line::from(vec!["  • ".into(), "codex-logs.log".into()]).into(),
         Line::from(vec![
             "  • ".into(),
@@ -514,12 +514,12 @@ pub(crate) fn feedback_upload_consent_params(
         .into(),
         Line::from(vec![
             "  • ".into(),
-            format!("{CODEX_APPS_TOOLS_CACHE_ATTACHMENT_FILENAME} (if available)").into(),
+            format!("{CODEX_APPS_TOOLS_CACHE_ATTACHMENT_FILENAME}（如可用）").into(),
         ])
         .into(),
         Line::from(vec![
             "  • ".into(),
-            format!("{CODEX_APP_DIRECTORY_CACHE_ATTACHMENT_FILENAME} (if available)").into(),
+            format!("{CODEX_APP_DIRECTORY_CACHE_ATTACHMENT_FILENAME}（如可用）").into(),
         ])
         .into(),
     ];
@@ -565,17 +565,14 @@ pub(crate) fn feedback_upload_consent_params(
         footer_hint: Some(standard_popup_hint_line()),
         items: vec![
             super::SelectionItem {
-                name: "Yes".to_string(),
-                description: Some(
-                    "Share the current Codex session logs and diagnostics with the team for troubleshooting."
-                        .to_string(),
-                ),
+                name: "是".to_string(),
+                description: Some("将当前 Codex 会话日志和诊断信息分享给团队以便排查问题。".to_string()),
                 actions: vec![yes_action],
                 dismiss_on_select: true,
                 ..Default::default()
             },
             super::SelectionItem {
-                name: "No".to_string(),
+                name: "否".to_string(),
                 actions: vec![no_action],
                 dismiss_on_select: true,
                 ..Default::default()
