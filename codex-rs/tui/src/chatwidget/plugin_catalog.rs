@@ -404,18 +404,18 @@ impl ChatWidget {
             header: Box::new(header),
             footer_hint: Some(Line::from(vec![
                 Span::from(key_hint::plain(KeyCode::Enter)),
-                " select".dim(),
+                " 选择".dim(),
                 " · ".into(),
-                "esc close".dim(),
+                "Esc 关闭".dim(),
             ])),
             items: vec![
                 SelectionItem {
-                    name: "Remove marketplace".to_string(),
+                    name: "移除市场".to_string(),
                     description: Some(
-                        "Remove this marketplace from the available plugin list.".to_string(),
+                        "从可用插件列表中移除此市场。".to_string(),
                     ),
                     selected_description: Some(
-                        "Remove this marketplace from the available plugin list.".to_string(),
+                        "从可用插件列表中移除此市场。".to_string(),
                     ),
                     actions: vec![Box::new(move |tx| {
                         tx.send(AppEvent::OpenMarketplaceRemoveLoading {
