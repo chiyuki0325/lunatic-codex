@@ -2,10 +2,10 @@
 source: tui/src/chatwidget/tests/popups_and_settings.rs
 expression: popup
 ---
-  Reset all memories?
+  重置所有记忆？
 
-› Reset all memories  Delete local memory files and rollout summaries.
-  Go back             Return to memory settings.
+› 重置所有记忆      删除本地记忆文件和 rollout 摘要。
+  返回                返回记忆设置。
 
 
 
