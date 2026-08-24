@@ -40,8 +40,8 @@ pub(super) fn reset_credit_options(
                                 .format("%H:%M on %-d %b %Y")
                         )
                     })
-                    .unwrap_or_else(|| "Expiration unavailable".to_string()),
-                None => "Does not expire".to_string(),
+                    .unwrap_or_else(|| "到期时间不可用".to_string()),
+                None => "永不过期".to_string(),
             };
             let reset_title = credit
                 .title

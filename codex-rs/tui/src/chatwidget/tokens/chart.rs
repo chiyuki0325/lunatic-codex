@@ -53,9 +53,9 @@ impl TokenActivityView {
 
     pub(super) fn label(self) -> &'static str {
         match self {
-            Self::Daily => "Daily",
-            Self::Weekly => "Weekly",
-            Self::Cumulative => "Cumulative",
+            Self::Daily => "每日",
+            Self::Weekly => "每周",
+            Self::Cumulative => "累计",
         }
     }
 }
