@@ -340,9 +340,9 @@ impl ChatWidget {
         self.bottom_pane.show_selection_view(SelectionViewParams {
             view_id: Some(RATE_LIMIT_RESET_VIEW_ID),
             title: Some("用量限额重置".to_string()),
-            subtitle: Some("Resetting your usage...".to_string()),
+            subtitle: Some("正在重置用量……".to_string()),
             items: vec![SelectionItem {
-                name: "Using a reset...".to_string(),
+                name: "正在使用重置……".to_string(),
                 is_disabled: true,
                 ..Default::default()
             }],
@@ -380,18 +380,18 @@ impl ChatWidget {
                 self.pending_rate_limit_reset_request_id = None;
                 let message = match response.outcome {
                     ConsumeAccountRateLimitResetCreditOutcome::NothingToReset => {
-                        "Your usage does not need a reset right now."
+                        "当前用量无需重置。"
                     }
                     ConsumeAccountRateLimitResetCreditOutcome::NoCredit if credit_id.is_some() => {
                         self.available_rate_limit_reset_credits = None;
                         self.replace_rate_limit_reset_popup(Self::reset_refresh_params(
-                            "That reset is no longer available. Refresh to see your current resets.",
+                            "该重置选项已不可用。请刷新以查看当前可用重置。",
                         ));
                         return false;
                     }
                     ConsumeAccountRateLimitResetCreditOutcome::NoCredit => {
                         self.available_rate_limit_reset_credits = Some(0);
-                        "No usage limit resets are available."
+                        "没有可用的用量限额重置次数。"
                     }
                     ConsumeAccountRateLimitResetCreditOutcome::Reset
                     | ConsumeAccountRateLimitResetCreditOutcome::AlreadyRedeemed => unreachable!(),
@@ -405,7 +405,7 @@ impl ChatWidget {
                 self.replace_rate_limit_reset_popup(SelectionViewParams {
                     view_id: Some(RATE_LIMIT_RESET_VIEW_ID),
                     title: Some("用量限额重置".to_string()),
-                    subtitle: Some("Couldn't reset usage. Please try again.".to_string()),
+                    subtitle: Some("无法重置用量，请重试。".to_string()),
                     items: vec![
                         SelectionItem {
                             name: "Try again".to_string(),
