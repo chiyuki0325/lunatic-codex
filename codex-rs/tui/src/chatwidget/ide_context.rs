@@ -117,7 +117,7 @@ impl ChatWidget {
                 self.ide_context.disable();
                 self.sync_ide_context_status_indicator();
                 self.add_info_message(
-                    "IDE context could not be enabled.".to_string(),
+                    "无法启用 IDE 上下文。".to_string(),
                     Some(err.user_facing_hint()),
                 );
             }
