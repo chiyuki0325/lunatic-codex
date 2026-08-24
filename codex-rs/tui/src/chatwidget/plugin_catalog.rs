@@ -589,19 +589,19 @@ impl ChatWidget {
     pub(super) fn marketplace_add_error_popup_params(&self) -> SelectionViewParams {
         let mut header = ColumnRenderable::new();
         header.push(Line::from("插件".bold()));
-        header.push(Line::from("Failed to add marketplace.".dim()));
+        header.push(Line::from("无法添加市场。".dim()));
 
         let mut items = vec![
             SelectionItem {
-                name: "Marketplace add failed".to_string(),
+                name: "添加市场失败".to_string(),
                 description: Some(
-                    "Failed to add marketplace from the provided source.".to_string(),
+                    "无法从提供的来源添加市场。".to_string(),
                 ),
                 is_disabled: true,
                 ..Default::default()
             },
             SelectionItem {
-                name: "Try again".to_string(),
+                name: "重试".to_string(),
                 description: Some("Enter a marketplace source.".to_string()),
                 selected_description: Some("Enter a marketplace source.".to_string()),
                 actions: vec![Box::new(|tx| {
@@ -655,7 +655,7 @@ impl ChatWidget {
                 ..Default::default()
             },
             SelectionItem {
-                name: "Try again".to_string(),
+                name: "重试".to_string(),
                 description: Some("Review the confirmation prompt again.".to_string()),
                 selected_description: Some("Review the confirmation prompt again.".to_string()),
                 actions: vec![Box::new(move |tx| {
