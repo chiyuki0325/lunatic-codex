@@ -167,15 +167,15 @@ impl WidgetRef for &ExternalAgentConfigMigrationScreen {
 
         let footer = match self.view {
             MigrationView::Summary => Line::from(vec![
-                "Use ".dim(),
+                "使用 ".dim(),
                 key_hint::plain(KeyCode::Up).into(),
                 "/".dim(),
                 key_hint::plain(KeyCode::Down).into(),
-                " to move, ".dim(),
+                " 以移动，按下 ".dim(),
                 key_hint::plain(KeyCode::Enter).into(),
-                " to select, ".dim(),
+                " 以选择，按下 ".dim(),
                 "c".cyan(),
-                " to customize".dim(),
+                " 以自定义".dim(),
             ]),
             MigrationView::Customize if self.focus == FocusArea::Actions => Line::from(vec![
                 "Press ".dim(),
