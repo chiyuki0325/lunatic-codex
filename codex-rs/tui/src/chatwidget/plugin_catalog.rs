@@ -1484,15 +1484,15 @@ fn plugin_source_summary(plugin: &PluginDetail) -> String {
                 MarketplaceProduct::from_marketplace_name(&plugin.marketplace_name)
                     .label()
                     .unwrap_or(plugin.marketplace_name.as_str());
-            format!("Remote · {marketplace_label}")
+            format!("远程 · {marketplace_label}")
         }
     }
 }
 
 fn plugin_auth_policy_summary(auth_policy: PluginAuthPolicy) -> String {
     match auth_policy {
-        PluginAuthPolicy::OnInstall => "Auth on install".to_string(),
-        PluginAuthPolicy::OnUse => "Auth on use".to_string(),
+        PluginAuthPolicy::OnInstall => "安装时认证".to_string(),
+        PluginAuthPolicy::OnUse => "使用时认证".to_string(),
     }
 }
 
@@ -1530,7 +1530,7 @@ fn plugin_share_context_summary(context: &PluginShareContext) -> String {
         parts.push(share_url.to_string());
     }
     if parts.is_empty() {
-        format!("Remote ID {}", context.remote_plugin_id)
+        format!("远程 ID {}", context.remote_plugin_id)
     } else {
         parts.join(" · ")
     }
@@ -1538,9 +1538,9 @@ fn plugin_share_context_summary(context: &PluginShareContext) -> String {
 
 fn plugin_share_discoverability_label(discoverability: PluginShareDiscoverability) -> &'static str {
     match discoverability {
-        PluginShareDiscoverability::Listed => "Listed",
-        PluginShareDiscoverability::Unlisted => "Workspace link",
-        PluginShareDiscoverability::Private => "Private",
+        PluginShareDiscoverability::Listed => "已列出",
+        PluginShareDiscoverability::Unlisted => "工作区链接",
+        PluginShareDiscoverability::Private => "私有",
     }
 }
 
@@ -1558,7 +1558,7 @@ fn plugin_share_creator_summary(context: &PluginShareContext) -> Option<String> 
 
 fn plugin_share_principals_summary(principals: &[PluginSharePrincipal]) -> String {
     match principals.len() {
-        0 => "No explicit principals".to_string(),
+        0 => "没有显式共享主体".to_string(),
         1 => format!("1 principal: {}", principals[0].name),
         count => format!("{count} principals"),
     }
