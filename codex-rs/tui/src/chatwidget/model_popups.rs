@@ -13,7 +13,7 @@ impl ChatWidget {
     pub(crate) fn open_model_popup(&mut self) {
         if !self.is_session_configured() {
             self.add_info_message(
-                "Model selection is disabled until startup completes.".to_string(),
+                "启动完成前无法选择模型。".to_string(),
                 /*hint*/ None,
             );
             return;
@@ -23,7 +23,7 @@ impl ChatWidget {
             Ok(models) => models,
             Err(_) => {
                 self.add_info_message(
-                    "Models are being updated; please try /model again in a moment.".to_string(),
+                    "模型正在更新；请稍后再次使用 /model。".to_string(),
                     /*hint*/ None,
                 );
                 return;
@@ -47,7 +47,7 @@ impl ChatWidget {
     fn model_menu_warning_line(&self) -> Option<Line<'static>> {
         let base_url = self.custom_openai_base_url()?;
         let warning = format!(
-            "Warning: OpenAI base URL is overridden to {base_url}. Selecting models may not be supported or work properly."
+            "警告：OpenAI 基础 URL 已被覆盖为 {base_url}。可能不支持选择模型，或模型无法正常工作。"
         );
         Some(Line::from(warning.red()))
     }
@@ -148,11 +148,11 @@ impl ChatWidget {
 
             let is_current = !items.iter().any(|item| item.is_current);
             let description = Some(format!(
-                "Choose a specific model and reasoning level (current: {current_label})"
+                "选择特定模型和推理强度（当前：{current_label}）"
             ));
 
             items.push(SelectionItem {
-                name: "All models".to_string(),
+                name: "所有模型".to_string(),
                 description,
                 is_current,
                 actions,
@@ -162,8 +162,8 @@ impl ChatWidget {
         }
 
         let header = self.model_menu_header(
-            "Select Model",
-            "Pick a quick auto mode or browse all models.",
+            "选择模型",
+            "选择快速自动模式或浏览所有模型。",
         );
         self.bottom_pane.show_selection_view(SelectionViewParams {
             footer_hint: Some(standard_popup_hint_line()),
@@ -189,7 +189,7 @@ impl ChatWidget {
     pub(crate) fn open_all_models_popup(&mut self, presets: Vec<ModelPreset>) {
         if presets.is_empty() {
             self.add_info_message(
-                "No additional models are available right now.".to_string(),
+                "当前没有其他可用模型。".to_string(),
                 /*hint*/ None,
             );
             return;
@@ -221,8 +221,8 @@ impl ChatWidget {
         }
 
         let header = self.model_menu_header(
-            "Select Model and Effort",
-            "Access legacy models by running codex -m <model_name> or in your config.toml",
+            "选择模型和推理强度",
+            "运行 codex -m <model_name> 或在 config.toml 中访问旧版模型",
         );
         self.bottom_pane.show_selection_view(SelectionViewParams {
             footer_hint: Some(self.bottom_pane.standard_popup_hint_line()),
@@ -294,21 +294,18 @@ impl ChatWidget {
         effort: Option<ReasoningEffortConfig>,
     ) {
         let reasoning_phrase = match effort.as_ref() {
-            Some(ReasoningEffortConfig::None) => "no reasoning".to_string(),
+            Some(ReasoningEffortConfig::None) => "不进行推理".to_string(),
             Some(selected_effort) => {
-                format!(
-                    "{} reasoning",
-                    Self::reasoning_effort_sentence_label(selected_effort)
-                )
+                format!("{} 推理", Self::reasoning_effort_sentence_label(selected_effort))
             }
-            None => "the selected reasoning".to_string(),
+            None => "所选推理强度".to_string(),
         };
-        let plan_only_description = format!("Always use {reasoning_phrase} in Plan mode.");
+        let plan_only_description = format!("始终在 Plan 模式中使用{reasoning_phrase}。");
         let plan_reasoning_source = if let Some(plan_override) =
             self.config.plan_mode_reasoning_effort.as_ref()
         {
             format!(
-                "user-chosen Plan override ({})",
+                "用户选择的 Plan 覆盖值（{}）",
                 Self::reasoning_effort_sentence_label(plan_override)
             )
         } else if let Some(plan_mask) = collaboration_modes::plan_mask(self.model_catalog.as_ref())
@@ -319,18 +316,18 @@ impl ChatWidget {
                 .and_then(|effort| effort.as_ref())
             {
                 Some(plan_effort) => format!(
-                    "built-in Plan default ({})",
+                    "内置 Plan 默认值（{}）",
                     Self::reasoning_effort_sentence_label(plan_effort)
                 ),
-                None => "built-in Plan default (no reasoning)".to_string(),
+                None => "内置 Plan 默认值（不进行推理）".to_string(),
             }
         } else {
-            "built-in Plan default".to_string()
+            "内置 Plan 默认值".to_string()
         };
         let all_modes_description = format!(
-            "Set the global default reasoning level and the Plan mode override. This replaces the current {plan_reasoning_source}."
+            "设置全局默认推理强度和 Plan 模式覆盖值。这将替换当前的{plan_reasoning_source}。"
         );
-        let subtitle = format!("Choose where to apply {reasoning_phrase}.");
+        let subtitle = format!("选择将{reasoning_phrase}应用到何处。");
         let warning = effort
             .as_ref()
             .and_then(|effort| self.ultra_reasoning_concurrency_warning(effort));
@@ -418,7 +415,7 @@ impl ChatWidget {
         };
         let warning_text = warn_effort.as_ref().map(|effort| {
             let effort_label = Self::reasoning_effort_label(effort);
-            format!("⚠ {effort_label} reasoning effort can quickly consume Plus plan rate limits.")
+            format!("⚠ {effort_label} 推理强度可能会迅速耗尽 Plus 方案的速率限制。")
         });
         let warn_for_model = preset.model.starts_with("gpt-5.1-codex")
             || preset.model.starts_with("gpt-5.1-codex-max")
@@ -479,7 +476,7 @@ impl ChatWidget {
             let effort = choice.clone();
             let mut effort_label = Self::reasoning_effort_label(&effort);
             if Some(choice) == default_choice.as_ref() {
-                effort_label.push_str(" (default)");
+                effort_label.push_str("（默认）");
             }
 
             let description = supported
@@ -527,12 +524,7 @@ impl ChatWidget {
                 .iter()
                 .map(Self::reasoning_effort_label)
                 .collect::<Vec<_>>()
-                .join(" and ");
-            let verb = if advanced_choices.len() == 1 {
-                "consumes"
-            } else {
-                "consume"
-            };
+                .join(" 和 ");
             let preset_for_action = preset;
             let actions: Vec<SelectionAction> = vec![Box::new(move |tx| {
                 tx.send(AppEvent::OpenAdvancedReasoningPopup {
@@ -540,8 +532,8 @@ impl ChatWidget {
                 });
             })];
             items.push(SelectionItem {
-                name: "More reasoning…".to_string(),
-                description: Some(format!("{advanced_label} {verb} usage limits faster")),
+                name: "更多推理……".to_string(),
+                description: Some(format!("{advanced_label} 会更快消耗用量限制")),
                 is_current: is_current_model
                     && highlight_choice
                         .as_ref()
@@ -554,7 +546,7 @@ impl ChatWidget {
 
         let mut header = ColumnRenderable::new();
         header.push(Line::from(
-            format!("Select Reasoning Level for {model_slug}").bold(),
+            format!("选择 {model_slug} 的推理强度").bold(),
         ));
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
@@ -593,10 +585,10 @@ impl ChatWidget {
         for effort in choices {
             let description = match &effort {
                 ReasoningEffortConfig::Max => {
-                    "For difficult problems when quality matters more than speed · higher usage"
+                    "适合质量比速度更重要的困难问题 · 用量较高"
                 }
                 ReasoningEffortConfig::Ultra => {
-                    "For demanding work using multiple agents · highest usage"
+                    "适合使用多个智能体的高要求任务 · 用量最高"
                 }
                 _ => unreachable!("advanced choices are limited to Max and Ultra"),
             };
@@ -619,8 +611,8 @@ impl ChatWidget {
         }
 
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Advanced Reasoning".bold()));
-        header.push(Line::from("⚠ Consumes usage limits faster".cyan()));
+        header.push(Line::from("高级推理".bold()));
+        header.push(Line::from("⚠ 会更快消耗用量限制".cyan()));
         self.bottom_pane.show_selection_view(SelectionViewParams {
             header: Box::new(header),
             footer_hint: Some(standard_popup_hint_line()),
@@ -638,12 +630,12 @@ impl ChatWidget {
 
     pub(super) fn reasoning_effort_label(effort: &ReasoningEffortConfig) -> String {
         match effort {
-            ReasoningEffortConfig::None => "None".to_string(),
-            ReasoningEffortConfig::Minimal => "Minimal".to_string(),
-            ReasoningEffortConfig::Low => "Low".to_string(),
-            ReasoningEffortConfig::Medium => "Medium".to_string(),
-            ReasoningEffortConfig::High => "High".to_string(),
-            ReasoningEffortConfig::XHigh => "Extra high".to_string(),
+            ReasoningEffortConfig::None => "无推理".to_string(),
+            ReasoningEffortConfig::Minimal => "极低".to_string(),
+            ReasoningEffortConfig::Low => "低".to_string(),
+            ReasoningEffortConfig::Medium => "中".to_string(),
+            ReasoningEffortConfig::High => "高".to_string(),
+            ReasoningEffortConfig::XHigh => "极高".to_string(),
             ReasoningEffortConfig::Max => "Max".to_string(),
             ReasoningEffortConfig::Ultra => "Ultra".to_string(),
             ReasoningEffortConfig::Custom(value) => value.clone(),
@@ -675,10 +667,9 @@ impl ChatWidget {
 
         let max_subagents = max_threads.saturating_sub(1);
         Some(format!(
-            "Ultra reasoning may proactively use multiple agents. This session is configured for \
-             {max_threads} concurrent threads with up to {max_subagents} subagents which can \
-             increase usage quickly. Consider setting \
-             features.multi_agent_v2.max_concurrent_threads_per_session below 8."
+            "Ultra 推理可能会主动使用多个智能体。此会话配置了 {max_threads} 个并发线程，\
+             最多包含 {max_subagents} 个子智能体，可能会迅速增加用量。请考虑将 \
+             features.multi_agent_v2.max_concurrent_threads_per_session 设为低于 8。"
         ))
     }
 

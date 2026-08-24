@@ -3682,7 +3682,7 @@ async fn reasoning_up_shortcut_does_not_silently_enter_advanced_effort() {
             assert_eq!(
                 messages,
                 vec![format!(
-                    "• Max and Ultra are available under /model → {model_path} → More reasoning…\n"
+                    "• 可通过 /model → {model_path} → 更多推理…… 使用 Max 和 Ultra\n"
                 )]
             );
         }
@@ -3737,12 +3737,8 @@ async fn reasoning_popup_shows_extra_high_with_space() {
 
     let popup = render_bottom_popup(&chat, /*width*/ 120);
     assert!(
-        popup.contains("Extra high"),
-        "expected popup to include 'Extra high'; popup: {popup}"
-    );
-    assert!(
-        !popup.contains("Extrahigh"),
-        "expected popup not to include 'Extrahigh'; popup: {popup}"
+        popup.contains("极高"),
+        "expected popup to include '极高'; popup: {popup}"
     );
 }
 
@@ -3778,7 +3774,7 @@ async fn single_reasoning_option_skips_selection() {
 
     let popup = render_bottom_popup(&chat, /*width*/ 80);
     assert!(
-        !popup.contains("Select Reasoning Level"),
+        !popup.contains("选择推理强度"),
         "expected reasoning selection popup to be skipped"
     );
 
@@ -3912,13 +3908,13 @@ async fn reasoning_popup_escape_returns_to_model_popup() {
     chat.open_reasoning_popup(preset);
 
     let before_escape = render_bottom_popup(&chat, /*width*/ 80);
-    assert!(before_escape.contains("Select Reasoning Level"));
+    assert!(before_escape.contains("选择 gpt-5.4 的推理强度"));
 
     chat.handle_key_event(KeyEvent::new(KeyCode::Esc, KeyModifiers::NONE));
 
     let after_escape = render_bottom_popup(&chat, /*width*/ 80);
-    assert!(after_escape.contains("Select Model"));
-    assert!(!after_escape.contains("Select Reasoning Level"));
+    assert!(after_escape.contains("选择模型"));
+    assert!(!after_escape.contains("选择 gpt-5.4 的推理强度"));
 }
 
 #[tokio::test]

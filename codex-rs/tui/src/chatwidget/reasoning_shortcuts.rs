@@ -124,21 +124,14 @@ impl ChatWidget {
                 .filter(|effort| Self::is_advanced_reasoning_effort(effort))
                 .map(Self::reasoning_effort_label)
                 .collect::<Vec<_>>()
-                .join(" and ");
-            let verb = if advanced_label.contains(" and ") {
-                "are"
-            } else {
-                "is"
-            };
+                .join(" 和 ");
             let model_path = if current_model.starts_with("codex-auto-") {
                 current_model
             } else {
-                format!("All models → {current_model}")
+                format!("所有模型 → {current_model}")
             };
             self.add_info_message(
-                format!(
-                    "{advanced_label} {verb} available under /model → {model_path} → More reasoning…"
-                ),
+                format!("可通过 /model → {model_path} → 更多推理…… 使用 {advanced_label}"),
                 /*hint*/ None,
             );
             return true;
