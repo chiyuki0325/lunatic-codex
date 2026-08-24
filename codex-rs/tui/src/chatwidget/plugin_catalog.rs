@@ -1075,7 +1075,7 @@ impl ChatWidget {
                 items.push(SelectionItem {
                     name: "Uninstall plugin".to_string(),
                     description: Some(
-                        "This remote plugin did not provide an uninstall identity.".to_string(),
+                        "此远程插件未提供卸载标识。".to_string(),
                     ),
                     is_disabled: true,
                     ..Default::default()
@@ -1084,7 +1084,7 @@ impl ChatWidget {
         } else if plugin.summary.availability == PluginAvailability::DisabledByAdmin {
             items.push(SelectionItem {
                 name: "Install plugin".to_string(),
-                description: Some("This plugin is disabled by your workspace admin.".to_string()),
+                description: Some("此插件已被工作区管理员禁用。".to_string()),
                 is_disabled: true,
                 ..Default::default()
             });
