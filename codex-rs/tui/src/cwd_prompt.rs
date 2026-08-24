@@ -334,9 +334,9 @@ impl WidgetRef for &CwdPromptScreen {
         column.push("");
         column.push(
             Line::from(vec![
-                "Press ".dim(),
+                "按下 ".dim(),
                 key_hint::plain(KeyCode::Enter).into(),
-                " to continue".dim(),
+                " 以继续".dim(),
             ])
             .inset(Insets::tlbr(
                 /*top*/ 0, /*left*/ 2, /*bottom*/ 0, /*right*/ 0,
