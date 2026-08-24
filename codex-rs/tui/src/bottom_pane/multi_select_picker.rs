@@ -826,9 +826,9 @@ impl MultiSelectPickerBuilder {
 
         let instructions = if self.instructions.is_empty() {
             let mut spans = vec![
-                "Press ".into(),
+                "按下 ".into(),
                 key_hint::plain(KeyCode::Char(' ')).into(),
-                " to toggle".into(),
+                " 以切换".into(),
             ];
             if self.ordering_enabled
                 && let (Some(move_left), Some(move_right)) = (
@@ -840,12 +840,12 @@ impl MultiSelectPickerBuilder {
                 spans.push(move_left.into());
                 spans.push("/".into());
                 spans.push(move_right.into());
-                spans.push(" to move".into());
+                spans.push(" 以移动".into());
             }
             if let Some(accept) = self.keymap.primary_hint(ListAction::Accept) {
                 spans.push("; ".into());
                 spans.push(accept.into());
-                spans.push(" to confirm and close".into());
+                spans.push(" 以确认并关闭".into());
             }
             if let Some(cancel) = self.keymap.primary_hint(ListAction::Cancel) {
                 spans.push("; ".into());
