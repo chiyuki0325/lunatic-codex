@@ -865,13 +865,13 @@ impl ChatWidget {
 
         if let Some(install_url) = app.install_url.clone() {
             let install_label = if is_installed {
-                "Manage on ChatGPT"
+                "在 ChatGPT 中管理"
             } else {
-                "Install on ChatGPT"
+                "在 ChatGPT 中安装"
             };
             items.push(SelectionItem {
                 name: install_label.to_string(),
-                description: Some("Open the ChatGPT app management page".to_string()),
+                description: Some("打开 ChatGPT 应用管理页面".to_string()),
                 selected_description: Some("Open the app page in your browser.".to_string()),
                 actions: vec![Box::new(move |tx| {
                     tx.send(AppEvent::OpenUrlInBrowser {
