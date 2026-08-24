@@ -164,7 +164,7 @@ impl WidgetRef for &ExternalAgentConfigSourceScreen {
         Clear.render(area, buf);
         let mut column = ColumnRenderable::new();
         column.push("");
-        column.push("Choose an import source".bold());
+        column.push("选择导入来源".bold());
         column.push("");
         column.push(
             Line::from("选择要导入配置的应用。".dim()).inset(Insets::tlbr(
