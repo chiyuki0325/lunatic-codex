@@ -520,17 +520,14 @@ impl ChatWidget {
                 self.newly_installed_marketplace_tab_id =
                     (!response.already_added).then_some(marketplace_tab_id);
                 let message = if response.already_added {
-                    format!(
-                        "Marketplace {} is already added.",
-                        response.marketplace_name
-                    )
+                    format!("市场 {} 已添加。", response.marketplace_name)
                 } else {
-                    format!("Added marketplace {}.", response.marketplace_name)
+                    format!("已添加市场 {}。", response.marketplace_name)
                 };
                 self.add_info_message(
                     message,
                     Some(format!(
-                        "Marketplace root: {}",
+                        "市场根目录：{}",
                         response.installed_root.as_path().display()
                     )),
                 );
@@ -567,7 +564,7 @@ impl ChatWidget {
                     format!("Removed marketplace {marketplace_display_name}."),
                     Some(match response.installed_root {
                         Some(installed_root) => {
-                            format!("Marketplace root: {}", installed_root.as_path().display())
+                            format!("市场根目录：{}", installed_root.as_path().display())
                         }
                         None => format!(
                             "Removed marketplace config for {}.",
