@@ -182,22 +182,20 @@ impl ChatWidget {
             }
             SlashCommand::Archive => {
                 self.bottom_pane.show_selection_view(SelectionViewParams {
-                    title: Some("Archive this session?".to_string()),
-                    subtitle: Some(
-                        "Are you sure? This will archive the current session and exit Codex"
-                            .to_string(),
+                    title: Some("归档此会话？".to_string()),
+                    subtitle: Some("确定吗？这将归档当前会话并退出 Codex".to_string()),
                     ),
                     footer_hint: Some(standard_popup_hint_line()),
                     items: vec![
                         SelectionItem {
-                            name: "No, don't archive".to_string(),
-                            description: Some("Return to the current session".to_string()),
+                            name: "否，保留此会话".to_string(),
+                            description: Some("返回当前会话".to_string()),
                             dismiss_on_select: true,
                             ..Default::default()
                         },
                         SelectionItem {
-                            name: "Yes, archive and exit".to_string(),
-                            description: Some("Archive this session now".to_string()),
+                            name: "是，归档并退出".to_string(),
+                            description: Some("立即归档此会话".to_string()),
                             actions: vec![Box::new(|tx| {
                                 tx.send(AppEvent::ArchiveCurrentThread);
                             })],
@@ -211,21 +209,19 @@ impl ChatWidget {
             }
             SlashCommand::Delete => {
                 self.bottom_pane.show_selection_view(SelectionViewParams {
-                    title: Some("Delete this session?".to_string()),
-                    subtitle: Some(
-                        "Cannot be undone. Subagent threads will also be deleted.".to_string(),
-                    ),
+                    title: Some("删除此会话？".to_string()),
+                    subtitle: Some("此操作无法撤销。子智能体对话也将被删除。".to_string()),
                     footer_hint: Some(standard_popup_hint_line()),
                     items: vec![
                         SelectionItem {
-                            name: "No, keep this session".to_string(),
-                            description: Some("Return to the current session".to_string()),
+                            name: "否，保留此会话".to_string(),
+                            description: Some("返回当前会话".to_string()),
                             dismiss_on_select: true,
                             ..Default::default()
                         },
                         SelectionItem {
-                            name: "Yes, delete and exit".to_string(),
-                            description: Some("Permanently delete this session now".to_string()),
+                            name: "是，删除并退出".to_string(),
+                            description: Some("立即永久删除此会话".to_string()),
                             actions: vec![Box::new(|tx| {
                                 tx.send(AppEvent::DeleteCurrentThread);
                             })],
@@ -250,7 +246,7 @@ impl ChatWidget {
             SlashCommand::App => {
                 let Some(thread_id) = self.thread_id else {
                     self.add_error_message(
-                        "Session is still starting; try /app again in a moment.".to_string(),
+                        "会话仍在启动；请稍后再次尝试 /app。".to_string(),
                     );
                     return;
                 };
