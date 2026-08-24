@@ -109,14 +109,14 @@ impl Renderable for PetPickerPreviewRenderable {
             inner.last_area = Some(area);
             match &inner.status {
                 PetPickerPreviewStatus::Hidden => return,
-                PetPickerPreviewStatus::Loading => ("Loading preview...", None),
+                PetPickerPreviewStatus::Loading => ("正在加载预览……", None),
                 PetPickerPreviewStatus::Disabled => (
-                    "Terminal pets disabled",
-                    Some("No pet will be shown.".to_string()),
+                    "终端宠物已禁用",
+                    Some("不会显示宠物。".to_string()),
                 ),
                 PetPickerPreviewStatus::Ready => return,
                 PetPickerPreviewStatus::Error { message } => {
-                    ("Preview unavailable", Some(message.clone()))
+                    ("预览不可用", Some(message.clone()))
                 }
             }
         };
