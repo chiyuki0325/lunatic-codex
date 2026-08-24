@@ -15,8 +15,8 @@ use codex_protocol::user_input::TextElement;
 use uuid::Uuid;
 
 const GOAL_ATTACHMENT_DIR: &str = "attachments";
-const GOAL_FILE_PREFIX: &str = "Read the Codex goal objective file at ";
-const GOAL_FILE_SUFFIX: &str = " before continuing.";
+const GOAL_FILE_PREFIX: &str = "继续前，请读取位于 ";
+const GOAL_FILE_SUFFIX: &str = " 的 Codex 目标文件。";
 const GOAL_FILE_NAME: &str = "goal-objective.md";
 
 #[derive(Clone, Debug, Default)]
@@ -37,7 +37,7 @@ pub(crate) async fn materialize_goal_draft(
 ) -> Result<(String, Option<GoalFilePath>)> {
     let mut objective = draft.objective;
     if objective.trim().is_empty() {
-        bail!("Goal objective must not be empty.");
+        bail!("目标不能为空。");
     }
     let text_elements = draft.text_elements;
     if !draft.pending_pastes.is_empty() {
@@ -47,7 +47,7 @@ pub(crate) async fn materialize_goal_draft(
             &draft.pending_pastes,
         );
         if expanded_objective.trim().is_empty() {
-            bail!("Goal objective must not be empty.");
+            bail!("目标不能为空。");
         }
     }
 
