@@ -528,7 +528,7 @@ impl HooksBrowserView {
             };
             lines.push(detail_line("上下文", &value));
         }
-        lines.push(detail_line("Trust", hook_trust_label(hook.trust_status)));
+        lines.push(detail_line("信任", hook_trust_label(hook.trust_status)));
         lines
     }
 
