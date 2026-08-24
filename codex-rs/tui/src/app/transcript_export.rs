@@ -153,7 +153,7 @@ fn export_activity_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
             ..
         } => {
             let mut lines =
-                vec![format!("mcp tool: {server}/{tool}({arguments}) · {status:?}").into()];
+                vec![format!("MCP 工具：{server}/{tool}({arguments}) · {status:?}").into()];
             if let Some(result) = result {
                 for content in &result.content {
                     match serde_json::from_value::<rmcp::model::ContentBlock>(content.clone()) {
@@ -161,30 +161,30 @@ fn export_activity_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
                             lines.extend(raw_lines_from_source(&text.text));
                         }
                         Ok(rmcp::model::ContentBlock::Image(_)) => {
-                            lines.push("<image content>".into());
+                            lines.push("<图像内容>".into());
                         }
                         Ok(rmcp::model::ContentBlock::Audio(_)) => {
-                            lines.push("<audio content>".into());
+                            lines.push("<音频内容>".into());
                         }
                         Ok(rmcp::model::ContentBlock::Resource(_)) => {
                             let uri = content
                                 .pointer("/resource/uri")
                                 .and_then(serde_json::Value::as_str)
-                                .unwrap_or("<unknown embedded resource>");
-                            lines.push(format!("embedded resource: {uri}").into());
+                                .unwrap_or("<未知嵌入资源>");
+                            lines.push(format!("嵌入资源：{uri}").into());
                         }
                         Ok(rmcp::model::ContentBlock::ResourceLink(link)) => {
-                            lines.push(format!("link: {}", link.uri).into());
+                            lines.push(format!("链接：{}", link.uri).into());
                         }
                         _ => lines.push(content.to_string().into()),
                     }
                 }
                 if let Some(content) = &result.structured_content {
-                    lines.push(format!("structured result: {content}").into());
+                    lines.push(format!("结构化结果：{content}").into());
                 }
             }
             if let Some(error) = error {
-                lines.extend(raw_lines_from_source(&format!("error: {}", error.message)));
+                lines.extend(raw_lines_from_source(&format!("错误：{}", error.message)));
             }
             lines
         }

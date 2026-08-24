@@ -49,11 +49,11 @@ fn projected_content_preserves_width_dependent_rendering() {
                 .collect::<Vec<_>>(),
             vec![
                 format_text(text),
-                "<image content>".to_string(),
-                "<audio content>".to_string(),
-                "embedded resource: file:///text.txt".to_string(),
-                "embedded resource: file:///blob.bin".to_string(),
-                "link: file:///linked.txt".to_string(),
+                "<图像内容>".to_string(),
+                "<音频内容>".to_string(),
+                "嵌入资源：file:///text.txt".to_string(),
+                "嵌入资源：file:///blob.bin".to_string(),
+                "链接：file:///linked.txt".to_string(),
                 format_text(&malformed.to_string()),
                 format_text(&invalid_metadata.to_string()),
                 format_text(&unknown.to_string()),
@@ -73,7 +73,7 @@ fn projected_image_marker_still_requires_a_complete_image() {
 
     let projected = McpToolResult::new(result(vec![invalid.clone()]), McpResultKind::Standard);
     assert!(!projected.has_image);
-    assert_eq!(projected.content[0].render(/*width*/ 80), "<image content>");
+    assert_eq!(projected.content[0].render(/*width*/ 80), "<图像内容>");
 
     let projected = McpToolResult::new(result(vec![invalid, valid]), McpResultKind::Standard);
     assert!(projected.has_image);
@@ -114,12 +114,12 @@ fn code_mode_preserves_text_fields_on_nontext_and_unknown_blocks() {
         .join("\n");
     insta::assert_snapshot!(format!("history:\n{display}\n\ntranscript:\n{transcript}"), @r#"
     history:
-    • Called Inspect results
+    • 已调用 Inspect results
       └ image-side output
         unknown-side output
 
     transcript:
-    • Called node_repl.js({"title":"Inspect results"})
+    • 已调用 node_repl.js({"title":"Inspect results"})
       └ Script completed
         Output:
         image-side output
@@ -130,8 +130,8 @@ fn code_mode_preserves_text_fields_on_nontext_and_unknown_blocks() {
     assert_eq!(
         cell.raw_lines(),
         vec![
-            Line::from("Called node_repl.js({\"title\":\"Inspect results\"})"),
-            Line::from("<image content>"),
+            Line::from("已调用 node_repl.js({\"title\":\"Inspect results\"})"),
+            Line::from("<图像内容>"),
             Line::from(format_and_truncate_tool_result(
                 &unknown.to_string(),
                 TOOL_CALL_MAX_LINES,
