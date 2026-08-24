@@ -300,9 +300,9 @@ impl ExecCell {
             },
             " ".into(),
             if self.is_active() {
-                "Exploring".bold()
+                "正在探索".bold()
             } else {
-                "Explored".bold()
+                "已探索".bold()
             },
         ]));
 
