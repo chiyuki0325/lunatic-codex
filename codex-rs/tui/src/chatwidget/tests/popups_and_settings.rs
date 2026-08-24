@@ -2863,7 +2863,7 @@ async fn apps_popup_shows_disabled_status_for_installed_but_disabled_apps() {
     chat.add_connectors_output();
     let popup = render_bottom_popup(&chat, /*width*/ 80);
     assert!(
-        popup.contains("Installed · Disabled. Press Enter to open the app page"),
+        popup.contains("已安装 · 已禁用。按下 Enter 打开应用页面"),
         "expected selected app description to include disabled status, got:\n{popup}"
     );
     assert!(
@@ -2942,7 +2942,7 @@ async fn apps_refresh_preserves_toggled_enabled_state() {
     chat.add_connectors_output();
     let popup = render_bottom_popup(&chat, /*width*/ 80);
     assert!(
-        popup.contains("Installed · Disabled. Press Enter to open the app page"),
+        popup.contains("已安装 · 已禁用。按下 Enter 打开应用页面"),
         "expected disabled status to persist after reload, got:\n{popup}"
     );
 }
@@ -2983,7 +2983,7 @@ async fn apps_popup_for_not_installed_app_uses_install_only_selected_description
     chat.add_connectors_output();
     let popup = render_bottom_popup(&chat, /*width*/ 80);
     assert!(
-        popup.contains("Can be installed. Press Enter to open the app page to install"),
+        popup.contains("可安装。按下 Enter 打开应用页面以安装"),
         "expected selected app description to be install-only for not-installed apps, got:\n{popup}"
     );
     assert!(

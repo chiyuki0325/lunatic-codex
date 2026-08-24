@@ -160,8 +160,8 @@ impl ChatWidget {
     pub(crate) fn add_connectors_output(&mut self) {
         if !self.connectors_enabled() {
             self.add_info_message(
-                "Apps are disabled.".to_string(),
-                Some("Enable the apps feature to use $ or /apps.".to_string()),
+                "应用功能已禁用。".to_string(),
+                Some("启用应用功能后即可使用 $ 或 /apps。".to_string()),
             );
             return;
         }
@@ -352,12 +352,12 @@ impl ChatWidget {
     fn connector_status_label(connector: &AppInfo) -> &'static str {
         if connector.is_accessible {
             if connector.is_enabled {
-                "Installed"
+                "已安装"
             } else {
-                "Installed · Disabled"
+                "已安装 · 已禁用"
             }
         } else {
-            "Can be installed"
+            "可安装"
         }
     }
 
