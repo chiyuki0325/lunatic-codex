@@ -345,15 +345,15 @@ impl RequestUserInputOverlay {
         if self.question_count() > 0 {
             let idx = self.current_index() + 1;
             let total = self.question_count();
-            let base = format!("Question {idx}/{total}");
+            let base = format!("问题 {idx}/{total}");
             let unanswered = self.unanswered_count();
             if unanswered > 0 {
-                format!("{base} ({unanswered} unanswered)")
+                format!("{base}（{unanswered} 个未回答）")
             } else {
                 base
             }
         } else {
-            "No questions".to_string()
+            "没有问题".to_string()
         }
     }
 
