@@ -271,13 +271,13 @@ fn fallback_transcript_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
             ]
         }
         ThreadItem::EnteredReviewMode { review, .. } => {
-            vec![vec!["review started: ".dim(), review.clone().into()].into()]
+            vec![vec!["审查已开始：".dim(), review.clone().into()].into()]
         }
         ThreadItem::ExitedReviewMode { review, .. } => {
-            vec![vec!["review finished: ".dim(), review.clone().into()].into()]
+            vec![vec!["审查已完成：".dim(), review.clone().into()].into()]
         }
         ThreadItem::ContextCompaction { .. } => {
-            vec!["context compacted".dim().into()]
+            vec!["上下文已压缩".dim().into()]
         }
         ThreadItem::UserMessage { .. }
         | ThreadItem::AgentMessage { .. }
