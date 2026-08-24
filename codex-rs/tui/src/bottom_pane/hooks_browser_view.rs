@@ -519,7 +519,7 @@ impl HooksBrowserView {
                 lines.push(detail_line("处理器", "智能体"));
             }
         }
-        lines.push(detail_line("Timeout", &format!("{}s", hook.timeout_sec)));
+        lines.push(detail_line("超时", &format!("{} 秒", hook.timeout_sec)));
         if let Some(limit) = hook.additional_context_limit {
             let value = if limit == 0 {
                 "unlimited".to_string()
