@@ -552,14 +552,14 @@ impl ChatWidget {
         let mut header = ColumnRenderable::new();
         header.push(Line::from("插件".bold()));
         header.push(Line::from(
-            format!("Uninstalling {plugin_display_name}...").dim(),
+            format!("正在卸载 {plugin_display_name}……").dim(),
         ));
 
         SelectionViewParams {
             view_id: Some(PLUGINS_SELECTION_VIEW_ID),
             header: Box::new(header),
             items: vec![SelectionItem {
-                name: "Uninstalling plugin...".to_string(),
+                name: "正在卸载插件……".to_string(),
                 description: Some("This updates when the plugin removal completes.".to_string()),
                 is_disabled: true,
                 ..Default::default()
