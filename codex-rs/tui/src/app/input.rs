@@ -261,23 +261,23 @@ impl App {
                 let allow_background = running_side_thread_id.is_none()
                     && !self.chat_widget.has_queued_follow_up_messages();
                 self.chat_widget.show_selection_view(SelectionViewParams {
-                    title: Some("Task is still running".to_string()),
-                    subtitle: Some("Choose what happens to the current task.".to_string()),
+                    title: Some("任务仍在运行".to_string()),
+                    subtitle: Some("选择如何处理当前任务。".to_string()),
                     footer_hint: Some(standard_popup_hint_line()),
                     items: [
                         (
-                            "Cancel task",
-                            "Stop the current task and stay in Codex",
+                            "取消任务",
+                            "停止当前任务并留在 Codex 中",
                             RunningTaskExitAction::CancelTask,
                         ),
                         (
-                            "Run in background",
-                            "Exit Codex and leave the task running",
+                            "转入后台运行",
+                            "退出 Codex 并让任务继续运行",
                             RunningTaskExitAction::RunInBackground,
                         ),
                         (
-                            "Exit",
-                            "Stop the current task and exit Codex",
+                            "退出",
+                            "停止当前任务并退出 Codex",
                             RunningTaskExitAction::Exit,
                         ),
                     ]
