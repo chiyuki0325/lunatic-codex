@@ -319,7 +319,7 @@ impl HooksBrowserView {
         let mut lines = vec![format!("{} hooks", event_label(event_name)).bold().into()];
         match review_needed_message(review_needed_count) {
             None => lines.push(
-                "Turn hooks on or off. Your changes are saved automatically."
+                "启用或禁用 Hook。更改会自动保存。"
                     .dim()
                     .into(),
             ),
@@ -476,7 +476,7 @@ impl HooksBrowserView {
 
     fn detail_lines(&self, event_name: HookEventName, width: usize) -> Vec<Line<'static>> {
         let Some(hook) = self.selected_hook(event_name) else {
-            return vec!["No hooks installed for this event.".dim().into()];
+            return vec!["此事件未安装 Hook。".dim().into()];
         };
 
         let mut lines = vec![detail_line("Event", event_label(event_name))];
@@ -703,7 +703,7 @@ impl Renderable for HooksBrowserView {
                 if rows.is_empty() {
                     lines.push(Line::default());
                     lines.push(Line::from(
-                        "No hooks installed for this event.".dim().italic(),
+                        "此事件未安装 Hook。".dim().italic(),
                     ));
                     lines.push(Line::default());
                     Paragraph::new(lines).render(content_area, buf);
