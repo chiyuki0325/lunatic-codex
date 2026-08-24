@@ -479,7 +479,7 @@ impl HooksBrowserView {
             return vec!["此事件未安装 Hook。".dim().into()];
         };
 
-        let mut lines = vec![detail_line("Event", event_label(event_name))];
+        let mut lines = vec![detail_line("事件", event_label(event_name))];
         if let Some(matcher) = hook.matcher.as_deref() {
             lines.extend(detail_wrapped_lines(
                 "Matcher", matcher, width, /*max_lines*/ None,
