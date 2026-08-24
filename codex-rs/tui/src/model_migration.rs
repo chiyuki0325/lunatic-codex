@@ -52,7 +52,7 @@ impl MigrationMenuOption {
     fn label(self) -> &'static str {
         match self {
             Self::TryNewModel => "Try new model",
-            Self::UseExistingModel => "Use existing model",
+            Self::UseExistingModel => "使用当前模型",
         }
     }
 }
@@ -82,7 +82,7 @@ pub(crate) fn migration_copy_for_models(
     }
 
     let heading_text = Span::from(format!(
-        "Codex just got an upgrade. Introducing {target_display_name}."
+        "Codex 已升级。现推出 {target_display_name}。"
     ))
     .bold();
     let description_line: Line<'static>;
@@ -94,7 +94,7 @@ pub(crate) fn migration_copy_for_models(
             .map(Line::from)
             .unwrap_or_else(|| {
                 Line::from(format!(
-                    "{target_display_name} is recommended for better performance and reliability."
+                    "建议使用 {target_display_name}，以获得更好的性能和可靠性。"
                 ))
             });
     }
@@ -102,7 +102,7 @@ pub(crate) fn migration_copy_for_models(
     let mut content = vec![];
     if migration_copy.is_none() {
         content.push(Line::from(format!(
-            "We recommend switching from {current_model} to {target_model}."
+            "建议从 {current_model} 切换到 {target_model}。"
         )));
         content.push(Line::from(""));
     }
@@ -120,10 +120,10 @@ pub(crate) fn migration_copy_for_models(
 
     if can_opt_out {
         content.push(Line::from(format!(
-            "You can continue using {current_model} if you prefer."
+            "如有需要，您可继续使用 {current_model}。"
         )));
     } else {
-        content.push(Line::from("Press enter to continue".dim()));
+        content.push(Line::from("按下 Enter 以继续".dim()));
     }
 
     ModelMigrationCopy {
