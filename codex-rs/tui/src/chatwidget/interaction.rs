@@ -311,16 +311,16 @@ impl ChatWidget {
                 Ok(lease) => {
                     self.clipboard_lease = lease;
                     self.add_to_history(history_cell::new_info_event(
-                        "Copied last message to clipboard".into(),
+                        "已将最后一条消息复制到剪贴板".into(),
                         /*hint*/ None,
                     ));
                 }
                 Err(error) => self.add_to_history(history_cell::new_error_event(format!(
-                    "Copy failed: {error}"
+                    "复制失败：{error}"
                 ))),
             },
             _ => self.add_to_history(history_cell::new_error_event(
-                "No agent response to copy".into(),
+                "没有可复制的代理回复".into(),
             )),
         }
         self.request_redraw();
