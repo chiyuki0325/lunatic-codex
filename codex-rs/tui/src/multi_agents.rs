@@ -315,17 +315,17 @@ pub(crate) fn sub_agent_activity_history_cell(item: &ThreadItem) -> Option<Plain
 
 pub(crate) fn sub_agent_activity_summary(kind: SubAgentActivityKind, agent_path: &str) -> String {
     match kind {
-        SubAgentActivityKind::Started => format!("Started `{agent_path}`"),
-        SubAgentActivityKind::Interacted => format!("Interacted with `{agent_path}`"),
-        SubAgentActivityKind::Interrupted => format!("Interrupted `{agent_path}`"),
+        SubAgentActivityKind::Started => format!("已启动 `{agent_path}`"),
+        SubAgentActivityKind::Interacted => format!("已与 `{agent_path}` 交互"),
+        SubAgentActivityKind::Interrupted => format!("已中断 `{agent_path}`"),
     }
 }
 
 fn sub_agent_activity_title(kind: SubAgentActivityKind, agent_path: &str) -> Line<'static> {
     let (prefix, path) = match kind {
-        SubAgentActivityKind::Started => ("Started ", agent_path),
-        SubAgentActivityKind::Interacted => ("Interacted with ", agent_path),
-        SubAgentActivityKind::Interrupted => ("Interrupted ", agent_path),
+        SubAgentActivityKind::Started => ("已启动 ", agent_path),
+        SubAgentActivityKind::Interacted => ("已与 ", agent_path),
+        SubAgentActivityKind::Interrupted => ("已中断 ", agent_path),
     };
     title_spans_line(vec![
         Span::from(prefix).bold(),
