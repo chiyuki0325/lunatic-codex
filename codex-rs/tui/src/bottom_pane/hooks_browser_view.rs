@@ -543,28 +543,28 @@ impl HooksBrowserView {
         let footer = match self.page {
             HooksBrowserPage::Events if self.review_needed_total_count() > 0 => {
                 let mut spans = vec![
-                    "Press ".into(),
+                    "按下 ".into(),
                     key_hint::plain(KeyCode::Char('t')).into(),
-                    " to trust all; ".into(),
+                    " 以全部信任；".into(),
                 ];
                 if let Some(accept) = accept {
-                    spans.extend([accept.into(), " to review hooks; ".into()]);
+                    spans.extend([accept.into(), " 以查看 Hook；".into()]);
                 }
-                spans.extend([cancel.into(), " to close".into()]);
+                spans.extend([cancel.into(), " 以关闭".into()]);
                 Line::from(spans)
             }
             HooksBrowserPage::Events => {
-                let mut spans = vec!["Press ".into()];
+                let mut spans = vec!["按下 ".into()];
                 if let Some(accept) = accept {
                     spans.extend([accept.into(), " to view hooks; ".into()]);
                 }
-                spans.extend([cancel.into(), " to close".into()]);
+                spans.extend([cancel.into(), " 以关闭".into()]);
                 Line::from(spans)
             }
             HooksBrowserPage::Handlers(event_name) => {
                 let selected_hook = self.selected_hook(event_name);
                 if selected_hook.is_none() {
-                    Line::from(vec!["Press ".into(), cancel.into(), " to go back".into()])
+                    Line::from(vec!["按下 ".into(), cancel.into(), " to go back".into()])
                 } else if selected_hook.is_some_and(|hook| hook.is_managed) {
                     Line::from(vec![
                         "Managed hooks are always on; press ".into(),
@@ -573,7 +573,7 @@ impl HooksBrowserView {
                     ])
                 } else if selected_hook.is_some_and(hook_needs_review) {
                     Line::from(vec![
-                        "Press ".into(),
+                        "按下 ".into(),
                         key_hint::plain(KeyCode::Char('t')).into(),
                         " to trust; ".into(),
                         cancel.into(),
@@ -581,7 +581,7 @@ impl HooksBrowserView {
                     ])
                 } else {
                     let mut spans =
-                        vec!["Press ".into(), key_hint::plain(KeyCode::Char(' ')).into()];
+                        vec!["按下 ".into(), key_hint::plain(KeyCode::Char(' ')).into()];
                     if let Some(accept) = accept {
                         spans.extend([" or ".into(), accept.into()]);
                     }
