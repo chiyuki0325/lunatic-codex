@@ -518,9 +518,9 @@ impl ChatWidget {
 
     pub(super) fn interrupted_turn_message(&self, reason: TurnAbortReason) -> String {
         if reason == TurnAbortReason::BudgetLimited {
-            return "Goal budget reached - the turn was stopped.".to_string();
+            return "已达到目标预算，轮次已停止。".to_string();
         }
 
-        "Conversation interrupted - tell the model what to do differently. Something went wrong? Hit `/feedback` to report the issue.".to_string()
+        "对话已中断，请告诉模型需要如何调整。若出现问题，请使用 `/feedback` 报告。".to_string()
     }
 }

@@ -1331,7 +1331,7 @@ async fn interrupted_turn_pending_steers_message_snapshot() {
     let info = cells
         .iter()
         .map(|cell| lines_to_single_string(cell))
-        .find(|line| line.contains("Model interrupted to submit steer instructions."))
+        .find(|line| line.contains("已中断模型以提交引导指令。"))
         .expect("expected steer interrupt info message to be inserted");
     assert_chatwidget_snapshot!("interrupted_turn_pending_steers_message", info);
 }

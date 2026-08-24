@@ -236,7 +236,7 @@ impl ChatWidget {
         if self.interrupted_turn_notice_mode != InterruptedTurnNoticeMode::Suppress {
             if send_pending_steers_immediately {
                 self.add_to_history(history_cell::new_info_event(
-                    "Model interrupted to submit steer instructions.".to_owned(),
+                    "已中断模型以提交引导指令。".to_owned(),
                     /*hint*/ None,
                 ));
             } else {
