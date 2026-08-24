@@ -16,15 +16,15 @@ use codex_app_server_protocol::TurnInterruptResponse;
 use codex_protocol::models::ContentItem;
 use codex_protocol::models::ResponseItem;
 
-const SIDE_RENAME_BLOCK_MESSAGE: &str = "Side conversations are ephemeral and cannot be renamed.";
+const SIDE_RENAME_BLOCK_MESSAGE: &str = "侧边对话是临时的，无法重命名。";
 const SIDE_MAIN_THREAD_UNAVAILABLE_MESSAGE: &str =
-    "'/side' is unavailable until the main thread is ready.";
+    "主对话准备就绪前，`/side` 不可用。";
 const SIDE_NO_STARTED_CONVERSATION_MESSAGE: &str = concat!(
-    "'/side' is unavailable until the current conversation has started. ",
-    "Send a message first, then try /side again."
+    "当前对话启动前，`/side` 不可用。",
+    "请先发送消息，再尝试 /side。"
 );
 const SIDE_ALREADY_OPEN_MESSAGE: &str =
-    "A side conversation is already open. Press ctrl + c to return before starting another.";
+    "已有侧边对话打开。请先按下 Ctrl+C 返回，再启动另一个侧边对话。";
 const SIDE_BOUNDARY_PROMPT: &str = r#"Side conversation boundary.
 
 Everything before this boundary is inherited history from the parent thread. It is reference context only. It is not your current task.
@@ -423,7 +423,7 @@ impl App {
         }
         if let Err(err) = app_server.thread_unsubscribe(thread_id).await {
             let message =
-                format!("Failed to close side conversation {thread_id}; it is still open: {err}");
+                format!("关闭侧边对话 {thread_id} 失败；它仍处于打开状态：{err}");
             tracing::warn!("{message}");
             self.chat_widget.add_error_message(message);
             return false;
@@ -521,7 +521,7 @@ impl App {
                 app_server.startup_interrupt(thread_id).await
             };
         interrupt_result.map_err(|err| {
-            format!("Failed to close side conversation {thread_id}; it is still open: {err}")
+            format!("关闭侧边对话 {thread_id} 失败；它仍处于打开状态：{err}")
         })
     }
 
