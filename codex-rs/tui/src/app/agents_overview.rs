@@ -371,7 +371,7 @@ impl App {
                 Ok(thread) => thread,
                 Err(error) => {
                     self.chat_widget.add_error_message(format!(
-                        "Agent session {root_thread_id} is unavailable: {error}"
+                        "智能体会话 {root_thread_id} 不可用：{error}"
                     ));
                     return Ok(AppRunControl::Continue);
                 }
@@ -590,7 +590,7 @@ impl App {
             }
             return self
                 .chat_widget
-                .add_error_message("Permission profile has different settings.".to_string());
+                .add_error_message("权限配置文件的设置不同。".to_string());
         }
         self.apply_runtime_policy_overrides(&mut config);
         apply_managed_new_thread_defaults(
