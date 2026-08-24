@@ -892,8 +892,8 @@ impl ChatWidget {
         if is_installed {
             items.push(SelectionItem {
                 name: "继续".to_string(),
-                description: Some("This app is already installed.".to_string()),
-                selected_description: Some("Advance to the next app.".to_string()),
+                description: Some("此应用已安装。".to_string()),
+                selected_description: Some("前往下一个应用。".to_string()),
                 actions: vec![Box::new(|tx| {
                     tx.send(AppEvent::PluginInstallAuthAdvance {
                         refresh_connectors: false,
