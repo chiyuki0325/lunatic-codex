@@ -965,18 +965,18 @@ impl ChatWidget {
         if abandoned {
             self.add_info_message(
                 format!(
-                    "Skipped remaining app setup for {} plugin.",
+                    "已跳过插件 {} 的其余应用设置。",
                     flow.plugin_display_name
                 ),
-                Some("The plugin may not be usable until required apps are installed.".to_string()),
+                Some("安装所需应用前，此插件可能无法使用。".to_string()),
             );
         } else {
             self.add_info_message(
                 format!(
-                    "Completed app setup flow for {} plugin.",
+                    "已完成插件 {} 的应用设置流程。",
                     flow.plugin_display_name
                 ),
-                Some("You can now continue managing plugins from /plugins.".to_string()),
+                Some("现在可通过 /plugins 继续管理插件。".to_string()),
             );
         }
 
