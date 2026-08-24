@@ -25,7 +25,7 @@ impl ChatWidget {
             items: vec![
                 SelectionItem {
                     name: "复制到剪贴板".to_string(),
-                    description: Some("Copy the complete Markdown transcript".to_string()),
+                    description: Some("复制完整的 Markdown 对话记录".to_string()),
                     is_disabled: cfg!(target_os = "android"),
                     actions: vec![Box::new(|tx| {
                         tx.send(AppEvent::ExportTranscript {
@@ -36,8 +36,8 @@ impl ChatWidget {
                     ..Default::default()
                 },
                 SelectionItem {
-                    name: "Save to file".to_string(),
-                    description: Some("Choose a Markdown filename".to_string()),
+                    name: "保存到文件".to_string(),
+                    description: Some("选择 Markdown 文件名".to_string()),
                     actions: vec![Box::new(|tx| {
                         tx.send(AppEvent::OpenTranscriptExportFilePrompt);
                     })],
@@ -58,7 +58,7 @@ impl ChatWidget {
             |thread_id| format!("codex-session-{thread_id}.md"),
         );
         let view = CustomPromptView::new(
-            "Save conversation".to_string(),
+            "保存对话".to_string(),
             "Type a filename and press Enter".to_string(),
             filename,
             /*context_label*/ None,
