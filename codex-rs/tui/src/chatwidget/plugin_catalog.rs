@@ -480,8 +480,8 @@ impl ChatWidget {
         marketplace_name: Option<&str>,
     ) -> SelectionViewParams {
         let loading_text = marketplace_name
-            .map(|name| format!("Upgrading {name} marketplace..."))
-            .unwrap_or_else(|| "Upgrading marketplaces...".to_string());
+            .map(|name| format!("正在升级市场 {name}……"))
+            .unwrap_or_else(|| "正在升级市场……".to_string());
         SelectionViewParams {
             view_id: Some(PLUGINS_SELECTION_VIEW_ID),
             header: Box::new(DelayedLoadingHeader::new(
@@ -492,7 +492,7 @@ impl ChatWidget {
             )),
             items: vec![SelectionItem {
                 name: loading_text,
-                description: Some("This updates when marketplace upgrade completes.".to_string()),
+                description: Some("市场升级完成后将自动更新。".to_string()),
                 is_disabled: true,
                 ..Default::default()
             }],
