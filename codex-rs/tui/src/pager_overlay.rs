@@ -453,9 +453,9 @@ impl TranscriptHistoryState {
 
     fn session_header_placeholder(self) -> Option<&'static str> {
         match self {
-            Self::LoadingOlder | Self::LoadingBeginning => Some("Loading earlier messages..."),
-            Self::Partial => Some("Earlier messages are available — scroll up to load them"),
-            Self::Failed => Some("Earlier messages unavailable — scroll up to retry"),
+            Self::LoadingOlder | Self::LoadingBeginning => Some("正在加载较早的消息……"),
+            Self::Partial => Some("可加载较早的消息——向上滚动以加载"),
+            Self::Failed => Some("较早的消息暂不可用——向上滚动以重试"),
             Self::Idle | Self::Complete => None,
         }
     }
