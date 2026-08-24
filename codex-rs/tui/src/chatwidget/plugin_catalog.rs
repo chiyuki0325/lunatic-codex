@@ -753,7 +753,7 @@ impl ChatWidget {
             .map(|(_, _, display_name)| {
                 PLUGIN_ROW_PREFIX_WIDTH + UnicodeWidthStr::width(display_name.as_str())
             })
-            .chain([UnicodeWidthStr::width("Add marketplace")])
+            .chain([UnicodeWidthStr::width("添加市场")])
             .max();
         let installed_entries = all_entries
             .iter()
@@ -976,7 +976,7 @@ impl ChatWidget {
                 "输入来源，使其中的插件在此菜单中可用。".to_string(),
             ),
             items: vec![SelectionItem {
-                name: "Add marketplace".to_string(),
+                name: "添加市场".to_string(),
                 description: Some(
                     "Enter owner/repo, a Git URL, or a local marketplace path.".to_string(),
                 ),
@@ -1148,7 +1148,7 @@ impl ChatWidget {
             ..Default::default()
         });
         items.push(SelectionItem {
-            name: "MCP Servers".to_string(),
+            name: "MCP 服务器".to_string(),
             description: Some(plugin_mcp_summary(plugin)),
             is_disabled: true,
             ..Default::default()
@@ -1261,7 +1261,7 @@ impl ChatWidget {
                     Vec::new()
                 };
             let is_disabled = !can_view_details && !plugin.installed;
-            let disabled_reason = is_disabled.then(|| "plugin details are unavailable".to_string());
+            let disabled_reason = is_disabled.then(|| "插件详情不可用".to_string());
 
             items.push(SelectionItem {
                 name: display_name,
