@@ -648,7 +648,7 @@ impl HistoryCell for McpInventoryLoadingCell {
                 )
                 .unwrap_or_else(|| "•".dim()),
                 " ".into(),
-                "Loading MCP inventory".bold(),
+                "正在加载 MCP 清单".bold(),
                 "…".dim(),
             ]
             .into(),
@@ -656,7 +656,7 @@ impl HistoryCell for McpInventoryLoadingCell {
     }
 
     fn raw_lines(&self) -> Vec<Line<'static>> {
-        vec![Line::from("Loading MCP inventory...")]
+        vec![Line::from("正在加载 MCP 清单……")]
     }
 
     fn transcript_animation_tick(&self) -> Option<u64> {
