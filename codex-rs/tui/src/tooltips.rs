@@ -9,16 +9,16 @@ const ANNOUNCEMENT_TIP_URL: &str =
 const IS_MACOS: bool = cfg!(target_os = "macos");
 const IS_WINDOWS: bool = cfg!(target_os = "windows");
 
-const APP_TOOLTIP: &str = "Try the **Desktop app**. Run 'codex app' or visit https://chatgpt.com/codex?app-landing-page=true";
+const APP_TOOLTIP: &str = "试试 **桌面应用**。运行 'codex app'，或访问 https://chatgpt.com/codex?app-landing-page=true";
 const MACOS_APP_TOOLTIP: &str =
-    "Run `codex app` to open the Desktop app (it installs on macOS if needed).";
-const LINUX_APP_TOOLTIP: &str = "Try the **Desktop app** on Linux: install it from https://learn.chatgpt.com/docs/linux/linux-app and run 'chatgpt'.";
+    "运行 `codex app` 打开桌面应用（如有需要，将在 macOS 上安装）。";
+const LINUX_APP_TOOLTIP: &str = "在 Linux 上试试 **桌面应用**：从 https://learn.chatgpt.com/docs/linux/linux-app 安装，然后运行 'chatgpt'。";
 const FAST_TOOLTIP: &str =
-    "*New* Use **/fast** to enable our fastest inference with increased plan usage.";
-const OTHER_TOOLTIP: &str = "*New* Build faster with the **Desktop app**. Run 'codex app' or visit https://chatgpt.com/codex?app-landing-page=true";
-const OTHER_TOOLTIP_NON_MAC: &str = "*New* Build faster with Codex.";
+    "*新功能* 使用 **/fast** 启用最快的推理速度，但会增加套餐用量。";
+const OTHER_TOOLTIP: &str = "*新功能* 使用 **桌面应用**，更快地完成构建。运行 'codex app'，或访问 https://chatgpt.com/codex?app-landing-page=true";
+const OTHER_TOOLTIP_NON_MAC: &str = "*新功能* 使用 Codex，更快地完成构建。";
 const FREE_GO_TOOLTIP: &str =
-    "*New* For a limited time, Codex is included in your plan for free – let’s build together.";
+    "*新功能* 限时免费：您的套餐包含 Codex，让我们一起构建。";
 
 const RAW_TOOLTIPS: &str = include_str!("../tooltips.txt");
 
@@ -380,14 +380,14 @@ mod tests {
         let tooltip = TOOLTIPS
             .iter()
             .copied()
-            .find(|tip| tip.contains("Desktop app"));
+            .find(|tip| tip.contains("桌面应用"));
 
         if linux_app_tooltip(LinuxDesktopSession::current()).is_some() {
             let tooltip = tooltip.expect("Linux should advertise the desktop app");
             assert_eq!(paid_app_tooltip(), Some(tooltip));
         } else if IS_MACOS {
             let tooltip = tooltip.expect("macOS should advertise the desktop app");
-            insta::assert_snapshot!(tooltip, @"Run `codex app` to open the Desktop app (it installs on macOS if needed).");
+            insta::assert_snapshot!(tooltip, @"运行 `codex app` 打开桌面应用（如有需要，将在 macOS 上安装）。");
             assert_eq!(paid_app_tooltip(), Some(APP_TOOLTIP));
         } else if IS_WINDOWS {
             assert_eq!(tooltip, None);
@@ -405,7 +405,7 @@ mod tests {
             is_wsl: false,
         })
         .expect("graphical native Linux should advertise the desktop app");
-        insta::assert_snapshot!(tooltip, @"Try the **Desktop app** on Linux: install it from https://learn.chatgpt.com/docs/linux/linux-app and run 'chatgpt'.");
+        insta::assert_snapshot!(tooltip, @"在 Linux 上试试 **桌面应用**：从 https://learn.chatgpt.com/docs/linux/linux-app 安装，然后运行 'chatgpt'。");
 
         assert_eq!(
             linux_app_tooltip(LinuxDesktopSession {
