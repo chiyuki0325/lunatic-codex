@@ -340,7 +340,7 @@ impl ChatWidget {
 
     pub(super) fn image_inputs_not_supported_message(&self) -> String {
         format!(
-            "Model {} does not support image inputs. Remove images or switch models.",
+            "模型 {} 不支持图像输入。请移除图像或切换模型。",
             self.current_model()
         )
     }
