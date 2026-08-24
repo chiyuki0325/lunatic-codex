@@ -265,7 +265,7 @@ fn fallback_transcript_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
                 .map(|path| format!(" · {}", path.as_path().display()))
                 .unwrap_or_default();
             vec![
-                format!("image generation: {}{saved}", item.status)
+                format!("图像生成：{}{saved}", item.status)
                     .dim()
                     .into(),
             ]
