@@ -424,7 +424,7 @@ impl App {
     ) -> Result<()> {
         let Some(thread_id) = self.active_thread_id else {
             self.chat_widget
-                .add_error_message("No active thread is available.".to_string());
+                .add_error_message("没有可用的活动对话。".to_string());
             return Ok(());
         };
 
@@ -623,7 +623,7 @@ impl App {
                                 let notification =
                                     ServerNotification::Warning(WarningNotification {
                                         thread_id: Some(thread_id.to_string()),
-                                        message: format!("Failed to interrupt turn: {error}"),
+                                        message: format!("中断轮次失败：{error}"),
                                     });
                                 let should_send = {
                                     let mut store = thread_event_store.lock().await;
