@@ -972,8 +972,8 @@ impl ChatWidget {
             id: ADD_MARKETPLACE_TAB_ID.to_string(),
             label: "Add Marketplace".to_string(),
             header: plugins_header(
-                "Add a marketplace from a Git repo or local root.".to_string(),
-                "Enter a source to make its plugins available in this menu.".to_string(),
+                "从 Git 仓库或本地根目录添加市场。".to_string(),
+                "输入来源，使其中的插件在此菜单中可用。".to_string(),
             ),
             items: vec![SelectionItem {
                 name: "Add marketplace".to_string(),
