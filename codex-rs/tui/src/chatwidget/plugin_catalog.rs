@@ -344,12 +344,12 @@ impl ChatWidget {
             header: Box::new(DelayedLoadingHeader::new(
                 self.frame_requester.clone(),
                 self.config.animations,
-                "Loading available plugins...".to_string(),
-                Some("This updates when the marketplace list is ready.".to_string()),
+                "正在加载可用插件……".to_string(),
+                Some("市场列表准备就绪后将自动更新。".to_string()),
             )),
             items: vec![SelectionItem {
-                name: "Loading plugins...".to_string(),
-                description: Some("This updates when the marketplace list is ready.".to_string()),
+                name: "正在加载插件……".to_string(),
+                description: Some("市场列表准备就绪后将自动更新。".to_string()),
                 is_disabled: true,
                 ..Default::default()
             }],
@@ -363,11 +363,11 @@ impl ChatWidget {
             header: Box::new(DelayedLoadingHeader::new(
                 self.frame_requester.clone(),
                 self.config.animations,
-                "Adding marketplace...".to_string(),
+                "正在添加市场……".to_string(),
                 /*note*/ None,
             )),
             items: vec![SelectionItem {
-                name: "Adding marketplace...".to_string(),
+                name: "正在添加市场……".to_string(),
                 description: Some(
                     "This updates when marketplace installation completes.".to_string(),
                 ),
