@@ -2638,7 +2638,7 @@ impl App {
                         let error = format_config_error(&err);
                         tracing::error!(error = %error, "failed to persist status line settings; keeping previous selection");
                         self.chat_widget.add_error_message(format!(
-                            "Failed to save status line settings: {error}"
+                            "保存状态栏设置失败：{error}"
                         ));
                     }
                 }
@@ -2678,7 +2678,7 @@ impl App {
                         tracing::error!(error = %err, "failed to persist terminal title items; keeping previous selection");
                         self.chat_widget.revert_terminal_title_setup_preview();
                         self.chat_widget.add_error_message(format!(
-                            "Failed to save terminal title items: {err}"
+                            "保存终端标题项目失败：{err}"
                         ));
                     }
                 }
