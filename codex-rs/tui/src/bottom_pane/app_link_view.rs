@@ -187,7 +187,7 @@ impl AppLinkViewParams {
             app_id: elicitation_id.to_string(),
             title: "需要操作".to_string(),
             description: Some(format!("Server: {server_name}")),
-            instructions: "Complete the requested action in your browser, then return here."
+            instructions: "请在浏览器中完成请求的操作，然后返回此处。"
                 .to_string(),
             url: url.to_string(),
             is_installed: true,
@@ -669,19 +669,19 @@ impl AppLinkView {
     }
 
     fn hint_line(&self) -> Line<'static> {
-        let mut spans = vec!["Use ".into(), key_hint::plain(KeyCode::Tab).into()];
+        let mut spans = vec!["使用 ".into(), key_hint::plain(KeyCode::Tab).into()];
         if let Some(move_up) = self.list_keymap.primary_hint(ListAction::MoveUp) {
             spans.extend([" / ".into(), move_up.into()]);
         }
         if let Some(move_down) = self.list_keymap.primary_hint(ListAction::MoveDown) {
             spans.extend([" ".into(), move_down.into()]);
         }
-        spans.push(" to move".into());
+        spans.push(" 以移动".into());
         if let Some(accept) = self.list_keymap.primary_hint(ListAction::Accept) {
-            spans.extend([", ".into(), accept.into(), " to select".into()]);
+            spans.extend(["，按下 ".into(), accept.into(), " 以选择".into()]);
         }
         if let Some(cancel) = self.list_keymap.primary_hint(ListAction::Cancel) {
-            spans.extend([", ".into(), cancel.into(), " to close".into()]);
+            spans.extend(["，按下 ".into(), cancel.into(), " 以关闭".into()]);
         }
         Line::from(spans)
     }
@@ -964,7 +964,7 @@ mod tests {
                 app_id: "payment-123".to_string(),
                 title: "需要操作".to_string(),
                 description: Some("Server: payments".to_string()),
-                instructions: "Complete the requested action in your browser, then return here."
+                instructions: "请在浏览器中完成请求的操作，然后返回此处。"
                     .to_string(),
                 url: "https://payments.example/checkout/123".to_string(),
                 is_installed: true,
