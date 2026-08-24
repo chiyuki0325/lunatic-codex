@@ -601,18 +601,18 @@ fn status_permission_summary(
     let summary = summarize_permission_profile(permission_profile, cwd, workspace_roots);
     if let Some(details) = summary.strip_prefix("read-only") {
         if details.contains("(network access enabled)") {
-            return "read-only with network access".to_string();
+            return "只读，允许网络访问".to_string();
         }
-        return "read-only".to_string();
+        return "只读".to_string();
     }
     if let Some(details) = summary.strip_prefix("workspace-write") {
         if details.contains("(network access enabled)") {
-            return "workspace with network access".to_string();
+            return "工作区写入，允许网络访问".to_string();
         }
-        return "workspace".to_string();
+        return "工作区写入".to_string();
     }
     if summary == "custom permissions (network access enabled)" {
-        return "custom permissions with network access".to_string();
+        return "自定义权限，允许网络访问".to_string();
     }
     summary
 }
@@ -644,23 +644,20 @@ fn status_permissions_label(
     let active_id = active_permission_profile.map(|active| active.id.as_str());
     match active_id {
         Some(BUILT_IN_PERMISSION_PROFILE_READ_ONLY) => {
-            let label = if sandbox == "read-only with network access" {
-                "Read Only with network access"
+            let label = if sandbox == "只读，允许网络访问" {
+                "只读，允许网络访问"
             } else {
-                "Read Only"
+                "只读"
             };
-            return format!("{label} ({approval})");
+            return format!("{label}（{approval}）");
         }
         Some(BUILT_IN_PERMISSION_PROFILE_WORKSPACE) => match sandbox {
-            "workspace" => {
-                return format!(
-                    "Workspace{} ({approval})",
-                    workspace_root_suffix.unwrap_or("")
-                );
+            "工作区写入" => {
+                return format!("工作区写入{}（{approval}）", workspace_root_suffix.unwrap_or(""));
             }
-            "workspace with network access" => {
+            "工作区写入，允许网络访问" => {
                 return format!(
-                    "Workspace with network access{} ({approval})",
+                    "工作区写入，允许网络访问{}（{approval}）",
                     workspace_root_suffix.unwrap_or("")
                 );
             }
@@ -670,39 +667,36 @@ fn status_permissions_label(
             if permission_profile == &PermissionProfile::Disabled =>
         {
             return if approval_policy == AskForApproval::Never {
-                "Full Access".to_string()
+                "完全访问".to_string()
             } else {
-                format!("No Sandbox ({approval})")
+                format!("无沙箱（{approval}）")
             };
         }
         Some(id) => {
             let sandbox = decorate_workspace_sandbox_label(sandbox, workspace_root_suffix);
-            return format!("Profile {id} ({sandbox}, {approval})");
+            return format!("配置文件 {id}（{sandbox}，{approval}）");
         }
         None => {}
     }
 
-    if sandbox == "read-only" {
-        return format!("Read Only ({approval})");
+    if sandbox == "只读" {
+        return format!("只读（{approval}）");
     }
-    if approval_policy == AskForApproval::OnRequest && sandbox == "workspace" {
-        return format!(
-            "Workspace{} ({approval})",
-            workspace_root_suffix.unwrap_or("")
-        );
+    if approval_policy == AskForApproval::OnRequest && sandbox == "工作区写入" {
+        return format!("工作区写入{}（{approval}）", workspace_root_suffix.unwrap_or(""));
     }
     if approval_policy == AskForApproval::Never
         && permission_profile == &PermissionProfile::Disabled
     {
-        return "Full Access".to_string();
+        return "完全访问".to_string();
     }
     let sandbox = decorate_workspace_sandbox_label(sandbox, workspace_root_suffix);
-    format!("Custom ({sandbox}, {approval})")
+    format!("自定义（{sandbox}，{approval}）")
 }
 
 fn decorate_workspace_sandbox_label(sandbox: &str, workspace_root_suffix: Option<&str>) -> String {
     match workspace_root_suffix {
-        Some(suffix) if sandbox.starts_with("workspace") => format!("{sandbox}{suffix}"),
+        Some(suffix) if sandbox.starts_with("工作区写入") => format!("{sandbox}{suffix}"),
         _ => sandbox.to_string(),
     }
 }
@@ -714,8 +708,8 @@ fn status_approval_label(
 ) -> String {
     if approval_policy == AskForApproval::OnRequest {
         return match approvals_reviewer {
-            ApprovalsReviewer::AutoReview => "Approve for me".to_string(),
-            ApprovalsReviewer::User => "Ask for approval".to_string(),
+            ApprovalsReviewer::AutoReview => "替我批准".to_string(),
+            ApprovalsReviewer::User => "请求批准".to_string(),
         };
     }
 
