@@ -399,7 +399,7 @@ impl HooksBrowserView {
             return lines;
         }
 
-        lines.push("Issues".bold().into());
+        lines.push("问题".bold().into());
         lines.extend(
             self.entry
                 .warnings
