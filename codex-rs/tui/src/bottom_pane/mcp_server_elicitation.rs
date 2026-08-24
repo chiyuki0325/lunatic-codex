@@ -298,26 +298,26 @@ impl McpServerElicitationFormRequest {
                     "允许此请求，并为后续请求记住此选择。"
                 };
                 options.push(McpServerElicitationOption {
-                    label: "Always allow".to_string(),
+                    label: "始终允许".to_string(),
                     description: Some(description.to_string()),
                     value: Value::String(APPROVAL_ACCEPT_ALWAYS_VALUE.to_string()),
                 });
             }
             if is_tool_approval_action {
                 options.push(McpServerElicitationOption {
-                    label: "Cancel".to_string(),
-                    description: Some("Cancel this tool call".to_string()),
+                    label: "取消".to_string(),
+                    description: Some("取消此次工具调用".to_string()),
                     value: Value::String(APPROVAL_CANCEL_VALUE.to_string()),
                 });
             } else {
                 options.extend([
                     McpServerElicitationOption {
-                        label: "Deny".to_string(),
+                        label: "拒绝".to_string(),
                         description: Some("Decline this request and continue.".to_string()),
                         value: Value::String(APPROVAL_DECLINE_VALUE.to_string()),
                     },
                     McpServerElicitationOption {
-                        label: "Cancel".to_string(),
+                        label: "取消".to_string(),
                         description: Some("Cancel this request".to_string()),
                         value: Value::String(APPROVAL_CANCEL_VALUE.to_string()),
                     },
@@ -1985,12 +1985,12 @@ mod tests {
                                 value: Value::String(APPROVAL_ACCEPT_ONCE_VALUE.to_string()),
                             },
                             McpServerElicitationOption {
-                                label: "Deny".to_string(),
+                                label: "拒绝".to_string(),
                                 description: Some("Decline this request and continue.".to_string()),
                                 value: Value::String(APPROVAL_DECLINE_VALUE.to_string()),
                             },
                             McpServerElicitationOption {
-                                label: "Cancel".to_string(),
+                                label: "取消".to_string(),
                                 description: Some("Cancel this request".to_string()),
                                 value: Value::String(APPROVAL_CANCEL_VALUE.to_string()),
                             },
@@ -2042,8 +2042,8 @@ mod tests {
                                 value: Value::String(APPROVAL_ACCEPT_ONCE_VALUE.to_string()),
                             },
                             McpServerElicitationOption {
-                                label: "Cancel".to_string(),
-                                description: Some("Cancel this tool call".to_string()),
+                                label: "取消".to_string(),
+                                description: Some("取消此次工具调用".to_string()),
                                 value: Value::String(APPROVAL_CANCEL_VALUE.to_string()),
                             },
                         ],
