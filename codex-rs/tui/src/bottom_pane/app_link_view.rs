@@ -579,16 +579,16 @@ impl AppLinkView {
         if is_auth_suggestion {
             for line in wrap(
                 if is_codex_apps_auth {
-                    "Sign in to the app on ChatGPT in the browser window that just opened."
+                    "请在刚打开的浏览器窗口中登录 ChatGPT 内的应用。"
                 } else {
-                    "Complete authentication in the browser window that just opened."
+                    "请在刚打开的浏览器窗口中完成认证。"
                 },
                 usable_width,
             ) {
                 lines.push(Line::from(line.into_owned()));
             }
             for line in wrap(
-                "Then return here and select \"I already signed in\".",
+                "然后返回此处并选择“我已登录”。",
                 usable_width,
             ) {
                 lines.push(Line::from(line.into_owned()));
