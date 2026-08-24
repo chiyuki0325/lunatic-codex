@@ -803,7 +803,7 @@ fn event_description(event_name: HookEventName) -> &'static str {
 }
 
 fn hook_title(idx: usize) -> String {
-    format!("Hook {}", idx + 1)
+    format!("第 {} 个 Hook", idx + 1)
 }
 
 fn hook_source_summary(hook: &HookMetadata) -> String {
