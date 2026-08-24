@@ -64,8 +64,8 @@ impl ChatWidget {
     pub(crate) fn add_plugins_output(&mut self) {
         if !self.config.features.enabled(Feature::Plugins) {
             self.add_info_message(
-                "Plugins are disabled.".to_string(),
-                Some("Enable the plugins feature to use /plugins.".to_string()),
+                "插件已禁用。".to_string(),
+                Some("启用插件功能后即可使用 /plugins。".to_string()),
             );
             return;
         }
@@ -285,7 +285,7 @@ impl ChatWidget {
         let tx = self.app_event_tx.clone();
         let cwd = self.config.cwd.to_path_buf();
         let view = CustomPromptView::new(
-            "Add marketplace".to_string(),
+            "添加市场".to_string(),
             "owner/repo, git URL, or local marketplace path".to_string(),
             String::new(),
             Some("Examples: owner/repo, git URL, ./marketplace".to_string()),
