@@ -524,7 +524,7 @@ impl HooksBrowserView {
             let value = if limit == 0 {
                 "不限".to_string()
             } else {
-                format!("limit: {limit} approximate tokens")
+                format!("上限：约 {limit} 个令牌")
             };
             lines.push(detail_line("Context", &value));
         }
