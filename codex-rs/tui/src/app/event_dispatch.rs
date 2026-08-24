@@ -2027,7 +2027,7 @@ impl App {
                             .map(std::string::ToString::to_string)
                             .unwrap_or_else(|| "default".to_string());
                         tracing::info!("Selected model: {model}, Selected effort: {effort_label}");
-                        let mut message = format!("Model changed to {model}");
+                        let mut message = format!("模型已更改为 {model}");
                         if let Some(label) = Self::reasoning_label_for(&model, effort.as_ref()) {
                             message.push(' ');
                             message.push_str(&label);
@@ -2047,7 +2047,7 @@ impl App {
             }
             AppEvent::CyberModelAutoReviewNotice => {
                 self.chat_widget.add_warning_message(
-                    "Cyber models default to \"Approve for me\" for safety reasons.".to_string(),
+                    "出于安全原因，Cyber 模型默认使用“为我批准”。".to_string(),
                 );
             }
             AppEvent::PluginUninstallLoaded {
@@ -2092,7 +2092,7 @@ impl App {
                 {
                     Ok(_) => {
                         let label = Self::personality_label(personality);
-                        let message = format!("Personality set to {label}");
+                        let message = format!("个性已设置为 {label}");
                         self.chat_widget.add_info_message(message, /*hint*/ None);
                     }
                     Err(err) => {
@@ -2101,7 +2101,7 @@ impl App {
                             "failed to persist personality selection"
                         );
                         self.chat_widget.add_error_message(format!(
-                            "Failed to save default personality: {err}"
+                            "保存默认个性失败：{err}"
                         ));
                     }
                 }
@@ -2119,16 +2119,16 @@ impl App {
                 {
                     Ok(_) => {
                         let message = if let Some(service_tier) = service_tier {
-                            format!("Service tier set to {service_tier}")
+                            format!("服务层级已设置为 {service_tier}")
                         } else {
-                            "Service tier cleared".to_string()
+                            "服务层级已清除".to_string()
                         };
                         self.chat_widget.add_info_message(message, /*hint*/ None);
                     }
                     Err(err) => {
                         tracing::error!(error = %err, "failed to persist service tier selection");
                         self.chat_widget.add_error_message(format!(
-                            "Failed to save default service tier: {err}"
+                            "保存默认服务层级失败：{err}"
                         ));
                     }
                 }
