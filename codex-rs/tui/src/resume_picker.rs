@@ -2374,15 +2374,15 @@ fn footer_hint_lines(state: &PickerState, width: u16) -> Vec<Line<'static>> {
             SessionPickerLaunchContext::ExistingSession { .. } => ("exit", "exit"),
         }
     } else {
-        ("clear search", "clear")
+        ("清除搜索", "清除")
     };
     let ctrl_c_label = match state.launch_context {
-        SessionPickerLaunchContext::Startup => "quit",
-        SessionPickerLaunchContext::ExistingSession { .. } => "exit",
+        SessionPickerLaunchContext::Startup => "退出",
+        SessionPickerLaunchContext::ExistingSession { .. } => "退出",
     };
     let density_label = match state.density {
-        SessionListDensity::Comfortable => "dense view",
-        SessionListDensity::Dense => "comfortable view",
+        SessionListDensity::Comfortable => "紧凑视图",
+        SessionListDensity::Dense => "舒适视图",
     };
     let density_compact_label = match state.density {
         SessionListDensity::Comfortable => "dense",
