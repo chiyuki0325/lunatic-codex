@@ -1077,7 +1077,7 @@ impl ChatWidget {
             SelectionItem {
                 name: MULTI_AGENT_ENABLE_YES.to_string(),
                 description: Some(
-                    "Save the setting now. You will need a new session to use it.".to_string(),
+                    "立即保存设置。需新建会话后才能使用。".to_string(),
                 ),
                 actions: vec![Box::new(|tx| {
                     tx.send(AppEvent::UpdateFeatureFlags {
@@ -1092,7 +1092,7 @@ impl ChatWidget {
             },
             SelectionItem {
                 name: MULTI_AGENT_ENABLE_NO.to_string(),
-                description: Some("Keep subagents disabled.".to_string()),
+                description: Some("保持禁用智能体。".to_string()),
                 dismiss_on_select: true,
                 ..Default::default()
             },
@@ -1100,7 +1100,7 @@ impl ChatWidget {
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
             title: Some(MULTI_AGENT_ENABLE_TITLE.to_string()),
-            subtitle: Some("Subagents are currently disabled in your config.".to_string()),
+            subtitle: Some("配置当前已禁用智能体。".to_string()),
             footer_hint: Some(standard_popup_hint_line()),
             items,
             ..Default::default()
@@ -1127,7 +1127,7 @@ impl ChatWidget {
             SelectionItem {
                 name: MEMORIES_ENABLE_YES.to_string(),
                 description: Some(
-                    "Save the setting now. You will need a new session to use it.".to_string(),
+                    "立即保存设置。需新建会话后才能使用。".to_string(),
                 ),
                 actions: vec![Box::new(|tx| {
                     tx.send(AppEvent::UpdateFeatureFlags {
@@ -1139,7 +1139,7 @@ impl ChatWidget {
             },
             SelectionItem {
                 name: MEMORIES_ENABLE_NO.to_string(),
-                description: Some("Keep memories disabled.".to_string()),
+                description: Some("保持禁用记忆。".to_string()),
                 dismiss_on_select: true,
                 ..Default::default()
             },
@@ -1147,9 +1147,9 @@ impl ChatWidget {
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
             title: Some(MEMORIES_ENABLE_TITLE.to_string()),
-            subtitle: Some("Memories are currently disabled in your config.".to_string()),
+            subtitle: Some("配置当前已禁用记忆。".to_string()),
             footer_note: Some(Line::from(vec![
-                "Learn more: ".dim(),
+                "了解更多：".dim(),
                 MEMORIES_DOC_URL.cyan().underlined(),
             ])),
             footer_hint: Some(standard_popup_hint_line()),
