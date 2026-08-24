@@ -625,9 +625,9 @@ fn approval_footer_hint(
 ) -> Line<'static> {
     let mut spans = accept_cancel_hint_line(
         list_keymap.primary_hint(ListAction::Accept),
-        "to confirm",
+        "以确认",
         list_keymap.primary_hint(ListAction::Cancel),
-        "to cancel",
+        "以取消",
     )
     .spans;
     if request.thread_label().is_some()
@@ -635,11 +635,11 @@ fn approval_footer_hint(
             approval_keymap.primary_hint("open_thread", &approval_keymap.open_thread)
     {
         if !spans.is_empty() {
-            spans.push(" or ".into());
+            spans.push("，或按下 ".into());
         } else {
-            spans.push("Press ".into());
+            spans.push("按下 ".into());
         }
-        spans.extend([open_thread.into(), " to open thread".into()]);
+        spans.extend([open_thread.into(), " 以打开对话".into()]);
     }
     Line::from(spans)
 }
