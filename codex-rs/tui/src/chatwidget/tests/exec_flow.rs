@@ -1102,7 +1102,7 @@ async fn final_worked_for_uses_cumulative_turn_duration_snapshot() {
         .map(|lines| lines_to_single_string(lines))
         .collect::<String>();
     assert!(
-        combined.contains("Worked for 2m 05s"),
+        combined.contains("工作耗时 2m 05s"),
         "expected final separator to use cumulative turn duration, got:\n{combined}"
     );
     assert_chatwidget_snapshot!("final_worked_for_uses_cumulative_turn_duration", combined);

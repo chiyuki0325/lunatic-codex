@@ -620,14 +620,14 @@ fn final_message_separator_hides_short_worked_label_and_includes_runtime_metrics
     let rendered = render_lines(&cell.display_lines(/*width*/ 600));
 
     assert_eq!(rendered.len(), 1);
-    assert!(!rendered[0].contains("Worked for"));
-    assert!(rendered[0].contains("Local tools: 3 calls (2.5s)"));
-    assert!(rendered[0].contains("Inference: 2 calls (1.2s)"));
-    assert!(rendered[0].contains("WebSocket: 1 events send (700ms)"));
-    assert!(rendered[0].contains("Streams: 6 events (900ms)"));
-    assert!(rendered[0].contains("4 events received (1.2s)"));
-    assert!(rendered[0].contains("Responses API overhead: 650ms"));
-    assert!(rendered[0].contains("Responses API inference: 1.9s"));
+    assert!(!rendered[0].contains("工作耗时"));
+    assert!(rendered[0].contains("本地工具：3 次调用（2.5s）"));
+    assert!(rendered[0].contains("推理：2 次调用（1.2s）"));
+    assert!(rendered[0].contains("WebSocket：已发送 1 个事件（700ms）"));
+    assert!(rendered[0].contains("流式：6 个事件（900ms）"));
+    assert!(rendered[0].contains("已接收 4 个事件（1.2s）"));
+    assert!(rendered[0].contains("Responses API 开销：650ms"));
+    assert!(rendered[0].contains("Responses API 推理：1.9s"));
     assert!(rendered[0].contains("TTFT: 410ms (iapi) 460ms (service)"));
     assert!(rendered[0].contains("TBT: 1.2s (iapi) 1.2s (service)"));
 }
@@ -649,7 +649,7 @@ fn final_message_separator_includes_worked_label_after_one_minute() {
     let rendered = render_lines(&cell.display_lines(/*width*/ 200));
 
     assert_eq!(rendered.len(), 1);
-    assert!(rendered[0].contains("Worked for"));
+    assert!(rendered[0].contains("工作耗时"));
 }
 
 #[test]
