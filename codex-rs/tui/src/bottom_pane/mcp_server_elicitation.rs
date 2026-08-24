@@ -1330,7 +1330,7 @@ impl McpServerElicitationOverlay {
                 state.selected_idx = Some(0);
             }
             state.ensure_visible(rows.len(), area.height as usize);
-            render_rows(area, buf, &rows, &state, rows.len().max(1), "No options");
+            render_rows(area, buf, &rows, &state, rows.len().max(1), "没有选项");
             return;
         }
         if self.current_field_is_secret() {
@@ -1471,7 +1471,7 @@ impl Renderable for McpServerElicitationOverlay {
                 Line::from(base.dim())
             }
         } else {
-            Line::from("No fields".dim())
+            Line::from("没有字段".dim())
         };
         Paragraph::new(progress_line).render(progress_area, buf);
         self.render_prompt(prompt_area, buf);
