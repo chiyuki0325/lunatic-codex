@@ -216,7 +216,7 @@ impl App {
             Err(err) => {
                 tracing::warn!("failed to update app-server thread settings from TUI: {err}");
                 self.chat_widget
-                    .add_error_message(format!("Failed to update thread settings: {err}"));
+                    .add_error_message(format!("更新会话设置失败：{err}"));
                 false
             }
         }

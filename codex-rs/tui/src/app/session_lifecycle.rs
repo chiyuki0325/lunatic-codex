@@ -478,7 +478,7 @@ impl App {
                 .await)
         {
             self.chat_widget
-                .add_error_message(format!("Agent thread {thread_id} is no longer available."));
+                .add_error_message(format!("智能体会话 {thread_id} 已不可用。"));
             return Ok(());
         }
         let mut is_replay_only = self
@@ -499,14 +499,14 @@ impl App {
                 }
                 Err(err) => {
                     self.chat_widget.add_error_message(format!(
-                        "Failed to attach to agent thread {thread_id}: {err}"
+                        "连接到智能体会话 {thread_id} 失败：{err}"
                     ));
                     return Ok(());
                 }
             }
         } else if !self.thread_event_channels.contains_key(&thread_id) && is_replay_only {
             self.chat_widget
-                .add_error_message(format!("Agent thread {thread_id} is no longer available."));
+                .add_error_message(format!("智能体会话 {thread_id} 已不可用。"));
             return Ok(());
         }
         let previous_thread_id = self.active_thread_id;
@@ -515,7 +515,7 @@ impl App {
         let Some((receiver, mut snapshot)) = self.activate_thread_for_replay(thread_id).await
         else {
             self.chat_widget
-                .add_error_message(format!("Agent thread {thread_id} is already active."));
+                .add_error_message(format!("智能体会话 {thread_id} 已处于活动状态。"));
             if let Some(previous_thread_id) = previous_thread_id {
                 self.activate_thread_channel(previous_thread_id).await;
             }
