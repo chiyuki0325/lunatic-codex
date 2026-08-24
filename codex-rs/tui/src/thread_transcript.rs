@@ -74,7 +74,7 @@ pub(crate) fn thread_to_transcript_cells(
     );
     if cells.is_empty() {
         cells.push(Arc::new(PlainHistoryCell::new(vec![
-            "No transcript content available".italic().dim().into(),
+            "没有可用的对话记录内容".italic().dim().into(),
         ])));
     }
     cells
