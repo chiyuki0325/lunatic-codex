@@ -1092,7 +1092,7 @@ impl ChatWidget {
             items.push(SelectionItem {
                 name: "Install plugin".to_string(),
                 description: Some(
-                    "This plugin is not installable from this marketplace.".to_string(),
+                    "无法从此市场安装该插件。".to_string(),
                 ),
                 is_disabled: true,
                 ..Default::default()
@@ -1103,8 +1103,8 @@ impl ChatWidget {
             let plugin_display_name = display_name;
             items.push(SelectionItem {
                 name: "Install plugin".to_string(),
-                description: Some("Install this plugin now.".to_string()),
-                selected_description: Some("Install this plugin now.".to_string()),
+                description: Some("立即安装此插件。".to_string()),
+                selected_description: Some("立即安装此插件。".to_string()),
                 actions: vec![Box::new(move |tx| {
                     tx.send(AppEvent::OpenPluginInstallLoading {
                         plugin_display_name: plugin_display_name.clone(),
