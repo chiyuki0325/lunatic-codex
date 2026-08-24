@@ -293,13 +293,13 @@ impl AppLinkView {
         if self.is_auth_suggestion() {
             return match self.screen {
                 AppLinkScreen::Link => vec!["打开登录 URL", "返回"],
-                AppLinkScreen::InstallConfirmation => vec!["I already signed in", "返回"],
+                AppLinkScreen::InstallConfirmation => vec!["我已登录", "返回"],
             };
         }
         if self.is_external_action_suggestion() {
             return match self.screen {
-                AppLinkScreen::Link => vec!["Open link", "返回"],
-                AppLinkScreen::InstallConfirmation => vec!["I finished", "返回"],
+                AppLinkScreen::Link => vec!["打开链接", "返回"],
+                AppLinkScreen::InstallConfirmation => vec!["我已完成", "返回"],
             };
         }
 
