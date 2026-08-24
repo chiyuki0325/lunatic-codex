@@ -184,7 +184,7 @@ impl App {
                     Ok(app_server) => app_server,
                     Err(err) => {
                         self.chat_widget.add_error_message(format!(
-                            "Failed to start TUI session picker: {err}"
+                            "启动 TUI 会话选择器失败：{err}"
                         ));
                         self.chat_widget.maybe_send_next_queued_input();
                         return Ok(AppRunControl::Continue);
@@ -315,7 +315,7 @@ impl App {
                                         None
                                     }
                                     Err(err) => {
-                                        Some(format!("Failed to name the forked session: {err}"))
+                                        Some(format!("命名派生会话失败：{err}"))
                                     }
                                 }
                             } else {
@@ -342,7 +342,7 @@ impl App {
                                         }
                                         if let Some(command) = summary.resume_hint {
                                             let spans = vec![
-                                                "To continue this session, run ".into(),
+                                                "要继续此会话，请运行 ".into(),
                                                 command.cyan(),
                                             ];
                                             lines.push(spans.into());
@@ -352,21 +352,20 @@ impl App {
                                 }
                                 Err(err) => {
                                     self.chat_widget.add_error_message(format!(
-                                        "Failed to attach to forked app-server thread: {err}"
+                                        "连接到派生的 app-server 会话失败：{err}"
                                     ));
                                 }
                             }
                         }
                         Err(err) => {
                             self.chat_widget.add_error_message(format!(
-                                "Failed to fork current session through the app server: {err}"
+                                "通过 app-server 派生当前会话失败：{err}"
                             ));
                         }
                     }
                 } else {
                     self.chat_widget.add_error_message(
-                        "A thread must contain at least one turn before it can be forked."
-                            .to_string(),
+                        "会话至少需要包含一个轮次才能派生。".to_string(),
                     );
                 }
 
