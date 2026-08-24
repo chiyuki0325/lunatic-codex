@@ -449,12 +449,9 @@ impl ChatWidget {
             Ok(response) => {
                 let available_count = response.available_count;
                 self.available_rate_limit_reset_credits = Some(available_count);
-                format!(
-                    "Usage reset. You have {available_count} {} left.",
-                    reset_label(available_count)
-                )
+                format!("用量已重置。剩余 {available_count} 次重置。")
             }
-            Err(_) => "Usage reset.".to_string(),
+            Err(_) => "用量已重置。".to_string(),
         };
         self.replace_rate_limit_reset_popup(Self::rate_limit_reset_message_params(&message));
         true
@@ -464,9 +461,9 @@ impl ChatWidget {
         SelectionViewParams {
             view_id: Some(RATE_LIMIT_RESET_VIEW_ID),
             title: Some("用量限额重置".to_string()),
-            subtitle: Some("Usage reset. Checking your remaining resets...".to_string()),
+            subtitle: Some("用量已重置。正在检查剩余重置次数……".to_string()),
             items: vec![SelectionItem {
-                name: "Refreshing...".to_string(),
+                name: "正在刷新……".to_string(),
                 is_disabled: true,
                 ..Default::default()
             }],
