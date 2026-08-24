@@ -60,13 +60,13 @@ pub(super) fn build_header(request: &ApplyPatchApprovalRequest) -> Box<dyn Rende
     destinations.dedup();
     if destinations.is_empty() {
         header.push(Line::from(vec![
-            "Destination: ".into(),
-            "unavailable".bold(),
+            "目标位置：".into(),
+            "不可用".bold(),
         ]));
     }
     for destination in destinations {
         header.push(Line::from_iter([
-            "Destination: ".into(),
+            "目标位置：".into(),
             destination.bold(),
         ]));
     }
