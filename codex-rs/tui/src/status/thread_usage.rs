@@ -182,24 +182,24 @@ fn grouped_usage(
                 .map(format_model_display_name)
                 .unwrap_or_else(|| "Other".to_string()),
             BreakdownDimension::Reasoning => match group.reasoning_effort.as_deref() {
-                Some("none") => "None",
-                Some("minimal") => "Minimal",
-                Some("low") => "Light",
-                Some("medium") => "Medium",
-                Some("high") => "High",
-                Some("xhigh") => "Extra High",
-                Some("max") => "Max",
-                Some("ultra") => "Ultra",
+                Some("none") => "无",
+                Some("minimal") => "极低",
+                Some("low") => "低",
+                Some("medium") => "中等",
+                Some("high") => "高",
+                Some("xhigh") => "极高",
+                Some("max") => "最高",
+                Some("ultra") => "超级",
                 Some(other) => other,
-                None => "Other",
+                None => "其他",
             }
             .to_string(),
             BreakdownDimension::Speed => match group.speed.as_deref() {
-                Some("fast") => "Fast mode",
-                Some("ultrafast") => "Ultrafast",
-                Some("standard") => "Standard",
+                Some("fast") => "快速模式",
+                Some("ultrafast") => "超快速",
+                Some("standard") => "标准",
                 Some(other) => other,
-                None => "Other",
+                None => "其他",
             }
             .to_string(),
         };
