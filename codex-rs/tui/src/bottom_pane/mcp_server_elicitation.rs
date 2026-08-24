@@ -281,21 +281,21 @@ impl McpServerElicitationFormRequest {
             }];
             if approval_supports_persist_mode(meta, APPROVAL_PERSIST_SESSION_VALUE) {
                 let description = if is_tool_approval_action {
-                    "Run the tool and remember this choice for this session."
+                    "运行工具，并在本次会话中记住此选择。"
                 } else {
-                    "Allow this request and remember this choice for this session."
+                    "允许此请求，并在本次会话中记住此选择。"
                 };
                 options.push(McpServerElicitationOption {
-                    label: "Allow for this session".to_string(),
+                    label: "在本次会话中允许".to_string(),
                     description: Some(description.to_string()),
                     value: Value::String(APPROVAL_ACCEPT_SESSION_VALUE.to_string()),
                 });
             }
             if approval_supports_persist_mode(meta, APPROVAL_PERSIST_ALWAYS_VALUE) {
                 let description = if is_tool_approval_action {
-                    "Run the tool and remember this choice for future tool calls."
+                    "运行工具，并为后续工具调用记住此选择。"
                 } else {
-                    "Allow this request and remember this choice for future requests."
+                    "允许此请求，并为后续请求记住此选择。"
                 };
                 options.push(McpServerElicitationOption {
                     label: "Always allow".to_string(),
