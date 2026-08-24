@@ -10,12 +10,11 @@ pub(super) const PLAN_IMPLEMENTATION_TITLE: &str = "执行此计划吗？";
 const PLAN_IMPLEMENTATION_YES: &str = "是，执行此计划";
 const PLAN_IMPLEMENTATION_CLEAR_CONTEXT: &str = "是，清除上下文后执行";
 const PLAN_IMPLEMENTATION_NO: &str = "否，留在计划模式";
-pub(super) const PLAN_IMPLEMENTATION_CODING_MESSAGE: &str = "Implement the plan.";
+pub(super) const PLAN_IMPLEMENTATION_CODING_MESSAGE: &str = "执行计划。";
 pub(super) const PLAN_IMPLEMENTATION_CLEAR_CONTEXT_PREFIX: &str = concat!(
-    "A previous agent produced the plan below to accomplish the user's task. ",
-    "Implement the plan in a fresh context. Treat the plan as the source of ",
-    "user intent, re-read files as needed, and carry the work through ",
-    "implementation and verification."
+    "此前的智能体已生成下方计划以完成用户任务。",
+    "请在全新上下文中执行该计划，将其视为用户意图的来源，",
+    "按需重新阅读文件，并完成实现与验证。"
 );
 pub(super) const PLAN_IMPLEMENTATION_DEFAULT_UNAVAILABLE: &str = "默认模式不可用";
 pub(super) const PLAN_IMPLEMENTATION_NO_APPROVED_PLAN: &str = "没有已批准的计划";
