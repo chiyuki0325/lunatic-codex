@@ -108,7 +108,7 @@ impl HistoryCell for ProposedPlanCell {
     fn display_hyperlink_lines(&self, width: u16) -> Vec<HyperlinkLine> {
         self.rendered_lines.render(width, || {
             let mut lines = vec![
-                HyperlinkLine::new(vec!["• ".dim(), "Proposed Plan".bold()].into()),
+                HyperlinkLine::new(vec!["• ".dim(), "拟定计划".bold()].into()),
                 HyperlinkLine::new(Line::from(" ")),
             ];
 
@@ -121,7 +121,7 @@ impl HistoryCell for ProposedPlanCell {
                 Some(self.cwd.as_path()),
             );
             if body.is_empty() {
-                body.push(HyperlinkLine::new(Line::from("(empty)".dim().italic())));
+                body.push(HyperlinkLine::new(Line::from("（为空）".dim().italic())));
             }
             plan_lines.extend(prefix_hyperlink_lines(body, "  ".into(), "  ".into()));
             plan_lines.push(HyperlinkLine::new(Line::from(" ")));
@@ -201,7 +201,7 @@ impl HistoryCell for PlanUpdateCell {
         };
 
         let mut lines: Vec<Line<'static>> = vec![];
-        lines.push(vec!["• ".dim(), "Updated Plan".bold()].into());
+        lines.push(vec!["• ".dim(), "已更新计划".bold()].into());
 
         let mut indented_lines = vec![];
         let note = self
