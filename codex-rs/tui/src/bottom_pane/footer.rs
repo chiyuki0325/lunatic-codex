@@ -102,7 +102,7 @@ pub(crate) enum GoalStatusIndicator {
     Complete { usage: Option<String> },
 }
 
-const MODE_CYCLE_HINT: &str = "shift+tab to cycle";
+const MODE_CYCLE_HINT: &str = "shift+tab 切换";
 const FOOTER_CONTEXT_GAP_COLS: u16 = 1;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
