@@ -475,7 +475,7 @@ impl ChatWidget {
                     self.add_info_message(
                         format!("已安装插件 {plugin_display_name}。"),
                         Some(format!(
-                            "{} app(s) still need authentication: {app_names}",
+                            "仍有 {} 个应用需要认证：{app_names}",
                             self.plugin_install_apps_needing_auth.len()
                         )),
                     );
