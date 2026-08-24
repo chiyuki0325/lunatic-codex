@@ -62,7 +62,7 @@ impl App {
         } = &mut turn
         else {
             self.chat_widget.add_error_message(
-                "Failed to retry with a faster model: original turn is unavailable.".to_string(),
+                "无法使用更快的模型重试：原轮次不可用。".to_string(),
             );
             return;
         };
@@ -75,7 +75,7 @@ impl App {
         );
         if let Err(err) = turn_permissions_overrides(permissions_override, cwd.as_path()) {
             self.chat_widget
-                .add_error_message(format!("Failed to retry with a faster model: {err}"));
+                .add_error_message(format!("使用更快的模型重试失败：{err}"));
             return;
         }
         *turn_model = model.clone();
@@ -90,7 +90,7 @@ impl App {
 
         if let Err(err) = app_server.turn_interrupt(thread_id, turn_id.clone()).await {
             self.chat_widget
-                .add_error_message(format!("Failed to retry with a faster model: {err}"));
+                .add_error_message(format!("使用更快的模型重试失败：{err}"));
             return;
         }
 
@@ -241,7 +241,7 @@ impl App {
         self.chat_widget.cancel_safety_buffered_retry_submission();
         self.chat_widget.restore_user_message_to_composer(prompt);
         self.chat_widget
-            .add_error_message(format!("Failed to retry with a faster model: {err}"));
+            .add_error_message(format!("使用更快的模型重试失败：{err}"));
     }
 }
 
