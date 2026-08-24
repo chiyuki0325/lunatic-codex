@@ -56,7 +56,7 @@ pub fn new_approval_decision_cell(
                 let summary = if let Some(snippet) = non_empty_exec_snippet(&command) {
                     vec![
                         actor.subject().into(),
-                        "approved".bold(),
+                        "已批准".bold(),
                         " codex to run ".into(),
                         Span::from(snippet).dim(),
                         " this time".bold(),
@@ -64,7 +64,7 @@ pub fn new_approval_decision_cell(
                 } else {
                     vec![
                         actor.subject().into(),
-                        "approved".bold(),
+                        "已批准".bold(),
                         " this request".into(),
                         " this time".bold(),
                     ]
@@ -75,7 +75,7 @@ pub fn new_approval_decision_cell(
                 "✔ ".green(),
                 vec![
                     actor.subject().into(),
-                    "approved".bold(),
+                    "已批准".bold(),
                     " codex network access to ".into(),
                     Span::from(target).dim(),
                     " this time".bold(),
@@ -90,7 +90,7 @@ pub fn new_approval_decision_cell(
                 "✔ ".green(),
                 vec![
                     actor.subject().into(),
-                    "approved".bold(),
+                    "已批准".bold(),
                     " codex to always run commands that start with ".into(),
                     snippet,
                 ],
@@ -101,7 +101,7 @@ pub fn new_approval_decision_cell(
                 let summary = if let Some(snippet) = non_empty_exec_snippet(&command) {
                     vec![
                         actor.subject().into(),
-                        "approved".bold(),
+                        "已批准".bold(),
                         " codex to run ".into(),
                         Span::from(snippet).dim(),
                         " every time this session".bold(),
@@ -109,7 +109,7 @@ pub fn new_approval_decision_cell(
                 } else {
                     vec![
                         actor.subject().into(),
-                        "approved".bold(),
+                        "已批准".bold(),
                         " this request".into(),
                         " every time this session".bold(),
                     ]
@@ -120,7 +120,7 @@ pub fn new_approval_decision_cell(
                 "✔ ".green(),
                 vec![
                     actor.subject().into(),
-                    "approved".bold(),
+                    "已批准".bold(),
                     " codex network access to ".into(),
                     Span::from(target).dim(),
                     " every time this session".bold(),
@@ -148,7 +148,7 @@ pub fn new_approval_decision_cell(
                     "✗ ".red(),
                     vec![
                         actor.subject().into(),
-                        "denied".bold(),
+                        "已拒绝".bold(),
                         " codex network access to ".into(),
                         Span::from(target).dim(),
                         " and saved that rule".into(),
@@ -169,7 +169,7 @@ pub fn new_approval_decision_cell(
                         ],
                         ApprovalDecisionActor::Guardian => vec![
                             "Request ".into(),
-                            "denied".bold(),
+                            "已拒绝".bold(),
                             " for codex to run ".into(),
                             snippet,
                         ],
@@ -182,7 +182,7 @@ pub fn new_approval_decision_cell(
                             " this request".into(),
                         ],
                         ApprovalDecisionActor::Guardian => {
-                            vec!["Request ".into(), "denied".bold()]
+                            vec!["Request ".into(), "已拒绝".bold()]
                         }
                     }
                 };
@@ -281,7 +281,7 @@ impl ApprovalDecisionActor {
 pub fn new_guardian_denied_patch_request(files: Vec<String>) -> Box<dyn HistoryCell> {
     let mut summary = vec![
         "Request ".into(),
-        "denied".bold(),
+        "已拒绝".bold(),
         " for codex to apply ".into(),
     ];
     if files.len() == 1 {
@@ -303,7 +303,7 @@ pub fn new_guardian_denied_patch_request(files: Vec<String>) -> Box<dyn HistoryC
 pub fn new_guardian_denied_action_request(summary: String) -> Box<dyn HistoryCell> {
     let line = Line::from(vec![
         "Request ".into(),
-        "denied".bold(),
+        "已拒绝".bold(),
         " for ".into(),
         Span::from(summary).dim(),
     ]);
