@@ -503,13 +503,13 @@ impl HooksBrowserView {
             }
             HookHandlerMetadata::McpTool { server, tool } => {
                 lines.extend(detail_wrapped_lines(
-                    "MCP Server",
+                    "MCP 服务器",
                     server,
                     width,
                     /*max_lines*/ None,
                 ));
                 lines.extend(detail_wrapped_lines(
-                    "MCP Tool", tool, width, /*max_lines*/ None,
+                    "MCP 工具", tool, width, /*max_lines*/ None,
                 ));
             }
             HookHandlerMetadata::Prompt {} => {
