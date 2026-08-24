@@ -1442,14 +1442,14 @@ fn plugin_metadata_items(plugin: &PluginDetail) -> Vec<SelectionItem> {
         ..Default::default()
     });
     items.push(SelectionItem {
-        name: "Auth".to_string(),
+        name: "认证".to_string(),
         description: Some(plugin_auth_policy_summary(plugin.summary.auth_policy)),
         is_disabled: true,
         ..Default::default()
     });
     if let Some(version) = plugin_version_summary(&plugin.summary) {
         items.push(SelectionItem {
-            name: "Version".to_string(),
+            name: "版本".to_string(),
             description: Some(version),
             is_disabled: true,
             ..Default::default()
@@ -1457,7 +1457,7 @@ fn plugin_metadata_items(plugin: &PluginDetail) -> Vec<SelectionItem> {
     }
     if let Some(share_context) = &plugin.summary.share_context {
         items.push(SelectionItem {
-            name: "Sharing".to_string(),
+            name: "共享".to_string(),
             description: Some(plugin_share_context_summary(share_context)),
             is_disabled: true,
             ..Default::default()
@@ -1468,7 +1468,7 @@ fn plugin_metadata_items(plugin: &PluginDetail) -> Vec<SelectionItem> {
 
 fn plugin_source_summary(plugin: &PluginDetail) -> String {
     match &plugin.summary.source {
-        PluginSource::Local { .. } => "Local".to_string(),
+        PluginSource::Local { .. } => "本地".to_string(),
         PluginSource::Git { url, ref_name, .. } => match ref_name {
             Some(ref_name) => format!("Git · {url}@{ref_name}"),
             None => format!("Git · {url}"),
