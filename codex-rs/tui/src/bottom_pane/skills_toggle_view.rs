@@ -400,29 +400,29 @@ fn skills_toggle_hint_line(keymap: &ListKeymap) -> Line<'static> {
 
     match (accept, cancel) {
         (Some(accept), Some(cancel)) => Line::from(vec![
-            "Press ".into(),
+            "按下 ".into(),
             space.into(),
-            " or ".into(),
+            " 或 ".into(),
             accept.into(),
-            " to toggle; ".into(),
+            " 以切换；".into(),
             cancel.into(),
-            " to close".into(),
+            " 以关闭".into(),
         ]),
         (Some(accept), None) => Line::from(vec![
-            "Press ".into(),
+            "按下 ".into(),
             space.into(),
-            " or ".into(),
+            " 或 ".into(),
             accept.into(),
-            " to toggle".into(),
+            " 以切换".into(),
         ]),
         (None, Some(cancel)) => Line::from(vec![
-            "Press ".into(),
+            "按下 ".into(),
             space.into(),
-            " to toggle; ".into(),
+            " 以切换；".into(),
             cancel.into(),
-            " to close".into(),
+            " 以关闭".into(),
         ]),
-        (None, None) => Line::from(vec!["Press ".into(), space.into(), " to toggle".into()]),
+        (None, None) => Line::from(vec!["按下 ".into(), space.into(), " 以切换".into()]),
     }
 }
 
