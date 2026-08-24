@@ -567,7 +567,7 @@ impl HooksBrowserView {
                     Line::from(vec!["按下 ".into(), cancel.into(), " 以返回".into()])
                 } else if selected_hook.is_some_and(|hook| hook.is_managed) {
                     Line::from(vec![
-                        "Managed hooks are always on; press ".into(),
+                        "受管 Hook 始终启用；按下 ".into(),
                         cancel.into(),
                         " 以返回".into(),
                     ])
@@ -575,7 +575,7 @@ impl HooksBrowserView {
                     Line::from(vec![
                         "按下 ".into(),
                         key_hint::plain(KeyCode::Char('t')).into(),
-                        " to trust; ".into(),
+                        " 以信任；".into(),
                         cancel.into(),
                         " 以返回".into(),
                     ])
@@ -583,9 +583,9 @@ impl HooksBrowserView {
                     let mut spans =
                         vec!["按下 ".into(), key_hint::plain(KeyCode::Char(' ')).into()];
                     if let Some(accept) = accept {
-                        spans.extend([" or ".into(), accept.into()]);
+                        spans.extend([" 或 ".into(), accept.into()]);
                     }
-                    spans.extend([" to toggle; ".into(), cancel.into(), " 以返回".into()]);
+                    spans.extend([" 以切换；".into(), cancel.into(), " 以返回".into()]);
                     Line::from(spans)
                 }
             }
