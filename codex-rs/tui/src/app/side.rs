@@ -68,18 +68,18 @@ pub(super) enum SideParentStatus {
 impl SideParentStatus {
     fn label(self, parent_is_main: bool) -> &'static str {
         match (self, parent_is_main) {
-            (SideParentStatus::NeedsInput, true) => "main needs input",
-            (SideParentStatus::NeedsInput, false) => "parent needs input",
-            (SideParentStatus::NeedsApproval, true) => "main needs approval",
-            (SideParentStatus::NeedsApproval, false) => "parent needs approval",
-            (SideParentStatus::Failed, true) => "main failed",
-            (SideParentStatus::Failed, false) => "parent failed",
-            (SideParentStatus::Interrupted, true) => "main interrupted",
-            (SideParentStatus::Interrupted, false) => "parent interrupted",
-            (SideParentStatus::Closed, true) => "main closed",
-            (SideParentStatus::Closed, false) => "parent closed",
-            (SideParentStatus::Finished, true) => "main finished",
-            (SideParentStatus::Finished, false) => "parent finished",
+            (SideParentStatus::NeedsInput, true) => "主对话需要输入",
+            (SideParentStatus::NeedsInput, false) => "父对话需要输入",
+            (SideParentStatus::NeedsApproval, true) => "主对话需要批准",
+            (SideParentStatus::NeedsApproval, false) => "父对话需要批准",
+            (SideParentStatus::Failed, true) => "主对话失败",
+            (SideParentStatus::Failed, false) => "父对话失败",
+            (SideParentStatus::Interrupted, true) => "主对话已中断",
+            (SideParentStatus::Interrupted, false) => "父对话已中断",
+            (SideParentStatus::Closed, true) => "主对话已关闭",
+            (SideParentStatus::Closed, false) => "父对话已关闭",
+            (SideParentStatus::Finished, true) => "主对话已完成",
+            (SideParentStatus::Finished, false) => "父对话已完成",
         }
     }
 
@@ -251,7 +251,7 @@ impl App {
             {
                 self.chat_widget
                     .set_side_conversation_context_label(Some(format!(
-                        "{} for side",
+                        "按下 {} 进入侧边对话",
                         binding.display_label()
                     )));
             }
@@ -267,10 +267,10 @@ impl App {
         let mut label_parts = Vec::new();
         let parent_is_main = self.primary_thread_id == Some(parent_thread_id);
         if parent_is_main {
-            label_parts.push("from main thread".to_string());
+            label_parts.push("来自主对话".to_string());
         } else {
             let parent_label = self.thread_label(parent_thread_id);
-            label_parts.push(format!("from parent thread ({parent_label})"));
+            label_parts.push(format!("来自父对话（{parent_label}）"));
         }
         if let Some(parent_status) = parent_status {
             label_parts.push(parent_status.label(parent_is_main).to_string());
@@ -279,11 +279,11 @@ impl App {
             crate::keymap::KeymapContext::Global,
             "toggle_side_conversation",
         ) {
-            label_parts.push(format!("{} to switch", binding.display_label()));
+            label_parts.push(format!("按下 {} 切换", binding.display_label()));
         }
-        label_parts.push("ctrl + c to close".to_string());
+        label_parts.push("按下 Ctrl+C 关闭".to_string());
         self.chat_widget
-            .set_side_conversation_context_label(Some(format!("Side {}", label_parts.join(" · "))));
+            .set_side_conversation_context_label(Some(format!("侧边对话：{}", label_parts.join(" · "))));
     }
 
     pub(super) fn active_side_parent_thread_id(&self) -> Option<ThreadId> {
