@@ -339,7 +339,7 @@ impl App {
             let source_for_event = source.clone();
             let result = fetch_marketplace_add(request_handle, cwd, source)
                 .await
-                .map_err(|err| format!("Failed to add marketplace: {err}"));
+                .map_err(|err| format!("添加市场失败：{err}"));
             app_event_tx.send(AppEvent::MarketplaceAddLoaded {
                 cwd: cwd_for_event,
                 source: source_for_event,
@@ -362,7 +362,7 @@ impl App {
             let marketplace_name_for_event = marketplace_name.clone();
             let result = fetch_marketplace_remove(request_handle, marketplace_name)
                 .await
-                .map_err(|err| format!("Failed to remove marketplace: {err}"));
+                .map_err(|err| format!("移除市场失败：{err}"));
             app_event_tx.send(AppEvent::MarketplaceRemoveLoaded {
                 cwd: cwd_for_event,
                 marketplace_name: marketplace_name_for_event,
@@ -384,7 +384,7 @@ impl App {
             let cwd_for_event = cwd.clone();
             let result = fetch_marketplace_upgrade(request_handle, marketplace_name)
                 .await
-                .map_err(|err| format!("Failed to upgrade marketplace: {err}"));
+                .map_err(|err| format!("升级市场失败：{err}"));
             app_event_tx.send(AppEvent::MarketplaceUpgradeLoaded {
                 cwd: cwd_for_event,
                 result,
@@ -408,7 +408,7 @@ impl App {
             let plugin_name_for_event = plugin_name.clone();
             let result = fetch_plugin_install(request_handle, location, plugin_name)
                 .await
-                .map_err(|err| format!("Failed to install plugin: {err}"));
+                .map_err(|err| format!("安装插件失败：{err}"));
             app_event_tx.send(AppEvent::PluginInstallLoaded {
                 cwd: cwd_for_event,
                 location: location_for_event,
@@ -433,7 +433,7 @@ impl App {
             let plugin_id_for_event = plugin_id.clone();
             let result = fetch_plugin_uninstall(request_handle, plugin_id)
                 .await
-                .map_err(|err| format!("Failed to uninstall plugin: {err}"));
+                .map_err(|err| format!("卸载插件失败：{err}"));
             app_event_tx.send(AppEvent::PluginUninstallLoaded {
                 cwd: cwd_for_event,
                 plugin_id: plugin_id_for_event,
@@ -475,7 +475,7 @@ impl App {
             let result = write_plugin_enabled(request_handle, plugin_id, enabled)
                 .await
                 .map(|_| ())
-                .map_err(|err| format!("Failed to update plugin config: {err}"));
+                .map_err(|err| format!("更新插件配置失败：{err}"));
             app_event_tx.send(AppEvent::PluginEnabledSet {
                 cwd: cwd_for_event,
                 plugin_id: plugin_id_for_event,
@@ -515,7 +515,7 @@ impl App {
                 .map(|_| ())
                 .map_err(|err| {
                     format!(
-                        "Failed to update hook config: {}",
+                        "更新 Hook 配置失败：{}",
                         format_config_error(&err)
                     )
                 });
@@ -539,7 +539,7 @@ impl App {
             let result = write_hook_trust(request_handle, key, current_hash)
                 .await
                 .map(|_| ())
-                .map_err(|err| format!("Failed to trust hook: {}", format_config_error(&err)));
+                .map_err(|err| format!("信任 Hook 失败：{}", format_config_error(&err)));
             app_event_tx.send(AppEvent::HookTrusted { result });
         });
     }
@@ -555,7 +555,7 @@ impl App {
             let result = write_hook_trusts(request_handle, updates)
                 .await
                 .map(|_| ())
-                .map_err(|err| format!("Failed to trust hooks: {}", format_config_error(&err)));
+                .map_err(|err| format!("信任 Hook 失败：{}", format_config_error(&err)));
             app_event_tx.send(AppEvent::HookTrusted { result });
         });
     }
@@ -716,7 +716,7 @@ impl App {
             Ok(statuses) => statuses,
             Err(err) => {
                 self.chat_widget
-                    .add_error_message(format!("Failed to load MCP inventory: {err}"));
+                    .add_error_message(format!("加载 MCP 清单失败：{err}"));
                 return;
             }
         };
