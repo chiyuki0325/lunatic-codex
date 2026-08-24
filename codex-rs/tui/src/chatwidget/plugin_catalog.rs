@@ -793,7 +793,7 @@ impl ChatWidget {
                 &preferred_local_sources,
                 /*include_marketplace_names*/ true,
                 "No installed plugins",
-                "No installed plugins.",
+                "没有已安装的插件。",
             ),
         });
 
@@ -824,7 +824,7 @@ impl ChatWidget {
             } else {
                 (
                     "No OpenAI Curated plugins available",
-                    "No OpenAI Curated plugins available.",
+                    "没有可用的 OpenAI 精选插件。",
                 )
             };
         let mut curated_items = self.plugin_selection_items(
