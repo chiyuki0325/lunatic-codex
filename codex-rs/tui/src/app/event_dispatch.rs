@@ -621,7 +621,7 @@ impl App {
                             .await
                     {
                         self.chat_widget
-                            .add_error_message(format!("Failed to interrupt task: {error}"));
+                            .add_error_message(format!("中断任务失败：{error}"));
                     }
                 }
                 RunningTaskExitAction::Exit => {
@@ -637,7 +637,7 @@ impl App {
                             .await
                     {
                         self.chat_widget
-                            .add_error_message(format!("Failed to pause task goal: {error}"));
+                            .add_error_message(format!("暂停任务目标失败：{error}"));
                         return Ok(AppRunControl::Continue);
                     }
                     let turn_id = self
@@ -651,7 +651,7 @@ impl App {
                         }
                         Err(error) => {
                             self.chat_widget
-                                .add_error_message(format!("Failed to interrupt task: {error}"));
+                                .add_error_message(format!("中断任务失败：{error}"));
                         }
                     }
                 }
@@ -666,7 +666,7 @@ impl App {
                 Err(err) => {
                     tracing::error!("failed to logout: {err}");
                     self.chat_widget
-                        .add_error_message(format!("Logout failed: {err}"));
+                        .add_error_message(format!("退出登录失败：{err}"));
                 }
             },
             AppEvent::FatalExitRequest(message) => {
@@ -701,7 +701,7 @@ impl App {
                         ) || unsupported_permissions)
                         && self
                             .chat_widget
-                            .handle_turn_start_rejection(format!("Failed to start turn: {err:#}"));
+                            .handle_turn_start_rejection(format!("启动轮次失败：{err:#}"));
                     if !handled {
                         return Err(err);
                     }
