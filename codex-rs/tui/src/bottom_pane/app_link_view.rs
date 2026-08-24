@@ -621,11 +621,11 @@ impl AppLinkView {
         lines.push(Line::from(""));
         lines.push(Line::from(vec![
             if is_auth_suggestion {
-                "Sign-in URL:"
+                "登录 URL："
             } else if is_external_action_suggestion {
-                "Link:"
+                "链接："
             } else {
-                "Setup URL:"
+                "设置 URL："
             }
             .dim(),
         ]));
