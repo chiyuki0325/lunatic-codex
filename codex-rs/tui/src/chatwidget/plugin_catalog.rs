@@ -768,14 +768,14 @@ impl ChatWidget {
             &preferred_local_sources,
             /*include_marketplace_names*/ true,
             "No marketplace plugins available",
-            "No plugins are available in the discovered marketplaces.",
+            "已发现的市场中没有可用插件。",
         );
 
         tabs.push(SelectionTab {
             id: ALL_PLUGINS_TAB_ID.to_string(),
             label: "All Plugins".to_string(),
             header: plugins_header(
-                "Browse plugins from available marketplaces.".to_string(),
+                "浏览可用市场中的插件。".to_string(),
                 format!("Installed {installed} of {total} available plugins."),
             ),
             items: all_items,
@@ -785,7 +785,7 @@ impl ChatWidget {
             id: INSTALLED_PLUGINS_TAB_ID.to_string(),
             label: format!("Installed ({installed})"),
             header: plugins_header(
-                "Installed plugins.".to_string(),
+                "已安装的插件。".to_string(),
                 format!("Showing {installed} installed plugins."),
             ),
             items: self.plugin_selection_items(
