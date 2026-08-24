@@ -896,7 +896,7 @@ impl App {
             }
             Err(err) => {
                 self.chat_widget.add_error_message(format!(
-                    "Failed to resolve app-server request for thread {thread_id}: {err}"
+                    "解析对话 {thread_id} 的 app-server 请求失败：{err}"
                 ));
                 Ok(false)
             }
@@ -1757,7 +1757,7 @@ impl App {
             } else {
                 self.clear_active_thread().await;
                 self.chat_widget.add_error_message(format!(
-                    "Agent thread {closed_thread_id} closed. Failed to switch back to main thread {primary_thread_id}.",
+                    "智能体对话 {closed_thread_id} 已关闭。未能切回主对话 {primary_thread_id}。",
                 ));
             }
             return Ok(());
