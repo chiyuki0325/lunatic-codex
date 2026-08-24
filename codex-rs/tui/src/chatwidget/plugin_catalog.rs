@@ -1121,7 +1121,7 @@ impl ChatWidget {
         } else {
             items.push(SelectionItem {
                 name: "Install plugin".to_string(),
-                description: Some("This plugin did not provide an install location.".to_string()),
+                description: Some("此插件未提供安装位置。".to_string()),
                 is_disabled: true,
                 ..Default::default()
             });
@@ -1316,7 +1316,7 @@ fn plugins_popup_hint_line(
 }
 
 pub(super) fn plugin_detail_hint_line() -> Line<'static> {
-    Line::from("Press esc to close.")
+    Line::from("按下 Esc 以关闭。")
 }
 
 pub(super) fn plugins_header(subtitle: String, count_line: String) -> Box<dyn Renderable> {
