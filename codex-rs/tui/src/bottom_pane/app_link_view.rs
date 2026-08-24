@@ -316,10 +316,10 @@ impl AppLinkView {
                         "返回",
                     ]
                 } else {
-                    vec!["Install on ChatGPT", "返回"]
+                    vec!["在 ChatGPT 中安装", "返回"]
                 }
             }
-            AppLinkScreen::InstallConfirmation => vec!["I already Installed it", "返回"],
+            AppLinkScreen::InstallConfirmation => vec!["我已安装", "返回"],
         }
     }
 
