@@ -2179,7 +2179,7 @@ impl App {
                 {
                     tracing::warn!(%err, "failed to set permission profile on chat config");
                     self.chat_widget
-                        .add_error_message(format!("Failed to set permission profile: {err}"));
+                        .add_error_message(format!("设置权限配置失败：{err}"));
                     return Ok(AppRunControl::Continue);
                 }
                 self.runtime_permission_profile_override =
@@ -2246,7 +2246,7 @@ impl App {
                         "failed to persist approvals reviewer update"
                     );
                     self.chat_widget
-                        .add_error_message(format!("Failed to save approvals reviewer: {err}"));
+                        .add_error_message(format!("保存审批审查者失败：{err}"));
                 }
             }
             AppEvent::UpdateFeatureFlags { updates } => {
