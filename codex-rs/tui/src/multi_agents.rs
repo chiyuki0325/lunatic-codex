@@ -341,11 +341,11 @@ fn spawn_end(
 ) -> PlainHistoryCell {
     let title = match new_thread_id {
         Some(thread_id) => title_with_agent(
-            "Spawned",
+            "已生成",
             agent_label(thread_id, &agent_metadata(thread_id)),
             spawn_request,
         ),
-        None => title_text("Agent spawn failed"),
+        None => title_text("生成智能体失败"),
     };
 
     let mut details = Vec::new();
