@@ -214,7 +214,7 @@ impl HistoryCell for PlanUpdateCell {
         };
 
         if self.plan.is_empty() {
-            indented_lines.push(Line::from("(no steps provided)".dim().italic()));
+            indented_lines.push(Line::from("（未提供步骤）".dim().italic()));
         } else {
             for PlanItemArg { step, status } in self.plan.iter() {
                 indented_lines.extend(render_step(status, step));
@@ -226,7 +226,7 @@ impl HistoryCell for PlanUpdateCell {
     }
 
     fn raw_lines(&self) -> Vec<Line<'static>> {
-        let mut lines = vec![Line::from("Updated Plan")];
+        let mut lines = vec![Line::from("已更新计划")];
         if let Some(explanation) = self
             .explanation
             .as_ref()
@@ -236,7 +236,7 @@ impl HistoryCell for PlanUpdateCell {
             lines.extend(raw_lines_from_source(explanation));
         }
         if self.plan.is_empty() {
-            lines.push(Line::from("(no steps provided)"));
+            lines.push(Line::from("（未提供步骤）"));
         } else {
             for PlanItemArg { step, status } in &self.plan {
                 lines.push(Line::from(format!("{status:?}: {step}")));
