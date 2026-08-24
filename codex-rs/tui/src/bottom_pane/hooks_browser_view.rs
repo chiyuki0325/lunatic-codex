@@ -351,7 +351,7 @@ impl HooksBrowserView {
         if show_review {
             header.push(header_label("待审核", COUNT_COLUMN_WIDTH).into());
         }
-        header.push("Description".into());
+        header.push("说明".into());
         lines.push(Line::from(header));
         for (idx, row) in rows.into_iter().enumerate() {
             let selected = self.state.selected_idx == Some(idx);
