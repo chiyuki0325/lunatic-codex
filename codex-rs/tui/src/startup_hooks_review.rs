@@ -229,7 +229,7 @@ fn selection_view_params(
     if let Some(error) = trust_all_error {
         header.push(Paragraph::new(Line::from(error.to_string()).red()).wrap(Wrap { trim: false }));
     } else if trusting_all {
-        header.push(Line::from("正在信任 Hook...".dim()));
+        header.push(Line::from("正在信任 Hook…".dim()));
     }
 
     SelectionViewParams {
