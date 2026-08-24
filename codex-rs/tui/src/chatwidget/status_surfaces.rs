@@ -930,24 +930,24 @@ impl ChatWidget {
     /// as `Ready` regardless of the last active status bucket.
     pub(super) fn run_state_status_text(&self) -> String {
         if self.mcp_startup_status.is_some() {
-            return "Starting".to_string();
+            return "正在启动".to_string();
         }
 
         match self.status_state.terminal_title_status_kind {
             TerminalTitleStatusKind::Working if !self.bottom_pane.is_task_running() => {
-                "Ready".to_string()
+                "就绪".to_string()
             }
             TerminalTitleStatusKind::WaitingForBackgroundTerminal
                 if !self.bottom_pane.is_task_running() =>
             {
-                "Ready".to_string()
+                "就绪".to_string()
             }
             TerminalTitleStatusKind::Thinking if !self.bottom_pane.is_task_running() => {
-                "Ready".to_string()
+                "就绪".to_string()
             }
-            TerminalTitleStatusKind::Working => "Working".to_string(),
-            TerminalTitleStatusKind::WaitingForBackgroundTerminal => "Waiting".to_string(),
-            TerminalTitleStatusKind::Thinking => "Thinking".to_string(),
+            TerminalTitleStatusKind::Working => "工作中".to_string(),
+            TerminalTitleStatusKind::WaitingForBackgroundTerminal => "等待中".to_string(),
+            TerminalTitleStatusKind::Thinking => "思考中".to_string(),
         }
     }
 
