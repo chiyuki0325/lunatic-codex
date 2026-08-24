@@ -285,7 +285,7 @@ impl Renderable for DelayedLoadingHeader {
         }
 
         let mut lines = Vec::with_capacity(3);
-        lines.push(Line::from("Plugins".bold()));
+        lines.push(Line::from("插件".bold()));
 
         let now = Instant::now();
         let elapsed = now.saturating_duration_since(self.started_at);
@@ -385,7 +385,7 @@ impl ChatWidget {
         marketplace_display_name: String,
     ) -> SelectionViewParams {
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Plugins".bold()));
+        header.push(Line::from("插件".bold()));
         header.push(Line::from(
             format!("Remove {marketplace_display_name} marketplace?").dim(),
         ));
@@ -457,7 +457,7 @@ impl ChatWidget {
         marketplace_display_name: &str,
     ) -> SelectionViewParams {
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Plugins".bold()));
+        header.push(Line::from("插件".bold()));
         header.push(Line::from(
             format!("Removing {marketplace_display_name}...").dim(),
         ));
@@ -527,16 +527,16 @@ impl ChatWidget {
         plugin_display_name: &str,
     ) -> SelectionViewParams {
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Plugins".bold()));
+        header.push(Line::from("插件".bold()));
         header.push(Line::from(
-            format!("Installing {plugin_display_name}...").dim(),
+            format!("正在安装 {plugin_display_name}……").dim(),
         ));
 
         SelectionViewParams {
             view_id: Some(PLUGINS_SELECTION_VIEW_ID),
             header: Box::new(header),
             items: vec![SelectionItem {
-                name: "Installing plugin...".to_string(),
+                name: "正在安装插件……".to_string(),
                 description: Some("This updates when plugin installation completes.".to_string()),
                 is_disabled: true,
                 ..Default::default()
@@ -550,7 +550,7 @@ impl ChatWidget {
         plugin_display_name: &str,
     ) -> SelectionViewParams {
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Plugins".bold()));
+        header.push(Line::from("插件".bold()));
         header.push(Line::from(
             format!("Uninstalling {plugin_display_name}...").dim(),
         ));
@@ -570,7 +570,7 @@ impl ChatWidget {
 
     pub(super) fn plugins_error_popup_params(&self, err: &str) -> SelectionViewParams {
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Plugins".bold()));
+        header.push(Line::from("插件".bold()));
         header.push(Line::from("Failed to load plugins.".dim()));
 
         SelectionViewParams {
@@ -588,7 +588,7 @@ impl ChatWidget {
 
     pub(super) fn marketplace_add_error_popup_params(&self) -> SelectionViewParams {
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Plugins".bold()));
+        header.push(Line::from("插件".bold()));
         header.push(Line::from("Failed to add marketplace.".dim()));
 
         let mut items = vec![
@@ -642,7 +642,7 @@ impl ChatWidget {
         marketplace_display_name: &str,
     ) -> SelectionViewParams {
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Plugins".bold()));
+        header.push(Line::from("插件".bold()));
         header.push(Line::from("Failed to remove marketplace.".dim()));
 
         let marketplace_name = marketplace_name.to_string();
@@ -699,7 +699,7 @@ impl ChatWidget {
         plugins_response: Option<&PluginListResponse>,
     ) -> SelectionViewParams {
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Plugins".bold()));
+        header.push(Line::from("插件".bold()));
         header.push(Line::from("Failed to load plugin details.".dim()));
 
         let mut items = vec![SelectionItem {
@@ -1006,7 +1006,7 @@ impl ChatWidget {
         let display_name = plugin_display_name(&plugin.summary);
         let detail_status_label = plugin_detail_status_label(&plugin.summary);
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Plugins".bold()));
+        header.push(Line::from("插件".bold()));
         header.push(Line::from(
             format!("{display_name} · {detail_status_label} · {marketplace_label}").bold(),
         ));
@@ -1321,7 +1321,7 @@ pub(super) fn plugin_detail_hint_line() -> Line<'static> {
 
 pub(super) fn plugins_header(subtitle: String, count_line: String) -> Box<dyn Renderable> {
     let mut header = ColumnRenderable::new();
-    header.push(Line::from("Plugins".bold()));
+    header.push(Line::from("插件".bold()));
     header.push(Line::from(subtitle.dim()));
     header.push(Line::from(count_line.dim()));
     Box::new(header)
