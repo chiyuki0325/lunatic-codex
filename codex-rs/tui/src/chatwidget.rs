@@ -180,17 +180,17 @@ use tokio::sync::mpsc::UnboundedSender;
 use tracing::debug;
 use tracing::warn;
 
-const DEFAULT_MODEL_DISPLAY_NAME: &str = "loading";
-const MULTI_AGENT_ENABLE_TITLE: &str = "Enable subagents?";
-const MULTI_AGENT_ENABLE_YES: &str = "Yes, enable";
-const MULTI_AGENT_ENABLE_NO: &str = "Not now";
-const MULTI_AGENT_ENABLE_NOTICE: &str = "Subagents will be enabled in the next session.";
-const TRUSTED_ACCESS_FOR_CYBER_VERIFICATION_WARNING: &str = "Your conversations have multiple flags for possible cybersecurity risk. Responses may take longer because extra safety checks are on. To get authorized for security work, join the Trusted Access for Cyber program: https://chatgpt.com/cyber";
+const DEFAULT_MODEL_DISPLAY_NAME: &str = "加载中";
+const MULTI_AGENT_ENABLE_TITLE: &str = "启用智能体？";
+const MULTI_AGENT_ENABLE_YES: &str = "是，启用";
+const MULTI_AGENT_ENABLE_NO: &str = "暂不启用";
+const MULTI_AGENT_ENABLE_NOTICE: &str = "智能体将在下一个会话中启用。";
+const TRUSTED_ACCESS_FOR_CYBER_VERIFICATION_WARNING: &str = "您的对话多次触发潜在网络安全风险标记。由于已启用额外安全检查，响应可能需要更长时间。若要获得安全工作授权，请加入 Trusted Access for Cyber 计划：https://chatgpt.com/cyber";
 const MEMORIES_DOC_URL: &str = "https://developers.openai.com/codex/memories";
-const MEMORIES_ENABLE_TITLE: &str = "Enable memories?";
-const MEMORIES_ENABLE_YES: &str = "Yes, enable";
-const MEMORIES_ENABLE_NO: &str = "Not now";
-const MEMORIES_ENABLE_NOTICE: &str = "Memories will be enabled in the next session.";
+const MEMORIES_ENABLE_TITLE: &str = "启用记忆？";
+const MEMORIES_ENABLE_YES: &str = "是，启用";
+const MEMORIES_ENABLE_NO: &str = "暂不启用";
+const MEMORIES_ENABLE_NOTICE: &str = "记忆将在下一个会话中启用。";
 const PLAN_MODE_REASONING_SCOPE_TITLE: &str = "应用推理强度变更";
 const PLAN_MODE_REASONING_SCOPE_PLAN_ONLY: &str = "应用到 Plan 模式覆盖值";
 const PLAN_MODE_REASONING_SCOPE_ALL_MODES: &str = "应用到全局默认值和 Plan 模式覆盖值";
@@ -489,8 +489,8 @@ use codex_utils_approval_presets::builtin_approval_presets;
 use strum::IntoEnumIterator;
 use unicode_segmentation::UnicodeSegmentation;
 
-const USER_SHELL_COMMAND_HELP_TITLE: &str = "Prefix a command with ! to run it locally";
-const USER_SHELL_COMMAND_HELP_HINT: &str = "Example: !ls";
+const USER_SHELL_COMMAND_HELP_TITLE: &str = "在命令前添加 ! 可在本地运行";
+const USER_SHELL_COMMAND_HELP_HINT: &str = "示例：!ls";
 const ASK_FOR_APPROVAL_LABEL: &str = "请求审批";
 const APPROVE_FOR_ME_LABEL: &str = "由我审批";
 const AUTO_REVIEW_DESCRIPTION: &str = "仅对检测为可能不安全的操作请求审批。";
@@ -2032,8 +2032,8 @@ impl Drop for ChatWidget {
     }
 }
 
-const PLACEHOLDER: &str = "Ask Codex to do anything";
-const SIDE_PLACEHOLDER: &str = "Ask a follow-up question";
+const PLACEHOLDER: &str = "让 Codex 完成任何任务";
+const SIDE_PLACEHOLDER: &str = "提出后续问题";
 
 // Extract the first bold (Markdown) element in the form **...** from `s`.
 // Returns the inner text if found; otherwise `None`.
