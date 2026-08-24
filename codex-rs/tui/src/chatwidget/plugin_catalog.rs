@@ -1047,7 +1047,7 @@ impl ChatWidget {
                 items.push(SelectionItem {
                     name: "Installed by admin".to_string(),
                     description: Some(
-                        "This plugin is installed by your workspace admin.".to_string(),
+                        "此插件由工作区管理员安装。".to_string(),
                     ),
                     is_disabled: true,
                     ..Default::default()
@@ -1057,8 +1057,8 @@ impl ChatWidget {
                 let plugin_display_name = display_name;
                 items.push(SelectionItem {
                     name: "Uninstall plugin".to_string(),
-                    description: Some("Remove this plugin now.".to_string()),
-                    selected_description: Some("Remove this plugin now.".to_string()),
+                    description: Some("立即移除此插件。".to_string()),
+                    selected_description: Some("立即移除此插件。".to_string()),
                     actions: vec![Box::new(move |tx| {
                         tx.send(AppEvent::OpenPluginUninstallLoading {
                             plugin_display_name: plugin_display_name.clone(),
