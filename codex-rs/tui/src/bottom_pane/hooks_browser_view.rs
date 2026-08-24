@@ -556,7 +556,7 @@ impl HooksBrowserView {
             HooksBrowserPage::Events => {
                 let mut spans = vec!["按下 ".into()];
                 if let Some(accept) = accept {
-                    spans.extend([accept.into(), " to view hooks; ".into()]);
+                    spans.extend([accept.into(), " 以查看 Hook；".into()]);
                 }
                 spans.extend([cancel.into(), " 以关闭".into()]);
                 Line::from(spans)
@@ -564,12 +564,12 @@ impl HooksBrowserView {
             HooksBrowserPage::Handlers(event_name) => {
                 let selected_hook = self.selected_hook(event_name);
                 if selected_hook.is_none() {
-                    Line::from(vec!["按下 ".into(), cancel.into(), " to go back".into()])
+                    Line::from(vec!["按下 ".into(), cancel.into(), " 以返回".into()])
                 } else if selected_hook.is_some_and(|hook| hook.is_managed) {
                     Line::from(vec![
                         "Managed hooks are always on; press ".into(),
                         cancel.into(),
-                        " to go back".into(),
+                        " 以返回".into(),
                     ])
                 } else if selected_hook.is_some_and(hook_needs_review) {
                     Line::from(vec![
@@ -577,7 +577,7 @@ impl HooksBrowserView {
                         key_hint::plain(KeyCode::Char('t')).into(),
                         " to trust; ".into(),
                         cancel.into(),
-                        " to go back".into(),
+                        " 以返回".into(),
                     ])
                 } else {
                     let mut spans =
@@ -585,7 +585,7 @@ impl HooksBrowserView {
                     if let Some(accept) = accept {
                         spans.extend([" or ".into(), accept.into()]);
                     }
-                    spans.extend([" to toggle; ".into(), cancel.into(), " to go back".into()]);
+                    spans.extend([" to toggle; ".into(), cancel.into(), " 以返回".into()]);
                     Line::from(spans)
                 }
             }
