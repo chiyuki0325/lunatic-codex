@@ -35,20 +35,17 @@ impl ChatWidget {
             match (reset_eligible, self.available_rate_limit_reset_credits) {
                 (true, Some(available_count)) if available_count > 0 => (
                     true,
-                    format!(
-                        "You have {available_count} {} available.",
-                        reset_label(available_count)
-                    ),
+                    format!("可用：{available_count} 次重置"),
                 ),
-                (true, None) => (true, "Check reset availability.".to_string()),
+                (true, None) => (true, "检查重置可用性。".to_string()),
                 (true, Some(_)) | (false, _) => {
-                    (false, "No usage limit resets available.".to_string())
+                    (false, "没有可用的用量限额重置次数。".to_string())
                 }
             };
         SelectionViewParams {
             view_id: Some(USAGE_MENU_VIEW_ID),
-            title: Some("Usage".to_string()),
-            subtitle: Some("View account usage or redeem an earned reset.".to_string()),
+            title: Some("用量".to_string()),
+            subtitle: Some("查看账户用量或兑换已获得的重置次数。".to_string()),
             footer_hint: Some(standard_popup_hint_line()),
             items: vec![
                 SelectionItem {
