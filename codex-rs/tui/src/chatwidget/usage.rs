@@ -49,8 +49,8 @@ impl ChatWidget {
             footer_hint: Some(standard_popup_hint_line()),
             items: vec![
                 SelectionItem {
-                    name: "Show usage".to_string(),
-                    description: Some("View recent account token usage.".to_string()),
+                    name: "查看用量".to_string(),
+                    description: Some("查看近期账户令牌用量。".to_string()),
                     actions: vec![Box::new(|tx| {
                         tx.send(AppEvent::OpenTokenActivity);
                     })],
@@ -58,7 +58,7 @@ impl ChatWidget {
                     ..Default::default()
                 },
                 SelectionItem {
-                    name: "Redeem usage limit reset".to_string(),
+                    name: "兑换用量限额重置".to_string(),
                     description: Some(reset_description),
                     is_disabled: !reset_action_enabled,
                     actions: vec![Box::new(|tx| {
