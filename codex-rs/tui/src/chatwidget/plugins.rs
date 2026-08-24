@@ -626,18 +626,18 @@ impl ChatWidget {
                 if upgraded_count == 0 && error_count == 0 {
                     let message = if selected_count == 1 {
                         format!(
-                            "Marketplace {} is already up to date.",
+                            "市场 {} 已是最新版本。",
                             response.selected_marketplaces[0]
                         )
                     } else {
                         format!(
-                            "Checked {selected_count} marketplaces; all are already up to date."
+                            "已检查 {selected_count} 个市场；全部已是最新版本。"
                         )
                     };
                     self.add_info_message(
                         message,
                         Some(format!(
-                            "Checked: {}",
+                            "已检查：{}",
                             response.selected_marketplaces.join(", ")
                         )),
                     );
@@ -645,15 +645,10 @@ impl ChatWidget {
                 }
 
                 if upgraded_count > 0 {
-                    let noun = if upgraded_count == 1 {
-                        "marketplace"
-                    } else {
-                        "marketplaces"
-                    };
                     self.add_info_message(
-                        format!("Upgraded {upgraded_count} {noun}."),
+                        format!("已升级 {upgraded_count} 个市场。"),
                         Some(format!(
-                            "Updated roots: {}",
+                            "已更新根目录：{}",
                             response
                                 .upgraded_roots
                                 .iter()
@@ -665,13 +660,8 @@ impl ChatWidget {
                 }
 
                 if error_count > 0 {
-                    let noun = if error_count == 1 {
-                        "marketplace"
-                    } else {
-                        "marketplaces"
-                    };
                     self.add_error_message(format!(
-                        "Failed to upgrade {error_count} {noun}: {}",
+                        "升级 {error_count} 个市场失败：{}",
                         response
                             .errors
                             .iter()
