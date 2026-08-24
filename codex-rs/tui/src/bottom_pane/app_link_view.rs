@@ -595,12 +595,12 @@ impl AppLinkView {
             }
         } else if is_external_action_suggestion {
             for line in wrap(
-                "Complete the requested action in the browser window that just opened.",
+                "请在刚打开的浏览器窗口中完成请求的操作。",
                 usable_width,
             ) {
                 lines.push(Line::from(line.into_owned()));
             }
-            for line in wrap("Then return here and select \"I finished\".", usable_width) {
+            for line in wrap("然后返回此处并选择“我已完成”。", usable_width) {
                 lines.push(Line::from(line.into_owned()));
             }
         } else {
