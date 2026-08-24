@@ -205,7 +205,7 @@ pub(crate) fn new_status_output_with_rate_limits(
         model_name,
         collaboration_mode,
         reasoning_effort_override,
-        "<none>".to_string(),
+        "<无>".to_string(),
         refreshing_rate_limits,
     )
     .0

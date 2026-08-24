@@ -20,14 +20,14 @@ pub(crate) fn compose_model_display(
 ) -> (String, Vec<String>) {
     let mut details: Vec<String> = Vec::new();
     if let Some((_, effort)) = entries.iter().find(|(k, _)| *k == "reasoning effort") {
-        details.push(format!("reasoning {}", effort.to_ascii_lowercase()));
+        details.push(format!("推理 {}", effort.to_ascii_lowercase()));
     }
     if let Some((_, summary)) = entries.iter().find(|(k, _)| *k == "reasoning summaries") {
         let summary = summary.trim();
         if summary.eq_ignore_ascii_case("none") || summary.eq_ignore_ascii_case("off") {
-            details.push("summaries off".to_string());
+            details.push("已关闭摘要".to_string());
         } else if !summary.is_empty() {
-            details.push(format!("summaries {}", summary.to_ascii_lowercase()));
+            details.push(format!("摘要 {}", summary.to_ascii_lowercase()));
         }
     }
 
@@ -84,7 +84,7 @@ pub(crate) fn compose_agents_summary(config: &Config, paths: &[PathUri]) -> Stri
     }
 
     if rels.is_empty() {
-        "<none>".to_string()
+        "<无>".to_string()
     } else {
         rels.join(", ")
     }
