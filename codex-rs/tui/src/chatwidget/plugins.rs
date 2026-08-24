@@ -286,9 +286,9 @@ impl ChatWidget {
         let cwd = self.config.cwd.to_path_buf();
         let view = CustomPromptView::new(
             "添加市场".to_string(),
-            "owner/repo, git URL, or local marketplace path".to_string(),
+            "owner/repo、git URL 或本地市场路径".to_string(),
             String::new(),
-            Some("Examples: owner/repo, git URL, ./marketplace".to_string()),
+            Some("示例：owner/repo、git URL、./marketplace".to_string()),
             Box::new(move |source: String| {
                 let source = source.trim().to_string();
                 if source.is_empty() {
@@ -854,10 +854,10 @@ impl ChatWidget {
         let mut header = ColumnRenderable::new();
         header.push(Line::from("插件".bold()));
         header.push(Line::from(
-            format!("{} plugin installed.", flow.plugin_display_name).bold(),
+            format!("{} 插件已安装。", flow.plugin_display_name).bold(),
         ));
         header.push(Line::from(
-            format!("App setup {current}/{total}: {}", app.name).dim(),
+            format!("应用设置 {current}/{total}：{}", app.name).dim(),
         ));
         header.push(Line::from(status_label.dim()));
 
@@ -872,7 +872,7 @@ impl ChatWidget {
             items.push(SelectionItem {
                 name: install_label.to_string(),
                 description: Some("打开 ChatGPT 应用管理页面".to_string()),
-                selected_description: Some("Open the app page in your browser.".to_string()),
+                selected_description: Some("在浏览器中打开应用页面。".to_string()),
                 actions: vec![Box::new(move |tx| {
                     tx.send(AppEvent::OpenUrlInBrowser {
                         url: install_url.clone(),
@@ -883,7 +883,7 @@ impl ChatWidget {
         } else {
             items.push(SelectionItem {
                 name: "ChatGPT 应用链接不可用".to_string(),
-                description: Some("This app did not provide an install/manage URL.".to_string()),
+                description: Some("此应用未提供安装或管理 URL。".to_string()),
                 is_disabled: true,
                 ..Default::default()
             });
@@ -904,12 +904,8 @@ impl ChatWidget {
         } else {
             items.push(SelectionItem {
                 name: "我已安装".to_string(),
-                description: Some(
-                    "Trust your confirmation and continue to the next app.".to_string(),
-                ),
-                selected_description: Some(
-                    "Continue without waiting for refresh to complete.".to_string(),
-                ),
+                description: Some("确认已安装，并继续设置下一个应用。".to_string()),
+                selected_description: Some("无需等待刷新完成，直接继续。".to_string()),
                 actions: vec![Box::new(|tx| {
                     tx.send(AppEvent::PluginInstallAuthAdvance {
                         refresh_connectors: true,
