@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 
-const FALLBACK_MODEL_METADATA_WARNING_PREFIX: &str = "Model metadata for `";
+const FALLBACK_MODEL_METADATA_WARNING_PREFIX: &str = "未找到模型 `";
 const FALLBACK_MODEL_METADATA_WARNING_SUFFIX: &str =
-    "` not found. Defaulting to fallback metadata; this can degrade performance and cause issues.";
+    "` 的元数据。将使用备用元数据，可能降低性能并导致问题。";
 
 #[derive(Default)]
 pub(super) struct WarningDisplayState {
