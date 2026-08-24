@@ -430,7 +430,7 @@ impl ChatWidget {
                     ..Default::default()
                 },
                 SelectionItem {
-                    name: "Back to plugins".to_string(),
+                    name: "返回插件列表".to_string(),
                     description: Some("Keep this marketplace installed.".to_string()),
                     selected_description: Some("Keep this marketplace installed.".to_string()),
                     actions: vec![Box::new(move |tx| {
@@ -602,8 +602,8 @@ impl ChatWidget {
             },
             SelectionItem {
                 name: "重试".to_string(),
-                description: Some("Enter a marketplace source.".to_string()),
-                selected_description: Some("Enter a marketplace source.".to_string()),
+                description: Some("输入市场来源。".to_string()),
+                selected_description: Some("输入市场来源。".to_string()),
                 actions: vec![Box::new(|tx| {
                     tx.send(AppEvent::OpenMarketplaceAddPrompt);
                 })],
@@ -614,9 +614,9 @@ impl ChatWidget {
         if let PluginsCacheState::Ready(plugins_response) = self.plugins_cache_for_current_cwd() {
             let cwd = self.config.cwd.to_path_buf();
             items.push(SelectionItem {
-                name: "Back to plugins".to_string(),
-                description: Some("Return to the plugin list.".to_string()),
-                selected_description: Some("Return to the plugin list.".to_string()),
+                name: "返回插件列表".to_string(),
+                description: Some("返回插件列表。".to_string()),
+                selected_description: Some("返回插件列表。".to_string()),
                 actions: vec![Box::new(move |tx| {
                     tx.send(AppEvent::OpenPluginsList {
                         cwd: cwd.clone(),
@@ -671,9 +671,9 @@ impl ChatWidget {
         if let PluginsCacheState::Ready(plugins_response) = self.plugins_cache_for_current_cwd() {
             let cwd = self.config.cwd.to_path_buf();
             items.push(SelectionItem {
-                name: "Back to plugins".to_string(),
-                description: Some("Return to the plugin list.".to_string()),
-                selected_description: Some("Return to the plugin list.".to_string()),
+                name: "返回插件列表".to_string(),
+                description: Some("返回插件列表。".to_string()),
+                selected_description: Some("返回插件列表。".to_string()),
                 actions: vec![Box::new(move |tx| {
                     tx.send(AppEvent::OpenPluginsList {
                         cwd: cwd.clone(),
@@ -711,9 +711,9 @@ impl ChatWidget {
         if let Some(plugins_response) = plugins_response.cloned() {
             let cwd = self.config.cwd.to_path_buf();
             items.push(SelectionItem {
-                name: "Back to plugins".to_string(),
-                description: Some("Return to the plugin list.".to_string()),
-                selected_description: Some("Return to the plugin list.".to_string()),
+                name: "返回插件列表".to_string(),
+                description: Some("返回插件列表。".to_string()),
+                selected_description: Some("返回插件列表。".to_string()),
                 actions: vec![Box::new(move |tx| {
                     tx.send(AppEvent::OpenPluginsList {
                         cwd: cwd.clone(),
@@ -1030,9 +1030,9 @@ impl ChatWidget {
         let cwd = self.config.cwd.to_path_buf();
         let plugins_response = plugins_response.clone();
         let mut items = vec![SelectionItem {
-            name: "Back to plugins".to_string(),
-            description: Some("Return to the plugin list.".to_string()),
-            selected_description: Some("Return to the plugin list.".to_string()),
+            name: "返回插件列表".to_string(),
+            description: Some("返回插件列表。".to_string()),
+            selected_description: Some("返回插件列表。".to_string()),
             actions: vec![Box::new(move |tx| {
                 tx.send(AppEvent::OpenPluginsList {
                     cwd: cwd.clone(),
