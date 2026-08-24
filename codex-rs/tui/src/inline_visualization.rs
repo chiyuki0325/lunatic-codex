@@ -245,12 +245,12 @@ pub(crate) fn rewrite_inline_visualizations<'a>(
                     },
                 );
             } else {
-                rewritten.push_str("_Visualization unavailable on this device._");
+                rewritten.push_str("_此设备无法显示可视化内容。_");
             }
         } else if trimmed.ends_with(CONTENT_REFERENCE_SUFFIX)
             || (trimmed.starts_with(DIRECTIVE_PREFIX) && trimmed.ends_with('}'))
         {
-            rewritten.push_str("_Visualization unavailable on this device._");
+            rewritten.push_str("_此设备无法显示可视化内容。_");
         }
         rewritten.push_str(newline);
     }
@@ -268,8 +268,8 @@ fn visualization_link_labels(file: &str) -> (String, String) {
         .unwrap_or("generated");
     let escaped_name = escape_markdown_label(name);
     (
-        format!("Open {escaped_name} visualization in the browser"),
-        format!("Open {name} visualization in the browser"),
+        format!("在浏览器中打开 {escaped_name} 可视化"),
+        format!("在浏览器中打开 {name} 可视化"),
     )
 }
 

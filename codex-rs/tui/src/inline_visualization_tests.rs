@@ -85,7 +85,7 @@ fn rewrites_complete_directive_to_trusted_static_file_placeholder() {
     assert!(
         rewritten
             .markdown
-            .starts_with("Before\nOpen chart visualization in the browser  \n[")
+            .starts_with("Before\n在浏览器中打开 chart 可视化  \n[")
     );
     assert!(rewritten.markdown.ends_with(")\nAfter"));
     assert_eq!(rewritten.trusted_file_links.len(), 1);
@@ -104,7 +104,7 @@ fn rewrites_complete_directive_to_trusted_static_file_placeholder() {
     );
     assert_eq!(
         destination.display_label,
-        "Open chart visualization in the browser"
+        "在浏览器中打开 chart 可视化"
     );
     assert!(rewritten.markdown.contains(&format!(
         "  \n[{}](",
@@ -153,7 +153,7 @@ fn unavailable_or_invalid_content_reference_has_explicit_fallback() {
         let reference = format!("\u{e200}visualize\u{e202}{payload}\u{e201}");
         assert_eq!(
             rewrite_inline_visualizations(&reference, Some(&context)).markdown,
-            "_Visualization unavailable on this device._"
+            "_此设备无法显示可视化内容。_"
         );
     }
 }
@@ -167,7 +167,7 @@ fn unavailable_artifact_has_explicit_fallback() {
     assert_eq!(
         rewrite_inline_visualizations("::codex-inline-vis{file=\"missing.html\"}", Some(&context),)
             .markdown,
-        "_Visualization unavailable on this device._"
+        "_此设备无法显示可视化内容。_"
     );
 }
 
@@ -182,7 +182,7 @@ fn rejects_parent_path_and_non_html_file() {
                 Some(&context),
             )
             .markdown,
-            "_Visualization unavailable on this device._"
+            "_此设备无法显示可视化内容。_"
         );
     }
 }
@@ -201,7 +201,7 @@ fn rejects_oversized_fragment() {
     assert_eq!(
         rewrite_inline_visualizations("::codex-inline-vis{file=\"chart.html\"}", Some(&context),)
             .markdown,
-        "_Visualization unavailable on this device._"
+        "_此设备无法显示可视化内容。_"
     );
 }
 
@@ -318,7 +318,7 @@ fn finalized_agent_cell_replays_visualization_link() {
     let title_span = lines
         .iter()
         .flat_map(|line| &line.line.spans)
-        .find(|span| span.content == "Open chart visualization in the browser")
+        .find(|span| span.content == "在浏览器中打开 chart 可视化")
         .expect("visualization title span");
     assert_eq!(title_span.style, Style::new());
     let url_span = lines
@@ -360,7 +360,7 @@ fn transcript_overlay_remeasures_visualization_when_artifact_becomes_available()
 
     overlay.render(area, &mut buffer);
     let unavailable = buffer_to_text(&buffer, area.width);
-    assert!(unavailable.contains("Visualization unavailable on this device"));
+    assert!(unavailable.contains("此设备无法显示可视化内容"));
 
     fs::write(context.thread_dir.join("chart.html"), "<div>chart</div>")
         .expect("write visualization fragment");
@@ -372,7 +372,7 @@ fn transcript_overlay_remeasures_visualization_when_artifact_becomes_available()
     overlay.render(area, &mut buffer);
 
     let available = buffer_to_text(&buffer, area.width);
-    assert!(available.contains("Open chart visualization in the browser"));
+    assert!(available.contains("在浏览器中打开 chart 可视化"));
     assert!(
         available.contains("file://"),
         "viewer URL was clipped: {available:?}"
@@ -442,7 +442,7 @@ fn streaming_hides_partial_directive_and_renders_completed_link() {
     let lines = cell.display_hyperlink_lines(/*width*/ 80);
     assert!(
         lines.iter().any(|line| {
-            line_text(&line.line).contains("Open chart visualization in the browser")
+            line_text(&line.line).contains("在浏览器中打开 chart 可视化")
         })
     );
 }
@@ -464,7 +464,7 @@ fn visualization_link_uses_the_artifact_name() {
     assert!(
         rewritten
             .markdown
-            .starts_with("Open compound\\-interest\\-explorer visualization in the browser  \n[")
+            .starts_with("在浏览器中打开 compound\\-interest\\-explorer 可视化  \n[")
     );
     assert_eq!(
         rewritten
@@ -473,7 +473,7 @@ fn visualization_link_uses_the_artifact_name() {
             .next()
             .expect("trusted destination")
             .display_label,
-        "Open compound-interest-explorer visualization in the browser"
+        "在浏览器中打开 compound-interest-explorer 可视化"
     );
 }
 
