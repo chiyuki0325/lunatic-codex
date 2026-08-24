@@ -66,16 +66,14 @@ impl App {
                     || !self.chat_widget.can_change_working_directory(thread_id)
                 {
                     self.chat_widget.add_error_message(
-                        "Changing directories requires an idle primary session without queued input."
-                            .to_string(),
+                        "切换目录需要主会话处于空闲状态，且没有排队中的输入。".to_string(),
                     );
                 } else if crate::uses_remote_workspace_or_environment(
                     &self.app_server_target,
                     self.environment_manager.as_ref(),
                 ) {
                     self.chat_widget.add_error_message(
-                        "Changing directories is not supported for remote workspaces or remote execution environments."
-                            .to_string(),
+                        "远程工作区或远程执行环境不支持切换目录。".to_string(),
                     );
                 } else {
                     let cwd = AbsolutePathBuf::resolve_path_against_base(
@@ -88,9 +86,9 @@ impl App {
                         }
                         Ok(_) => self
                             .chat_widget
-                            .add_error_message(format!("Not a directory: {}", cwd.display())),
+                            .add_error_message(format!("不是目录：{}", cwd.display())),
                         Err(error) => self.chat_widget.add_error_message(format!(
-                            "Cannot access directory {}: {error}",
+                            "无法访问目录 {}：{error}",
                             cwd.display()
                         )),
                     }
@@ -133,7 +131,7 @@ impl App {
             AppEvent::ExportTranscript { destination } => {
                 if let Err(error) = self.export_transcript(app_server, destination).await {
                     self.chat_widget
-                        .add_error_message(format!("Export failed: {error}"));
+                        .add_error_message(format!("导出失败：{error}"));
                 }
                 if self.chat_widget.no_modal_or_popup_active() {
                     self.chat_widget
