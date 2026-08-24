@@ -51,7 +51,7 @@ impl MigrationMenuOption {
 
     fn label(self) -> &'static str {
         match self {
-            Self::TryNewModel => "Try new model",
+            Self::TryNewModel => "试用新模型",
             Self::UseExistingModel => "使用当前模型",
         }
     }
