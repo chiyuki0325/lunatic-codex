@@ -43,7 +43,7 @@ impl App {
         let Some(goal) = response.goal else {
             self.chat_widget.add_info_message(
                 GOAL_USAGE.to_string(),
-                Some("No goal is currently set.".to_string()),
+                Some("当前未设置目标。".to_string()),
             );
             return;
         };
@@ -273,11 +273,11 @@ impl App {
             Ok(response) => {
                 if response.cleared {
                     self.chat_widget
-                        .add_info_message("Goal cleared".to_string(), /*hint*/ None);
+                        .add_info_message("目标已清除".to_string(), /*hint*/ None);
                 } else {
                     self.chat_widget.add_info_message(
-                        "No goal to clear".to_string(),
-                        Some("This thread does not currently have a goal.".to_string()),
+                        "没有可清除的目标".to_string(),
+                        Some("此对话当前没有目标。".to_string()),
                     );
                 }
             }
@@ -303,23 +303,23 @@ impl App {
         })];
         let items = vec![
             SelectionItem {
-                name: "Replace current goal".to_string(),
-                description: Some("Set the new objective and start it now".to_string()),
+                name: "替换当前目标".to_string(),
+                description: Some("设置新目标并立即开始".to_string()),
                 actions: replace_actions,
                 dismiss_on_select: true,
                 ..Default::default()
             },
             SelectionItem {
-                name: "Cancel".to_string(),
-                description: Some("Keep the current goal".to_string()),
+                name: "取消".to_string(),
+                description: Some("保留当前目标".to_string()),
                 dismiss_on_select: true,
                 ..Default::default()
             },
         ];
         self.chat_widget.show_selection_view(SelectionViewParams {
-            title: Some("Replace goal?".to_string()),
+            title: Some("替换目标？".to_string()),
             subtitle: Some(format!(
-                "New objective: {}",
+                "新目标：{}",
                 truncate_text(&objective, /*max_graphemes*/ 200)
             )),
             footer_hint: Some(standard_popup_hint_line()),
@@ -330,10 +330,10 @@ impl App {
 
     fn show_no_thread_goal_to_edit(&mut self) {
         self.chat_widget
-            .add_error_message("No goal is currently set.".to_string());
+            .add_error_message("当前未设置目标。".to_string());
         self.chat_widget.add_info_message(
             GOAL_USAGE.to_string(),
-            Some("Create a goal before editing it.".to_string()),
+            Some("请先创建目标再编辑。".to_string()),
         );
     }
 }
@@ -349,11 +349,11 @@ async fn cleanup_materialized_goal_files(
     }
 }
 
-fn thread_goal_error_message(action: &str, err: &color_eyre::Report) -> String {
+fn thread_goal_error_message(_action: &str, err: &color_eyre::Report) -> String {
     if is_ephemeral_thread_goal_error(err) {
         EPHEMERAL_THREAD_GOAL_ERROR_MESSAGE.to_string()
     } else {
-        format!("Failed to {action} thread goal: {err}")
+        format!("目标操作失败：{err}")
     }
 }
 
