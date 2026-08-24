@@ -20,8 +20,8 @@ pub(crate) enum SessionStartAction {
 impl SessionStartAction {
     pub(crate) fn verb(self) -> &'static str {
         match self {
-            Self::Resume(_) => "resume",
-            Self::Fork => "fork",
+            Self::Resume(_) => "恢复",
+            Self::Fork => "派生",
         }
     }
 
@@ -75,7 +75,7 @@ pub(crate) async fn complete_session_start(
     app_server
         .thread_unarchive(target.thread_id)
         .await
-        .wrap_err_with(|| format!("Failed to unarchive session {}", target.thread_id))?;
+        .wrap_err_with(|| format!("取消归档会话 {} 失败", target.thread_id))?;
     // Retry by ID, not by the old rollout path, which unarchiving may have moved.
     action
         .start(app_server, config, target)
@@ -107,7 +107,7 @@ fn session_start_error(
     }
 
     let target_label = target_session.display_label();
-    color_eyre::eyre::eyre!("Failed to {action} session from {target_label}: {err}")
+    color_eyre::eyre::eyre!("从 {target_label}{action}会话失败：{err}")
 }
 
 fn archived_session_guidance(err: &color_eyre::Report) -> Option<String> {
