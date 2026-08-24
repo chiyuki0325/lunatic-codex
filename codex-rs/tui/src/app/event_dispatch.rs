@@ -2292,7 +2292,7 @@ impl App {
                         "failed to persist world-writable warning acknowledgement"
                     );
                     self.chat_widget.add_error_message(format!(
-                        "Failed to save Agent mode warning preference: {err}"
+                        "保存智能体模式警告偏好失败：{err}"
                     ));
                 }
             }
@@ -2307,7 +2307,7 @@ impl App {
                         "failed to persist rate limit switch prompt preference"
                     );
                     self.chat_widget.add_error_message(format!(
-                        "Failed to save rate limit reminder preference: {err}"
+                        "保存速率限制提醒偏好失败：{err}"
                     ));
                 }
             }
