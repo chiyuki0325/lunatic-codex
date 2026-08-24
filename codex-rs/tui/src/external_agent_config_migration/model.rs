@@ -79,16 +79,16 @@ pub(crate) fn external_agent_config_migration_item_label(
     item: &ExternalAgentConfigMigrationItem,
 ) -> &'static str {
     match item.item_type {
-        ExternalAgentConfigMigrationItemType::AgentsMd => "Instructions",
-        ExternalAgentConfigMigrationItemType::Config => "Settings",
-        ExternalAgentConfigMigrationItemType::Skills => "Skills",
-        ExternalAgentConfigMigrationItemType::Plugins => "Plugins",
-        ExternalAgentConfigMigrationItemType::McpServerConfig => "MCP servers",
-        ExternalAgentConfigMigrationItemType::Subagents => "Agents",
-        ExternalAgentConfigMigrationItemType::Hooks => "Hooks",
-        ExternalAgentConfigMigrationItemType::Commands => "Slash commands",
-        ExternalAgentConfigMigrationItemType::Memory => "Memory",
-        ExternalAgentConfigMigrationItemType::Sessions => "Recent chat sessions",
+        ExternalAgentConfigMigrationItemType::AgentsMd => "说明",
+        ExternalAgentConfigMigrationItemType::Config => "设置",
+        ExternalAgentConfigMigrationItemType::Skills => "技能",
+        ExternalAgentConfigMigrationItemType::Plugins => "插件",
+        ExternalAgentConfigMigrationItemType::McpServerConfig => "MCP 服务器",
+        ExternalAgentConfigMigrationItemType::Subagents => "智能体",
+        ExternalAgentConfigMigrationItemType::Hooks => "Hook",
+        ExternalAgentConfigMigrationItemType::Commands => "斜杠命令",
+        ExternalAgentConfigMigrationItemType::Memory => "记忆",
+        ExternalAgentConfigMigrationItemType::Sessions => "最近的聊天会话",
     }
 }
 
@@ -96,16 +96,16 @@ pub(crate) fn external_agent_config_migration_type_label(
     item_type: ExternalAgentConfigMigrationItemType,
 ) -> &'static str {
     match item_type {
-        ExternalAgentConfigMigrationItemType::AgentsMd => "Instructions",
-        ExternalAgentConfigMigrationItemType::Config => "Settings",
-        ExternalAgentConfigMigrationItemType::Skills => "Skills",
-        ExternalAgentConfigMigrationItemType::Plugins => "Plugins",
-        ExternalAgentConfigMigrationItemType::McpServerConfig => "MCP servers",
-        ExternalAgentConfigMigrationItemType::Subagents => "Agents",
-        ExternalAgentConfigMigrationItemType::Hooks => "Hooks",
-        ExternalAgentConfigMigrationItemType::Commands => "Slash commands",
-        ExternalAgentConfigMigrationItemType::Memory => "Memory",
-        ExternalAgentConfigMigrationItemType::Sessions => "Chat sessions",
+        ExternalAgentConfigMigrationItemType::AgentsMd => "说明",
+        ExternalAgentConfigMigrationItemType::Config => "设置",
+        ExternalAgentConfigMigrationItemType::Skills => "技能",
+        ExternalAgentConfigMigrationItemType::Plugins => "插件",
+        ExternalAgentConfigMigrationItemType::McpServerConfig => "MCP 服务器",
+        ExternalAgentConfigMigrationItemType::Subagents => "智能体",
+        ExternalAgentConfigMigrationItemType::Hooks => "Hook",
+        ExternalAgentConfigMigrationItemType::Commands => "斜杠命令",
+        ExternalAgentConfigMigrationItemType::Memory => "记忆",
+        ExternalAgentConfigMigrationItemType::Sessions => "聊天会话",
     }
 }
 
