@@ -713,10 +713,10 @@ impl ChatWidget {
             }
             StatusLineItem::ContextRemaining => self
                 .status_line_context_remaining_percent()
-                .map(|remaining| format!("Context {remaining}% left")),
+                .map(|remaining| format!("上下文剩余 {remaining}%")),
             StatusLineItem::ContextUsed => self
                 .status_line_context_used_percent()
-                .map(|used| format!("Context {used}% used")),
+                .map(|used| format!("上下文已用 {used}%")),
             StatusLineItem::FiveHourLimit => {
                 let (window, is_secondary) = self
                     .rate_limit_snapshots_by_limit_id
@@ -736,23 +736,23 @@ impl ChatWidget {
             StatusLineItem::CodexVersion => Some(CODEX_CLI_VERSION.to_string()),
             StatusLineItem::ContextWindowSize => self
                 .status_line_context_window_size()
-                .map(|cws| format!("{} window", format_tokens_compact(cws))),
+                .map(|cws| format!("{} 上下文窗口", format_tokens_compact(cws))),
             StatusLineItem::TotalInputTokens => (!self.token_usage_pending).then(|| {
                 format!(
-                    "{} in",
+                    "{} 输入",
                     format_tokens_compact(self.status_line_total_usage().input_tokens)
                 )
             }),
             StatusLineItem::TotalOutputTokens => (!self.token_usage_pending).then(|| {
                 format!(
-                    "{} out",
+                    "{} 输出",
                     format_tokens_compact(self.status_line_total_usage().output_tokens)
                 )
             }),
             StatusLineItem::ThreadCredits => self
                 .estimated_thread_usage()
                 .map(|usage| usage.estimated_usage_credits_micros)
-                .map(|credits| format!("{} credits", format_credit_micros(credits))),
+                .map(|credits| format!("{} 额度", format_credit_micros(credits))),
             StatusLineItem::EstimatedThreadCost => self
                 .estimated_thread_usage()
                 .and_then(|usage| usage.estimated_usage_usd_micros)
