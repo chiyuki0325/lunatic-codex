@@ -387,10 +387,10 @@ impl ChatWidget {
         let mut header = ColumnRenderable::new();
         header.push(Line::from("插件".bold()));
         header.push(Line::from(
-            format!("Remove {marketplace_display_name} marketplace?").dim(),
+            format!("移除市场 {marketplace_display_name} 吗？").dim(),
         ));
         header.push(Line::from(
-            "This removes the configured marketplace from Codex.".dim(),
+            "这会从 Codex 中移除已配置的市场。".dim(),
         ));
 
         let cwd_for_remove = self.config.cwd.to_path_buf();
@@ -459,14 +459,14 @@ impl ChatWidget {
         let mut header = ColumnRenderable::new();
         header.push(Line::from("插件".bold()));
         header.push(Line::from(
-            format!("Removing {marketplace_display_name}...").dim(),
+            format!("正在移除市场 {marketplace_display_name}……").dim(),
         ));
 
         SelectionViewParams {
             view_id: Some(PLUGINS_SELECTION_VIEW_ID),
             header: Box::new(header),
             items: vec![SelectionItem {
-                name: "Removing marketplace...".to_string(),
+                name: "正在移除市场……".to_string(),
                 description: Some("This updates when marketplace removal completes.".to_string()),
                 is_disabled: true,
                 ..Default::default()
