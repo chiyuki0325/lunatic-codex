@@ -482,11 +482,11 @@ impl HooksBrowserView {
         let mut lines = vec![detail_line("事件", event_label(event_name))];
         if let Some(matcher) = hook.matcher.as_deref() {
             lines.extend(detail_wrapped_lines(
-                "Matcher", matcher, width, /*max_lines*/ None,
+                "匹配器", matcher, width, /*max_lines*/ None,
             ));
         }
         lines.extend(detail_wrapped_lines(
-            "Source",
+            "来源",
             &detail_source_value(hook),
             width,
             /*max_lines*/ None,
@@ -494,12 +494,12 @@ impl HooksBrowserView {
         match &hook.handler {
             HookHandlerMetadata::Command { command, r#async } => {
                 lines.extend(detail_wrapped_lines(
-                    "Command",
+                    "命令",
                     command,
                     width,
                     Some(MAX_COMMAND_DETAIL_LINES),
                 ));
-                lines.push(detail_line("Mode", if *r#async { "Async" } else { "Sync" }));
+                lines.push(detail_line("模式", if *r#async { "异步" } else { "同步" }));
             }
             HookHandlerMetadata::McpTool { server, tool } => {
                 lines.extend(detail_wrapped_lines(
