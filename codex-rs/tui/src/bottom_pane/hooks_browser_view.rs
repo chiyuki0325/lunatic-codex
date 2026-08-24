@@ -522,7 +522,7 @@ impl HooksBrowserView {
         lines.push(detail_line("超时", &format!("{} 秒", hook.timeout_sec)));
         if let Some(limit) = hook.additional_context_limit {
             let value = if limit == 0 {
-                "unlimited".to_string()
+                "不限".to_string()
             } else {
                 format!("limit: {limit} approximate tokens")
             };
