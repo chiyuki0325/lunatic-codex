@@ -167,7 +167,7 @@ impl WidgetRef for &ExternalAgentConfigSourceScreen {
         column.push("Choose an import source".bold());
         column.push("");
         column.push(
-            Line::from("Select the app whose setup you want to import.".dim()).inset(Insets::tlbr(
+            Line::from("选择要导入配置的应用。".dim()).inset(Insets::tlbr(
                 /*top*/ 0, /*left*/ 2, /*bottom*/ 0, /*right*/ 0,
             )),
         );
@@ -188,9 +188,9 @@ impl WidgetRef for &ExternalAgentConfigSourceScreen {
         column.push("");
         column.push(
             Line::from(vec![
-                "Press ".dim(),
+                "按下 ".dim(),
                 key_hint::plain(KeyCode::Enter).into(),
-                " to continue".dim(),
+                " 以继续".dim(),
             ])
             .inset(Insets::tlbr(
                 /*top*/ 0, /*left*/ 2, /*bottom*/ 0, /*right*/ 0,
