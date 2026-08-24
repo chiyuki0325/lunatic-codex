@@ -35,15 +35,15 @@ pub(crate) enum CwdPromptAction {
 impl CwdPromptAction {
     fn verb(self) -> &'static str {
         match self {
-            CwdPromptAction::Resume => "resume",
-            CwdPromptAction::Fork => "fork",
+            CwdPromptAction::Resume => "恢复",
+            CwdPromptAction::Fork => "派生",
         }
     }
 
     fn past_participle(self) -> &'static str {
         match self {
-            CwdPromptAction::Resume => "resumed",
-            CwdPromptAction::Fork => "forked",
+            CwdPromptAction::Resume => "已恢复",
+            CwdPromptAction::Fork => "已派生",
         }
     }
 }
@@ -281,14 +281,14 @@ impl WidgetRef for &CwdPromptScreen {
 
         column.push("");
         column.push(Line::from(vec![
-            "Choose working directory to ".into(),
+            "选择工作目录以".into(),
             action_verb.bold(),
-            " this session".into(),
+            "此会话".into(),
         ]));
         column.push("");
         column.push(
             Line::from(format!(
-                "Session = latest cwd recorded in the {action_past} session"
+                "会话目录 = {action_past}会话中记录的最新工作目录"
             ))
             .dim()
             .inset(Insets::tlbr(
@@ -296,32 +296,32 @@ impl WidgetRef for &CwdPromptScreen {
             )),
         );
         column.push(
-            Line::from("Current = your current working directory".dim()).inset(Insets::tlbr(
+            Line::from("当前目录 = 你当前的工作目录".dim()).inset(Insets::tlbr(
                 /*top*/ 0, /*left*/ 2, /*bottom*/ 0, /*right*/ 0,
             )),
         );
         column.push("");
         column.push(selection_option_row(
             /*index*/ 0,
-            format!("Use session directory ({session_cwd})"),
+            format!("使用会话目录（{session_cwd}）"),
             self.highlighted == CwdSelection::Session,
         ));
         column.push(selection_option_row(
             /*index*/ 1,
-            format!("Use current directory ({current_cwd})"),
+            format!("使用当前目录（{current_cwd}）"),
             self.highlighted == CwdSelection::Current,
         ));
         column.push(selection_option_row(
             /*index*/ 2,
-            "Always use session directory".to_string(),
+            "始终使用会话目录".to_string(),
             self.highlighted == CwdSelection::SessionAndRemember,
         ));
         if self.allow_remember_current {
             let label = if self.remembered_current_cwd == self.current_cwd {
-                "Always use current directory".to_string()
+                "始终使用当前目录".to_string()
             } else {
                 format!(
-                    "Always use current directory ({})",
+                    "始终使用当前目录（{}）",
                     self.remembered_current_cwd
                 )
             };
