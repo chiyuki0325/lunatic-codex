@@ -339,13 +339,17 @@ impl HooksBrowserView {
         let rows = self.event_rows();
         let show_review = rows.iter().any(|row| row.needs_review > 0);
         let mut lines = Vec::new();
+        let header_label = |label: &str, width: usize| {
+            let padding = width.saturating_sub(UnicodeWidthStr::width(label));
+            format!("{label}{}", " ".repeat(padding))
+        };
         let mut header = vec![
-            format!("{:<EVENT_COLUMN_WIDTH$}", "Event").into(),
-            format!("{:<COUNT_COLUMN_WIDTH$}", "Installed").into(),
-            format!("{:<COUNT_COLUMN_WIDTH$}", "Active").into(),
+            header_label("事件", EVENT_COLUMN_WIDTH).into(),
+            header_label("已安装", COUNT_COLUMN_WIDTH).into(),
+            header_label("已启用", COUNT_COLUMN_WIDTH).into(),
         ];
         if show_review {
-            header.push(format!("{:<COUNT_COLUMN_WIDTH$}", "Review").into());
+            header.push(header_label("待审核", COUNT_COLUMN_WIDTH).into());
         }
         header.push("Description".into());
         lines.push(Line::from(header));
