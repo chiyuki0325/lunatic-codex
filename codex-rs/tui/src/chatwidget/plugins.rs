@@ -561,13 +561,13 @@ impl ChatWidget {
             Ok(response) => {
                 self.plugins_active_tab_id = Some(ALL_PLUGINS_TAB_ID.to_string());
                 self.add_info_message(
-                    format!("Removed marketplace {marketplace_display_name}."),
+                    format!("已移除市场 {marketplace_display_name}。"),
                     Some(match response.installed_root {
                         Some(installed_root) => {
                             format!("市场根目录：{}", installed_root.as_path().display())
                         }
                         None => format!(
-                            "Removed marketplace config for {}.",
+                            "已移除市场 {} 的配置。",
                             response.marketplace_name
                         ),
                     }),
