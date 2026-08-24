@@ -6,10 +6,10 @@ use codex_app_server_protocol::ModelSafetyBufferingUpdatedNotification;
 const SAFETY_BUFFERING_PROMPT_VIEW_ID: &str = "safety-buffering-prompt";
 const SAFETY_BUFFERING_LEARN_MORE_URL: &str = "https://help.openai.com/en/articles/20001326";
 
-const SAFETY_BUFFERING_HEADER: &str =
-    "Our systems are thinking a bit more about this request before responding.";
-const SAFETY_BUFFERING_MESSAGE_WITH_RETRY: &str = "Hang tight or retry with a faster model for a quicker response, though it may be less capable of handling complex requests.";
-const SAFETY_BUFFERING_FOOTER: &str = "No action is required. Codex will keep waiting, and this menu will close when the response is ready.";
+const SAFETY_BUFFERING_HEADER: &str = "系统正在对此请求进行额外检查，然后再作答。";
+const SAFETY_BUFFERING_MESSAGE_WITH_RETRY: &str =
+    "请稍候，或使用更快的模型重试以获得更快响应；但它处理复杂请求的能力可能较弱。";
+const SAFETY_BUFFERING_FOOTER: &str = "无需操作。Codex 会继续等待，并在响应就绪后关闭此菜单。";
 
 #[derive(Debug)]
 struct ActiveSafetyBuffering {
