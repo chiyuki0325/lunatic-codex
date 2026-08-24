@@ -26,7 +26,7 @@ fn capture_view() -> (KeymapCaptureView, UnboundedReceiver<AppEvent>) {
         "jump_top".to_string(),
         KeymapEditIntent::AddAlternate,
         KeymapCaptureMode::Chord,
-        "Jump Top".to_string(),
+        "跳至顶部".to_string(),
         "home".to_string(),
         AppEventSender::new(tx),
     );
@@ -55,19 +55,19 @@ fn chord_capture_instruction_snapshots() {
     let (mut view, _rx) = capture_view();
 
     insta::assert_snapshot!(capture_lines_at_width(&view, /*width*/ 80), @r"
-    Remap Shortcut
-    Action: Jump Top  list.jump_top
-    Current: home
-    Press the first key, then the second. Esc cancels.
+    重新映射快捷键
+    操作：跳至顶部  list.jump_top
+    当前：home
+    先按下第一个按键，再按下第二个按键。Esc 取消。
     ");
 
     view.handle_key_event(ctrl_key(KeyCode::Char('x')));
 
     insta::assert_snapshot!(capture_lines_at_width(&view, /*width*/ 80), @r"
-    Remap Shortcut
-    Action: Jump Top  list.jump_top
-    Current: home
-    First key: ctrl-x. Press the second key. Esc cancels.
+    重新映射快捷键
+    操作：跳至顶部  list.jump_top
+    当前：home
+    第一个按键：ctrl-x。按下第二个按键。Esc 取消。
     ");
 }
 
@@ -76,14 +76,13 @@ fn chord_capture_instructions_wrap_to_narrow_panes() {
     let (mut view, _rx) = capture_view();
 
     insta::assert_snapshot!(capture_lines_at_width(&view, /*width*/ 24), @r"
-    Remap Shortcut
-    Action: Jump Top  list.jump_top
-    Current: home
-    Press the first key,
-    then the second. Esc
-    cancels.
+    重新映射快捷键
+    操作：跳至顶部  list.jump_top
+    当前：home
+    先按下第一个按键，再按下
+    第二个按键。Esc 取消。
     ");
-    assert_eq!(view.desired_height(/*width*/ 24), 6);
+    assert_eq!(view.desired_height(/*width*/ 24), 5);
 
     view.handle_key_event(KeyEvent::new(
         KeyCode::F(/*n*/ 24),
@@ -91,12 +90,12 @@ fn chord_capture_instructions_wrap_to_narrow_panes() {
     ));
 
     insta::assert_snapshot!(capture_lines_at_width(&view, /*width*/ 24), @r"
-    Remap Shortcut
-    Action: Jump Top  list.jump_top
-    Current: home
-    First key: ctrl-alt-
-    shift-f24. Press the
-    second key. Esc cancels.
+    重新映射快捷键
+    操作：跳至顶部  list.jump_top
+    当前：home
+    第一个按键：ctrl-alt-
+    shift-f24。按下第二个按键。
+    Esc 取消。
     ");
     assert_eq!(view.desired_height(/*width*/ 24), 6);
 }
