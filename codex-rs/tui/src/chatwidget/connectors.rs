@@ -208,15 +208,15 @@ impl ChatWidget {
 
     fn connectors_loading_popup_params(&self) -> SelectionViewParams {
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Apps".bold()));
-        header.push(Line::from("Loading installed and available apps...".dim()));
+        header.push(Line::from("应用".bold()));
+        header.push(Line::from("正在加载已安装和可用的应用……".dim()));
 
         SelectionViewParams {
             view_id: Some(CONNECTORS_SELECTION_VIEW_ID),
             header: Box::new(header),
             items: vec![SelectionItem {
-                name: "Loading apps...".to_string(),
-                description: Some("This updates when the full list is ready.".to_string()),
+                name: "正在加载应用……".to_string(),
+                description: Some("完整列表准备就绪后将自动更新。".to_string()),
                 is_disabled: true,
                 ..Default::default()
             }],
@@ -235,7 +235,7 @@ impl ChatWidget {
             .filter(|connector| connector.is_accessible)
             .count();
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Apps".bold()));
+        header.push(Line::from("应用".bold()));
         header.push(Line::from(
             "Use $ to insert an installed app into your prompt.".dim(),
         ));
