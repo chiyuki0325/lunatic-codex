@@ -1013,12 +1013,12 @@ impl ChatWidget {
         if !plugin.summary.installed {
             header.push(PluginDisclosureLine {
                 line: Line::from(vec![
-                    "Data shared with this app is subject to the app's ".into(),
-                    "terms of service".bold(),
-                    " and ".into(),
-                    "privacy policy".bold(),
-                    ". ".into(),
-                    "Learn more".cyan().underlined(),
+                    "与此应用共享的数据受该应用的".into(),
+                    "服务条款".bold(),
+                    "和".into(),
+                    "隐私政策".bold(),
+                    "约束。".into(),
+                    "了解更多".cyan().underlined(),
                     ".".into(),
                 ]),
             });
