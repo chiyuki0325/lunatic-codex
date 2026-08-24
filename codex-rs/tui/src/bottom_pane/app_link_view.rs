@@ -563,14 +563,14 @@ impl AppLinkView {
         lines.push(Line::from(
             if is_auth_suggestion {
                 if is_codex_apps_auth {
-                    "Finish App Sign In"
+                    "完成应用登录"
                 } else {
-                    "Finish Authentication"
+                    "完成认证"
                 }
             } else if is_external_action_suggestion {
-                "Finish in Browser"
+                "在浏览器中完成"
             } else {
-                "Finish App Setup"
+                "完成应用设置"
             }
             .bold(),
         ));
