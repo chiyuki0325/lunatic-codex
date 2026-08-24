@@ -1,0 +1,15 @@
+服务器地址host.home.chyk.ink
+工程目录~/lunatic-codex
+编译所需环境变量：
+export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
+export PKG_CONFIG_ALLOW_CROSS_aarch64_unknown_linux_gnu=1
+export PKG_CONFIG_LIBDIR_aarch64_unknown_linux_gnu=/usr/lib/aarch64-linux-gnu/pkgconfig:/usr/share/pkgconfig
+export V8_FROM_SOURCE=1
+export CLANG_BASE_PATH=/home/chiyuki/lunatic-codex/codex-rs/target/aarch64-unknown-linux-gnu/release/clang
+export GN_ARGS='use_sysroot=false chrome_pgo_phase=0 fatal_linker_warnings=false'
+编译所需补丁：lunatic/devbox-build-fix-v0.149.1分支
+编译命令：cargo build --release --target aarch64-unknown-linux-gnu --bin codex -j 16
+编译code-mode-host：cargo build --release --target aarch64-unknown-linux-gnu --bin codex-code-mode-host -j 16
+
+跑单测时需要带 PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH" 不然找不到just和uv
+服务器位于中国大陆，访问国际资源网络不畅，机器上2080端口有socks5/http代理，也可以使用gg这个命令包装器让任意命令走代理
