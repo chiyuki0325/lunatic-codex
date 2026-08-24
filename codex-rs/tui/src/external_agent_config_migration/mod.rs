@@ -202,7 +202,7 @@ impl ExternalAgentConfigMigrationScreen {
         let description = item
             .description
             .strip_prefix("Migrate ")
-            .map_or_else(|| item.description.clone(), |rest| format!("Import {rest}"));
+            .map_or_else(|| item.description.clone(), |rest| format!("导入 {rest}"));
         let Some(cwd) = item.cwd.as_deref() else {
             return description;
         };
@@ -211,35 +211,39 @@ impl ExternalAgentConfigMigrationScreen {
             description: &str,
             prefix: &str,
             separator: &str,
+            displayed_separator: &str,
             cwd: &std::path::Path,
         ) -> Option<String> {
             let remainder = description.strip_prefix(prefix)?;
             let (left, right) = remainder.split_once(separator)?;
             Some(format!(
-                "{prefix}{}{}{}",
+                "{prefix}{}{displayed_separator}{}",
                 display_path_for(std::path::Path::new(left), cwd),
-                separator,
                 display_path_for(std::path::Path::new(right), cwd)
             ))
         }
 
-        if let Some(reformatted) = reformat_description(&description, "Import ", " into ", cwd) {
+        if let Some(reformatted) = reformat_description(&description, "导入 ", " into ", " 至 ", cwd) {
             return reformatted;
         }
 
-        if let Some(reformatted) =
-            reformat_description(&description, "Import skills from ", " to ", cwd)
-        {
+        if let Some(reformatted) = reformat_description(
+            &description,
+            "导入 skills from ",
+            " to ",
+            " 导入技能至 ",
+            cwd,
+        ) {
             return reformatted;
         }
 
-        if let Some(reformatted) = reformat_description(&description, "Import ", " to ", cwd) {
+        if let Some(reformatted) = reformat_description(&description, "导入 ", " to ", " 至 ", cwd) {
             return reformatted;
         }
 
-        if let Some(source) = description.strip_prefix("Import enabled plugins from ") {
+        if let Some(source) = description.strip_prefix("导入 enabled plugins from ") {
             let description = format!(
-                "Import enabled plugins from {}",
+                "从 {} 导入已启用插件",
                 display_path_for(std::path::Path::new(source), cwd)
             );
             if let Some(details) = &item.details {
@@ -250,17 +254,7 @@ impl ExternalAgentConfigMigrationScreen {
                     .map(|plugin_group| plugin_group.plugin_names.len())
                     .sum::<usize>();
                 return format!(
-                    "{description} ({marketplace_count} {}, {plugin_count} {})",
-                    if marketplace_count == 1 {
-                        "marketplace"
-                    } else {
-                        "marketplaces"
-                    },
-                    if plugin_count == 1 {
-                        "plugin"
-                    } else {
-                        "plugins"
-                    }
+                    "{description}（{marketplace_count} 个市场，{plugin_count} 个插件）"
                 );
             }
             return description;
