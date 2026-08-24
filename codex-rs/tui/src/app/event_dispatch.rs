@@ -2932,7 +2932,7 @@ impl App {
     ) -> AppRunControl {
         let Some(thread_id) = self.active_thread_id.or(self.chat_widget.thread_id()) else {
             self.chat_widget
-                .add_error_message("A thread must start before it can be archived.".to_string());
+                .add_error_message("会话必须启动后才能归档。".to_string());
             return AppRunControl::Continue;
         };
         if self.side_threads.contains_key(&thread_id) {
@@ -2947,7 +2947,7 @@ impl App {
             Ok(()) => AppRunControl::Exit(ExitReason::UserRequested),
             Err(err) => {
                 self.chat_widget
-                    .add_error_message(format!("Failed to archive current thread: {err}"));
+                    .add_error_message(format!("归档当前会话失败：{err}"));
                 AppRunControl::Continue
             }
         }
@@ -2959,7 +2959,7 @@ impl App {
     ) -> AppRunControl {
         let Some(thread_id) = self.active_thread_id.or(self.chat_widget.thread_id()) else {
             self.chat_widget
-                .add_error_message("A thread must start before it can be deleted.".to_string());
+                .add_error_message("会话必须启动后才能删除。".to_string());
             return AppRunControl::Continue;
         };
         if self.side_threads.contains_key(&thread_id) {
@@ -2974,7 +2974,7 @@ impl App {
             Ok(()) => AppRunControl::Exit(ExitReason::UserRequested),
             Err(err) => {
                 self.chat_widget
-                    .add_error_message(format!("Failed to delete current thread: {err}"));
+                    .add_error_message(format!("删除当前会话失败：{err}"));
                 AppRunControl::Continue
             }
         }
