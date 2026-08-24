@@ -605,13 +605,13 @@ impl AppLinkView {
             }
         } else {
             for line in wrap(
-                "Complete app setup on ChatGPT in the browser window that just opened.",
+                "请在刚打开的浏览器窗口中完成 ChatGPT 应用设置。",
                 usable_width,
             ) {
                 lines.push(Line::from(line.into_owned()));
             }
             for line in wrap(
-                "Sign in there if needed, then return here and select \"I already Installed it\".",
+                "如有需要，请在其中登录，然后返回此处并选择“我已安装”。",
                 usable_width,
             ) {
                 lines.push(Line::from(line.into_owned()));
