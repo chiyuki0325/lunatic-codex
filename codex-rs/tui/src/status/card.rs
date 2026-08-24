@@ -398,15 +398,13 @@ impl StatusHistoryCell {
         let output_fmt = format_tokens_compact(self.token_usage.output);
 
         vec![
+            Span::from("总计 "),
             Span::from(total_fmt),
-            Span::from(" total "),
-            Span::from(" (").dim(),
+            Span::from("（").dim(),
             Span::from(input_fmt).dim(),
-            Span::from(" input").dim(),
-            Span::from(" + ").dim(),
+            Span::from(" 输入 + ").dim(),
             Span::from(output_fmt).dim(),
-            Span::from(" output").dim(),
-            Span::from(")").dim(),
+            Span::from(" 输出）").dim(),
         ]
     }
 
@@ -417,12 +415,12 @@ impl StatusHistoryCell {
         let window_fmt = format_tokens_compact(context.window);
 
         Some(vec![
-            Span::from(format!("{percent}% left")),
-            Span::from(" (").dim(),
+            Span::from(format!("剩余 {percent}%")),
+            Span::from("（").dim(),
             Span::from(used_fmt).dim(),
-            Span::from(" used / ").dim(),
+            Span::from(" 已用 / ").dim(),
             Span::from(window_fmt).dim(),
-            Span::from(")").dim(),
+            Span::from("）").dim(),
         ])
     }
 
