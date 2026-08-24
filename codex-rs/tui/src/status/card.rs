@@ -585,8 +585,8 @@ impl StatusHistoryCell {
                 }
                 push_label(labels, seen, "警告");
             }
-            StatusRateLimitData::Unavailable => push_label(labels, seen, "Limits"),
-            StatusRateLimitData::Missing => push_label(labels, seen, "Limits"),
+            StatusRateLimitData::Unavailable => push_label(labels, seen, "限额"),
+            StatusRateLimitData::Missing => push_label(labels, seen, "限额"),
         }
     }
 }
@@ -737,7 +737,7 @@ impl HistoryCell for StatusHistoryCell {
                 (None, None) => "ChatGPT".to_string(),
             },
             StatusAccountDisplay::ApiKey => {
-                "API key configured (run codex login to use ChatGPT)".to_string()
+                "已配置 API 密钥（运行 codex login 以使用 ChatGPT）".to_string()
             }
         });
 
@@ -777,7 +777,7 @@ impl HistoryCell for StatusHistoryCell {
         if self.collaboration_mode.is_some() {
             push_label(&mut labels, &mut seen, "协作模式");
         }
-        push_label(&mut labels, &mut seen, "Token 用量");
+        push_label(&mut labels, &mut seen, "令牌用量");
         if self.token_usage.context_window.is_some() {
             push_label(&mut labels, &mut seen, "上下文窗口");
         }
@@ -788,13 +788,11 @@ impl HistoryCell for StatusHistoryCell {
         let value_width = formatter.value_width(available_inner_width);
 
         let note_first_line = Line::from(vec![
-            Span::from("Visit ").cyan(),
+            Span::from("访问 ").cyan(),
             CHATGPT_USAGE_URL.cyan().underlined(),
-            Span::from(" for up-to-date").cyan(),
+            Span::from("，获取最新的").cyan(),
         ]);
-        let note_second_line = Line::from(vec![
-            Span::from("information on rate limits and credits").cyan(),
-        ]);
+        let note_second_line = Line::from(vec![Span::from("限额和额度信息").cyan()]);
         let note_lines = adaptive_wrap_lines(
             [note_first_line, note_second_line],
             RtOptions::new(available_inner_width),
@@ -818,7 +816,7 @@ impl HistoryCell for StatusHistoryCell {
             );
             let mut wrapped_remote = wrapped_remote.into_iter();
             if let Some(first) = wrapped_remote.next() {
-                lines.push(formatter.line("Remote", first.spans));
+                lines.push(formatter.line("远程", first.spans));
                 lines.extend(wrapped_remote.map(|line| formatter.continuation(line.spans)));
             }
             lines.push(Line::from(Vec::<Span<'static>>::new()));
@@ -863,7 +861,7 @@ impl HistoryCell for StatusHistoryCell {
         lines.push(Line::from(Vec::<Span<'static>>::new()));
         // Hide token usage only for ChatGPT subscribers
         if !matches!(self.account, Some(StatusAccountDisplay::ChatGpt { .. })) {
-            lines.push(formatter.line("Token 用量", self.token_usage_spans()));
+            lines.push(formatter.line("令牌用量", self.token_usage_spans()));
         }
 
         if let Some(spans) = self.context_window_spans() {
