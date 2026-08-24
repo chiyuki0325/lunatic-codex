@@ -509,12 +509,12 @@ impl ChatWidget {
             header: Box::new(DelayedLoadingHeader::new(
                 self.frame_requester.clone(),
                 self.config.animations,
-                format!("Loading details for {plugin_display_name}..."),
+                format!("正在加载 {plugin_display_name} 的详情……"),
                 /*note*/ None,
             )),
             items: vec![SelectionItem {
-                name: "Loading plugin details...".to_string(),
-                description: Some("This updates when plugin details load.".to_string()),
+                name: "正在加载插件详情……".to_string(),
+                description: Some("插件详情加载完成后将自动更新。".to_string()),
                 is_disabled: true,
                 ..Default::default()
             }],
