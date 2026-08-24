@@ -128,7 +128,7 @@ impl MarketplaceProduct {
 
     fn label(self) -> Option<&'static str> {
         match self {
-            Self::OpenAiCurated => Some("OpenAI Curated"),
+            Self::OpenAiCurated => Some("OpenAI 精选"),
             Self::Workspace => Some("Workspace"),
             Self::SharedWithMe => Some("Shared with me"),
             Self::SharedWithMeLink => Some("Shared with me (link)"),
@@ -649,7 +649,7 @@ impl ChatWidget {
         let marketplace_display_name = marketplace_display_name.to_string();
         let mut items = vec![
             SelectionItem {
-                name: "Marketplace removal failed".to_string(),
+                name: "市场移除失败".to_string(),
                 description: Some("Failed to remove the selected marketplace.".to_string()),
                 is_disabled: true,
                 ..Default::default()
@@ -703,7 +703,7 @@ impl ChatWidget {
         header.push(Line::from("Failed to load plugin details.".dim()));
 
         let mut items = vec![SelectionItem {
-            name: "Plugin detail unavailable".to_string(),
+            name: "插件详情不可用".to_string(),
             description: Some(err.to_string()),
             is_disabled: true,
             ..Default::default()
@@ -773,7 +773,7 @@ impl ChatWidget {
 
         tabs.push(SelectionTab {
             id: ALL_PLUGINS_TAB_ID.to_string(),
-            label: "All Plugins".to_string(),
+            label: "所有插件".to_string(),
             header: plugins_header(
                 "浏览可用市场中的插件。".to_string(),
                 format!("Installed {installed} of {total} available plugins."),
@@ -836,7 +836,7 @@ impl ChatWidget {
         );
         if curated_loading && curated_has_entries {
             curated_items.push(remote_section_loading_item(
-                "OpenAI Curated",
+                "OpenAI 精选",
                 OPENAI_CURATED_LOADING_DESCRIPTION,
             ));
         }
@@ -850,7 +850,7 @@ impl ChatWidget {
         }
         tabs.push(SelectionTab {
             id: OPENAI_CURATED_TAB_ID.to_string(),
-            label: "OpenAI Curated".to_string(),
+            label: "OpenAI 精选".to_string(),
             header: plugins_header(
                 "OpenAI Curated marketplace.".to_string(),
                 format!("Installed {curated_installed} of {curated_total} OpenAI Curated plugins."),
@@ -958,7 +958,7 @@ impl ChatWidget {
             tabs,
             initial_tab_id,
             is_searchable: true,
-            search_placeholder: Some("Type to search plugins".to_string()),
+            search_placeholder: Some("输入以搜索插件".to_string()),
             col_width_mode: ColumnWidthMode::AutoAllRows,
             row_display: SelectionRowDisplay::SingleLine,
             name_column_width,
@@ -970,7 +970,7 @@ impl ChatWidget {
     fn marketplace_add_tab(&self) -> SelectionTab {
         SelectionTab {
             id: ADD_MARKETPLACE_TAB_ID.to_string(),
-            label: "Add Marketplace".to_string(),
+            label: "添加市场".to_string(),
             header: plugins_header(
                 "从 Git 仓库或本地根目录添加市场。".to_string(),
                 "输入来源，使其中的插件在此菜单中可用。".to_string(),
@@ -1056,7 +1056,7 @@ impl ChatWidget {
                 let uninstall_cwd = self.config.cwd.to_path_buf();
                 let plugin_display_name = display_name;
                 items.push(SelectionItem {
-                    name: "Uninstall plugin".to_string(),
+                    name: "卸载插件".to_string(),
                     description: Some("立即移除此插件。".to_string()),
                     selected_description: Some("立即移除此插件。".to_string()),
                     actions: vec![Box::new(move |tx| {
@@ -1073,7 +1073,7 @@ impl ChatWidget {
                 });
             } else {
                 items.push(SelectionItem {
-                    name: "Uninstall plugin".to_string(),
+                    name: "卸载插件".to_string(),
                     description: Some(
                         "此远程插件未提供卸载标识。".to_string(),
                     ),
@@ -1083,14 +1083,14 @@ impl ChatWidget {
             }
         } else if plugin.summary.availability == PluginAvailability::DisabledByAdmin {
             items.push(SelectionItem {
-                name: "Install plugin".to_string(),
+                name: "安装插件".to_string(),
                 description: Some("此插件已被工作区管理员禁用。".to_string()),
                 is_disabled: true,
                 ..Default::default()
             });
         } else if plugin.summary.install_policy == PluginInstallPolicy::NotAvailable {
             items.push(SelectionItem {
-                name: "Install plugin".to_string(),
+                name: "安装插件".to_string(),
                 description: Some(
                     "无法从此市场安装该插件。".to_string(),
                 ),
@@ -1102,7 +1102,7 @@ impl ChatWidget {
             let plugin_name = plugin_request_name(&plugin.summary);
             let plugin_display_name = display_name;
             items.push(SelectionItem {
-                name: "Install plugin".to_string(),
+                name: "安装插件".to_string(),
                 description: Some("立即安装此插件。".to_string()),
                 selected_description: Some("立即安装此插件。".to_string()),
                 actions: vec![Box::new(move |tx| {
@@ -1120,7 +1120,7 @@ impl ChatWidget {
             });
         } else {
             items.push(SelectionItem {
-                name: "Install plugin".to_string(),
+                name: "安装插件".to_string(),
                 description: Some("此插件未提供安装位置。".to_string()),
                 is_disabled: true,
                 ..Default::default()
