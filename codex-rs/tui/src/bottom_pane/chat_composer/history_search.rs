@@ -473,7 +473,7 @@ impl ChatComposer {
             return None;
         }
 
-        let prompt_width = Line::from("reverse-i-search: ").width() as u16;
+        let prompt_width = Line::from("反向历史搜索：").width() as u16;
         let query_width = Line::from(search.query.clone()).width() as u16;
         let desired_x = hint_rect
             .x

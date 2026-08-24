@@ -714,7 +714,7 @@ fn footer_from_props_lines(
         FooterMode::QuitShortcutReminder => {
             vec![quit_shortcut_reminder_line(props.quit_shortcut_key)]
         }
-        FooterMode::HistorySearch => vec![Line::from("reverse-i-search: ").dim()],
+        FooterMode::HistorySearch => vec![Line::from("反向历史搜索：").dim()],
         FooterMode::ComposerEmpty => {
             let state = LeftSideState {
                 hint: if show_shortcuts_hint {
