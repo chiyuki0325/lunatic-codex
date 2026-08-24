@@ -6,10 +6,10 @@ use crate::bottom_pane::SelectionItem;
 use crate::bottom_pane::SelectionViewParams;
 use crate::bottom_pane::popup_consts::standard_popup_hint_line;
 
-pub(super) const PLAN_IMPLEMENTATION_TITLE: &str = "Implement this plan?";
-const PLAN_IMPLEMENTATION_YES: &str = "Yes, implement this plan";
-const PLAN_IMPLEMENTATION_CLEAR_CONTEXT: &str = "Yes, clear context and implement";
-const PLAN_IMPLEMENTATION_NO: &str = "No, stay in Plan mode";
+pub(super) const PLAN_IMPLEMENTATION_TITLE: &str = "执行此计划吗？";
+const PLAN_IMPLEMENTATION_YES: &str = "是，执行此计划";
+const PLAN_IMPLEMENTATION_CLEAR_CONTEXT: &str = "是，清除上下文后执行";
+const PLAN_IMPLEMENTATION_NO: &str = "否，留在计划模式";
 pub(super) const PLAN_IMPLEMENTATION_CODING_MESSAGE: &str = "Implement the plan.";
 pub(super) const PLAN_IMPLEMENTATION_CLEAR_CONTEXT_PREFIX: &str = concat!(
     "A previous agent produced the plan below to accomplish the user's task. ",
@@ -17,8 +17,8 @@ pub(super) const PLAN_IMPLEMENTATION_CLEAR_CONTEXT_PREFIX: &str = concat!(
     "user intent, re-read files as needed, and carry the work through ",
     "implementation and verification."
 );
-pub(super) const PLAN_IMPLEMENTATION_DEFAULT_UNAVAILABLE: &str = "Default mode unavailable";
-pub(super) const PLAN_IMPLEMENTATION_NO_APPROVED_PLAN: &str = "No approved plan available";
+pub(super) const PLAN_IMPLEMENTATION_DEFAULT_UNAVAILABLE: &str = "默认模式不可用";
+pub(super) const PLAN_IMPLEMENTATION_NO_APPROVED_PLAN: &str = "没有已批准的计划";
 
 /// Builds the confirmation prompt shown after a plan is approved in Plan mode.
 ///
