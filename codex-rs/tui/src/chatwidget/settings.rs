@@ -716,18 +716,18 @@ impl ChatWidget {
         if previous_mode != next_mode
             && (previous_model != next_model || previous_effort != next_effort)
         {
-            let mut message = format!("Model changed to {next_model}");
+            let mut message = format!("模型已更改为 {next_model}");
             if !next_model.starts_with("codex-auto-") {
                 let reasoning_label = match next_effort.as_ref() {
-                    None | Some(ReasoningEffortConfig::None) => "default",
+                    None | Some(ReasoningEffortConfig::None) => "默认",
                     Some(effort) => effort.as_str(),
                 };
                 message.push(' ');
                 message.push_str(reasoning_label);
             }
-            message.push_str(" for ");
+            message.push_str("（");
             message.push_str(next_mode.display_name());
-            message.push_str(" mode.");
+            message.push_str("模式）。");
             self.add_info_message(message, /*hint*/ None);
         }
         self.request_redraw();
