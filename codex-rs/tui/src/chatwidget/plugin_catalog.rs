@@ -2008,7 +2008,7 @@ fn plugin_detail_description(plugin: &PluginDetail) -> Option<String> {
 
 fn plugin_skill_summary(plugin: &PluginDetail) -> String {
     if plugin.skills.is_empty() {
-        "No plugin skills.".to_string()
+        "没有插件技能。".to_string()
     } else {
         plugin
             .skills
@@ -2021,7 +2021,7 @@ fn plugin_skill_summary(plugin: &PluginDetail) -> String {
 
 fn plugin_app_summary(plugin: &PluginDetail) -> String {
     if plugin.apps.is_empty() {
-        "No plugin apps.".to_string()
+        "没有插件应用。".to_string()
     } else {
         plugin
             .apps
@@ -2034,7 +2034,7 @@ fn plugin_app_summary(plugin: &PluginDetail) -> String {
 
 fn plugin_hook_summary(plugin: &PluginDetail) -> String {
     if plugin.hooks.is_empty() {
-        "No plugin hooks.".to_string()
+        "没有插件 Hook。".to_string()
     } else {
         let mut event_counts = Vec::<(codex_app_server_protocol::HookEventName, usize)>::new();
         for hook in &plugin.hooks {
@@ -2057,7 +2057,7 @@ fn plugin_hook_summary(plugin: &PluginDetail) -> String {
 
 fn plugin_mcp_summary(plugin: &PluginDetail) -> String {
     if plugin.mcp_servers.is_empty() {
-        "No plugin MCP servers.".to_string()
+        "没有插件 MCP 服务器。".to_string()
     } else {
         plugin.mcp_servers.join(", ")
     }
