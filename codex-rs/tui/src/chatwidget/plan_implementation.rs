@@ -70,8 +70,8 @@ pub(super) fn selection_view_params(
     };
 
     let clear_context_description = clear_context_usage_label.map_or_else(
-        || "Fresh thread with this plan.".to_string(),
-        |label| format!("Fresh thread. Context: {label}."),
+        || "使用此计划创建新对话。".to_string(),
+        |label| format!("新对话。上下文：{label}。"),
     );
 
     SelectionViewParams {
@@ -81,7 +81,7 @@ pub(super) fn selection_view_params(
         items: vec![
             SelectionItem {
                 name: PLAN_IMPLEMENTATION_YES.to_string(),
-                description: Some("Switch to Default and start coding.".to_string()),
+                description: Some("切换到默认模式并开始编码。".to_string()),
                 selected_description: None,
                 is_current: false,
                 actions: implement_actions,
@@ -101,7 +101,7 @@ pub(super) fn selection_view_params(
             },
             SelectionItem {
                 name: PLAN_IMPLEMENTATION_NO.to_string(),
-                description: Some("Continue planning with the model.".to_string()),
+                description: Some("继续与模型规划。".to_string()),
                 selected_description: None,
                 is_current: false,
                 actions: Vec::new(),
