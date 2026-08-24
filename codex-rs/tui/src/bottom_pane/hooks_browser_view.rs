@@ -526,7 +526,7 @@ impl HooksBrowserView {
             } else {
                 format!("上限：约 {limit} 个令牌")
             };
-            lines.push(detail_line("Context", &value));
+            lines.push(detail_line("上下文", &value));
         }
         lines.push(detail_line("Trust", hook_trust_label(hook.trust_status)));
         lines
