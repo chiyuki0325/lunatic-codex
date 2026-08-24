@@ -1045,7 +1045,7 @@ impl ChatWidget {
         if plugin.summary.installed {
             if plugin.summary.install_policy == PluginInstallPolicy::InstalledByDefault {
                 items.push(SelectionItem {
-                    name: "Installed by admin".to_string(),
+                    name: "由管理员安装".to_string(),
                     description: Some(
                         "此插件由工作区管理员安装。".to_string(),
                     ),
@@ -1413,7 +1413,7 @@ fn plugin_detail_status_label(plugin: &PluginSummary) -> &'static str {
     }
     if plugin.install_policy == PluginInstallPolicy::InstalledByDefault {
         return if plugin.installed {
-            "Installed by admin"
+            "由管理员安装"
         } else {
             "由管理员启用"
         };
@@ -1427,8 +1427,8 @@ fn plugin_detail_status_label(plugin: &PluginSummary) -> &'static str {
     } else {
         match plugin.install_policy {
             PluginInstallPolicy::NotAvailable => "不可安装",
-            PluginInstallPolicy::Available => "Can be installed",
-            PluginInstallPolicy::InstalledByDefault => "Installed by admin",
+            PluginInstallPolicy::Available => "可安装",
+            PluginInstallPolicy::InstalledByDefault => "由管理员安装",
         }
     }
 }
@@ -1436,7 +1436,7 @@ fn plugin_detail_status_label(plugin: &PluginSummary) -> &'static str {
 fn plugin_metadata_items(plugin: &PluginDetail) -> Vec<SelectionItem> {
     let mut items = Vec::new();
     items.push(SelectionItem {
-        name: "Source".to_string(),
+        name: "来源".to_string(),
         description: Some(plugin_source_summary(plugin)),
         is_disabled: true,
         ..Default::default()
