@@ -617,8 +617,8 @@ impl ChatWidget {
                 let error_count = response.errors.len();
                 if selected_count == 0 {
                     self.add_info_message(
-                        "No configured Git marketplaces to upgrade.".to_string(),
-                        Some("Only configured Git marketplaces can be upgraded.".to_string()),
+                        "没有可升级的已配置 Git 市场。".to_string(),
+                        Some("仅已配置的 Git 市场可以升级。".to_string()),
                     );
                     return;
                 }
