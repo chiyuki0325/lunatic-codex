@@ -2,8 +2,8 @@
 
 use super::*;
 
-const MISALIGNMENT_POLICY_TITLE: &str = "Chat stopped as a precaution";
-const MISALIGNMENT_POLICY_DESCRIPTION: &str = "We couldn’t confirm the agent was acting safely and following your instructions. To continue working, start or resume another chat.";
+const MISALIGNMENT_POLICY_TITLE: &str = "对话已作为预防措施停止";
+const MISALIGNMENT_POLICY_DESCRIPTION: &str = "我们无法确认智能体正在安全地遵循你的指令。要继续工作，请新建或恢复其他对话。";
 
 impl ChatWidget {
     pub(crate) fn has_misalignment_policy_violation(&self) -> bool {
@@ -46,13 +46,13 @@ impl ChatWidget {
     pub(crate) fn show_misalignment_policy_precaution(&mut self) {
         let mut items = vec![
             SelectionItem {
-                name: "New chat".to_string(),
+                name: "新建对话".to_string(),
                 actions: vec![Box::new(|tx| tx.send(AppEvent::NewSession { name: None }))],
                 dismiss_on_select: true,
                 ..Default::default()
             },
             SelectionItem {
-                name: "Resume another chat".to_string(),
+                name: "恢复其他对话".to_string(),
                 actions: vec![Box::new(|tx| tx.send(AppEvent::OpenResumePicker))],
                 ..Default::default()
             },
@@ -61,7 +61,7 @@ impl ChatWidget {
             items.insert(
                 1,
                 SelectionItem {
-                    name: "Agent command center".to_string(),
+                    name: "智能体指挥中心".to_string(),
                     actions: vec![Box::new(|tx| tx.send(AppEvent::OpenAgentsOverview))],
                     ..Default::default()
                 },
