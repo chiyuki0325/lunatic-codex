@@ -461,8 +461,8 @@ impl ChatWidget {
                 self.plugin_install_auth_flow = None;
                 if self.plugin_install_apps_needing_auth.is_empty() {
                     self.add_info_message(
-                        format!("Installed {plugin_display_name} plugin."),
-                        Some("No additional app authentication is required.".to_string()),
+                        format!("已安装插件 {plugin_display_name}。"),
+                        Some("无需额外的应用认证。".to_string()),
                     );
                     true
                 } else {
@@ -473,7 +473,7 @@ impl ChatWidget {
                         .collect::<Vec<_>>()
                         .join(", ");
                     self.add_info_message(
-                        format!("Installed {plugin_display_name} plugin."),
+                        format!("已安装插件 {plugin_display_name}。"),
                         Some(format!(
                             "{} app(s) still need authentication: {app_names}",
                             self.plugin_install_apps_needing_auth.len()
