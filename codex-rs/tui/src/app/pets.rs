@@ -115,7 +115,7 @@ impl App {
             }
             Err(err) => {
                 self.chat_widget
-                    .add_error_message(format!("Failed to disable pets: {err}"));
+                    .add_error_message(format!("禁用宠物失败：{err}"));
             }
         }
     }
@@ -159,13 +159,13 @@ impl App {
                     }
                     Err(err) => {
                         self.chat_widget
-                            .add_error_message(format!("Failed to save pet selection: {err}"));
+                            .add_error_message(format!("保存宠物选择失败：{err}"));
                     }
                 }
             }
             Err(err) => {
                 self.chat_widget
-                    .add_error_message(format!("Failed to load pet: {err}"));
+                    .add_error_message(format!("加载宠物失败：{err}"));
             }
         }
         tui.frame_requester().schedule_frame();
@@ -190,7 +190,7 @@ impl App {
             }
             Err(err) => {
                 self.chat_widget
-                    .add_warning_message(format!("Failed to load configured pet: {err}"));
+                    .add_warning_message(format!("加载已配置的宠物失败：{err}"));
             }
         }
     }
