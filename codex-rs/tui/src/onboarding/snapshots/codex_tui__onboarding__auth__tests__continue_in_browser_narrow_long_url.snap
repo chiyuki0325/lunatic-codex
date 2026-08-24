@@ -2,10 +2,9 @@
 source: tui/src/onboarding/auth.rs
 expression: contents
 ---
-  Finish signing in via your browser
+  请在浏览器中完成登录
 
-  If the link doesn't open automatically,
-open the following link to authenticate:
+  链接未自动打开？请用以下链接认证：
 
   https://auth.openai.com/oauth/authorize?re
 sponse_type=code&client_id=app_EMoamEEZ73f0C
@@ -19,7 +18,6 @@ d_organizations=true&codex_cli_simplified_fl
 ow=true&state=8cHjQ4nVx2Yp7Lm9Rk3Wf6Ta1Bs5Du
 0Ei4Go7Nz2PqM&originator=codex_cli_rs
 
-  On a remote or headless machine? Press esc
-and choose Sign in with Device Code.
+  远程或无头设备？按 esc，使用设备代码登录。
 
-  Press esc to cancel
+  按 esc 取消
