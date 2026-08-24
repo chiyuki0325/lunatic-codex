@@ -296,8 +296,8 @@ impl HooksBrowserView {
 
     fn event_header_lines() -> Vec<Line<'static>> {
         vec![
-            "Hooks".bold().into(),
-            "Lifecycle hooks from config and enabled plugins."
+            "Hook".bold().into(),
+            "来自配置和已启用插件的生命周期 Hook。"
                 .dim()
                 .into(),
         ]
