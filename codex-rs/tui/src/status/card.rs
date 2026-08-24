@@ -436,8 +436,8 @@ impl StatusHistoryCell {
             StatusRateLimitData::Available(rows_data) => {
                 if rows_data.is_empty() {
                     return vec![formatter.line(
-                        "Limits",
-                        vec![Span::from("not available for this account").dim()],
+                        "限额",
+                        vec![Span::from("此账户不可用").dim()],
                     )];
                 }
 
@@ -447,11 +447,11 @@ impl StatusHistoryCell {
                 let mut lines =
                     self.rate_limit_row_lines(rows_data, available_inner_width, formatter);
                 lines.push(formatter.line(
-                    "Warning",
+                    "警告",
                     vec![Span::from(if state.refreshing_rate_limits {
-                        "limits may be stale - run /status again shortly."
+                        "限额信息可能已过期，请稍后再次运行 /status。"
                     } else {
-                        "limits may be stale - start new turn to refresh."
+                        "限额信息可能已过期，请开始新轮次以刷新。"
                     })
                     .dim()],
                 ));
@@ -459,17 +459,17 @@ impl StatusHistoryCell {
             }
             StatusRateLimitData::Unavailable => {
                 vec![formatter.line(
-                    "Limits",
-                    vec![Span::from("not available for this account").dim()],
+                    "限额",
+                    vec![Span::from("此账户不可用").dim()],
                 )]
             }
             StatusRateLimitData::Missing => {
                 vec![formatter.line(
-                    "Limits",
+                    "限额",
                     vec![Span::from(if state.refreshing_rate_limits {
-                        "refresh requested; run /status again shortly."
+                        "已请求刷新，请稍后再次运行 /status。"
                     } else {
-                        "data not available yet"
+                        "数据暂不可用"
                     })
                     .dim()],
                 )]
@@ -574,7 +574,7 @@ impl StatusHistoryCell {
         match &state.rate_limits {
             StatusRateLimitData::Available(rows) => {
                 if rows.is_empty() {
-                    push_label(labels, seen, "Limits");
+                    push_label(labels, seen, "限额");
                 } else {
                     for row in rows {
                         push_label(labels, seen, row.label.as_str());
@@ -585,7 +585,7 @@ impl StatusHistoryCell {
                 for row in rows {
                     push_label(labels, seen, row.label.as_str());
                 }
-                push_label(labels, seen, "Warning");
+                push_label(labels, seen, "警告");
             }
             StatusRateLimitData::Unavailable => push_label(labels, seen, "Limits"),
             StatusRateLimitData::Missing => push_label(labels, seen, "Limits"),
