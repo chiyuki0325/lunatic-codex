@@ -29,7 +29,7 @@ impl HistoryCell for UnifiedExecInteractionCell {
         let mut header_spans = if waited_only {
             vec!["• Waited for background terminal".bold()]
         } else {
-            vec!["↳ ".dim(), "Interacted with background terminal".bold()]
+            vec!["↳ ".dim(), "已与后台终端交互".bold()]
         };
         if let Some(command) = &self.command_display
             && !command.is_empty()
@@ -72,10 +72,10 @@ impl HistoryCell for UnifiedExecInteractionCell {
                 .filter(|command| !command.is_empty())
             {
                 out.push(Line::from(format!(
-                    "Waited for background terminal: {command}"
+                    "等待后台终端：{command}"
                 )));
             } else {
-                out.push(Line::from("Waited for background terminal"));
+                out.push(Line::from("正在等待后台终端"));
             }
             return out;
         }
@@ -86,10 +86,10 @@ impl HistoryCell for UnifiedExecInteractionCell {
             .filter(|command| !command.is_empty())
         {
             out.push(Line::from(format!(
-                "Interacted with background terminal: {command}"
+                "与后台终端交互：{command}"
             )));
         } else {
-            out.push(Line::from("Interacted with background terminal"));
+            out.push(Line::from("已与后台终端交互"));
         }
         out.extend(raw_lines_from_source(&self.stdin));
         out
