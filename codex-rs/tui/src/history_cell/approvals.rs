@@ -139,8 +139,8 @@ pub fn new_approval_decision_cell(
                     "✔ ".green(),
                     vec![
                         actor.subject().into(),
-                        "persisted".bold(),
-                        " Codex network access to ".into(),
+                        "已永久保存".bold(),
+                        " Codex 的网络访问权限：".into(),
                         Span::from(target).dim(),
                     ],
                 ),
