@@ -44,37 +44,32 @@ impl App {
         if matches!(self.app_server_target, AppServerTarget::Embedded) {
             let workload_identity_selected = codex_login::is_workload_identity_selected();
             self.chat_widget.show_selection_view(SelectionViewParams {
-                title: Some("Shared agents unavailable".to_string()),
+                title: Some("共享智能体不可用".to_string()),
                 subtitle: Some(
                     if workload_identity_selected {
-                        "The agents dashboard is unavailable while workload identity is active."
+                        "启用工作负载身份时，智能体面板不可用。"
                     } else if cfg!(unix) {
-                        "This session isn’t connected to a shared background server."
+                        "此会话未连接到共享后台服务器。"
                     } else {
-                        "Connect to a remote background server to use the agents dashboard."
+                        "请连接到远程后台服务器以使用智能体面板。"
                     }
                     .to_string(),
                 ),
                 footer_note: (cfg!(unix) && !workload_identity_selected).then(|| {
-                    Line::from(
-                        "Starting a background server will not interrupt or move this session."
-                            .dim(),
-                    )
+                    Line::from("启动后台服务器不会中断或迁移此会话。".dim())
                 }),
                 footer_hint: Some(standard_popup_hint_line_for_keymap(&self.keymap.list)),
                 items: [
                     #[cfg(unix)]
                     (!workload_identity_selected).then(|| SelectionItem {
-                        name: "Start background server".to_string(),
-                        description: Some(
-                            "Open `codex agents` in another terminal afterward.".to_string(),
-                        ),
+                        name: "启动后台服务器".to_string(),
+                        description: Some("随后请在另一个终端中运行 `codex agents`。".to_string()),
                         actions: vec![Box::new(|tx| tx.send(AppEvent::StartAgentsDaemon))],
                         dismiss_on_select: true,
                         ..Default::default()
                     }),
                     Some(SelectionItem {
-                        name: "Return to this session".to_string(),
+                        name: "返回此会话".to_string(),
                         dismiss_on_select: true,
                         ..Default::default()
                     }),
