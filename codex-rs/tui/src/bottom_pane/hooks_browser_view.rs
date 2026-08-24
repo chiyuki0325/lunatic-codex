@@ -749,8 +749,8 @@ fn hook_is_active(hook: &HookMetadata) -> bool {
 fn review_needed_message(count: usize) -> Option<String> {
     match count {
         0 => None,
-        1 => Some("1 hook needs review before it can run.".to_string()),
-        count => Some(format!("{count} hooks need review before they can run.")),
+        1 => Some("1 个 Hook 需要审核后才能运行。".to_string()),
+        count => Some(format!("{count} 个 Hook 需要审核后才能运行。")),
     }
 }
 
@@ -763,10 +763,10 @@ struct EventRow {
 
 fn hook_trust_label(status: HookTrustStatus) -> &'static str {
     match status {
-        HookTrustStatus::Managed => "Managed",
-        HookTrustStatus::Trusted => "Trusted",
-        HookTrustStatus::Untrusted => "New hook - review required",
-        HookTrustStatus::Modified => "Modified since last trusted - review required",
+        HookTrustStatus::Managed => "受管理",
+        HookTrustStatus::Trusted => "已信任",
+        HookTrustStatus::Untrusted => "新 Hook - 需要审核",
+        HookTrustStatus::Modified => "自上次信任后已修改 - 需要审核",
     }
 }
 
@@ -788,17 +788,17 @@ fn event_label(event_name: HookEventName) -> &'static str {
 
 fn event_description(event_name: HookEventName) -> &'static str {
     match event_name {
-        HookEventName::PreToolUse => "Before a tool executes",
-        HookEventName::PermissionRequest => "When permission is requested",
-        HookEventName::PostToolUse => "After a tool executes",
-        HookEventName::PreCompact => "Before context compaction",
-        HookEventName::PostCompact => "After context compaction",
-        HookEventName::SessionStart => "When a new session starts",
-        HookEventName::SessionEnd => "Right before a session ends",
-        HookEventName::UserPromptSubmit => "When the user submits a prompt",
-        HookEventName::SubagentStart => "When a subagent is created",
-        HookEventName::SubagentStop => "Right before a subagent ends its turn",
-        HookEventName::Stop => "Right before Codex ends its turn",
+        HookEventName::PreToolUse => "工具执行前",
+        HookEventName::PermissionRequest => "请求权限时",
+        HookEventName::PostToolUse => "工具执行后",
+        HookEventName::PreCompact => "压缩上下文前",
+        HookEventName::PostCompact => "压缩上下文后",
+        HookEventName::SessionStart => "新会话开始时",
+        HookEventName::SessionEnd => "会话结束前",
+        HookEventName::UserPromptSubmit => "用户提交提示时",
+        HookEventName::SubagentStart => "创建子智能体时",
+        HookEventName::SubagentStop => "子智能体结束轮次前",
+        HookEventName::Stop => "Codex 结束轮次前",
     }
 }
 
