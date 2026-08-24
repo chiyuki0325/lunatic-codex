@@ -313,12 +313,12 @@ impl McpServerElicitationFormRequest {
                 options.extend([
                     McpServerElicitationOption {
                         label: "拒绝".to_string(),
-                        description: Some("Decline this request and continue.".to_string()),
+                        description: Some("拒绝此请求并继续。".to_string()),
                         value: Value::String(APPROVAL_DECLINE_VALUE.to_string()),
                     },
                     McpServerElicitationOption {
                         label: "取消".to_string(),
-                        description: Some("Cancel this request".to_string()),
+                        description: Some("取消此请求".to_string()),
                         value: Value::String(APPROVAL_CANCEL_VALUE.to_string()),
                     },
                 ]);
@@ -1986,12 +1986,12 @@ mod tests {
                             },
                             McpServerElicitationOption {
                                 label: "拒绝".to_string(),
-                                description: Some("Decline this request and continue.".to_string()),
+                                description: Some("拒绝此请求并继续。".to_string()),
                                 value: Value::String(APPROVAL_DECLINE_VALUE.to_string()),
                             },
                             McpServerElicitationOption {
                                 label: "取消".to_string(),
-                                description: Some("Cancel this request".to_string()),
+                                description: Some("取消此请求".to_string()),
                                 value: Value::String(APPROVAL_CANCEL_VALUE.to_string()),
                             },
                         ],
