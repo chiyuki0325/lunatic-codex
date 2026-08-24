@@ -118,8 +118,8 @@ impl WidgetRef for &ExternalAgentConfigMigrationScreen {
         .areas(inner_area);
 
         let title = match self.view {
-            MigrationView::Summary => "Import setup",
-            MigrationView::Customize => "Choose what to import",
+            MigrationView::Summary => "导入配置",
+            MigrationView::Customize => "选择要导入的内容",
         };
         let heading = Line::from(vec!["> ".into(), title.bold()]);
         heading.render(header_area, buf);
