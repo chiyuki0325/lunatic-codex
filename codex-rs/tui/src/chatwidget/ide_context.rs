@@ -35,7 +35,7 @@ impl ChatWidget {
         if self.ide_context.is_enabled() {
             self.ide_context.disable();
             self.sync_ide_context_status_indicator();
-            self.add_info_message("IDE context is off.".to_string(), /*hint*/ None);
+            self.add_info_message("IDE 上下文已关闭。".to_string(), /*hint*/ None);
         } else {
             self.ide_context.enable();
             self.add_ide_context_status_message();
@@ -52,13 +52,13 @@ impl ChatWidget {
             "off" => {
                 self.ide_context.disable();
                 self.sync_ide_context_status_indicator();
-                self.add_info_message("IDE context is off.".to_string(), /*hint*/ None);
+                self.add_info_message("IDE 上下文已关闭。".to_string(), /*hint*/ None);
             }
             "status" => {
                 self.add_ide_context_status_message();
             }
             _ => {
-                self.add_error_message("Usage: /ide [on|off|status]".to_string());
+                self.add_error_message("用法：/ide [on|off|status]".to_string());
             }
         }
     }
@@ -80,7 +80,7 @@ impl ChatWidget {
                 if !self.ide_context.prompt_fetch_warned {
                     self.ide_context.prompt_fetch_warned = true;
                     self.add_info_message(
-                        "IDE context was skipped for this message.".to_string(),
+                        "此消息未使用 IDE 上下文。".to_string(),
                         Some(err.prompt_skip_hint()),
                     );
                 }
@@ -91,7 +91,7 @@ impl ChatWidget {
     fn add_ide_context_status_message(&mut self) {
         if !self.ide_context.is_enabled() {
             self.sync_ide_context_status_indicator();
-            self.add_info_message("IDE context is off.".to_string(), /*hint*/ None);
+            self.add_info_message("IDE 上下文已关闭。".to_string(), /*hint*/ None);
             return;
         }
 
@@ -101,16 +101,15 @@ impl ChatWidget {
                 self.sync_ide_context_status_indicator();
                 if crate::ide_context::has_prompt_context(&context) {
                     self.add_info_message(
-                        "IDE context is on.".to_string(),
+                        "IDE 上下文已开启。".to_string(),
                         Some(
-                            "Future messages will include your current IDE selection and open tabs."
-                                .to_string(),
+                            "后续消息将包含当前 IDE 选区和已打开的标签页。".to_string(),
                         ),
                     );
                 } else {
                     self.add_info_message(
-                        "IDE context is on.".to_string(),
-                        Some("Connected to your IDE.".to_string()),
+                        "IDE 上下文已开启。".to_string(),
+                        Some("已连接到 IDE。".to_string()),
                     );
                 }
             }
