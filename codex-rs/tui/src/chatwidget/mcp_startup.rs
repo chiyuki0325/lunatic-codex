@@ -11,8 +11,8 @@ use codex_app_server_protocol::McpServerStatusUpdatedNotification;
 
 use super::ChatWidget;
 
-const MCP_STARTUP_SINGLE_HEADER_PREFIX: &str = "Booting MCP server:";
-const MCP_STARTUP_MULTI_HEADER_PREFIX: &str = "Starting MCP servers";
+const MCP_STARTUP_SINGLE_HEADER_PREFIX: &str = "正在启动 MCP 服务器：";
+const MCP_STARTUP_MULTI_HEADER_PREFIX: &str = "正在启动 MCP 服务器";
 
 #[derive(Debug, Clone)]
 pub(crate) enum McpStartupStatus {
