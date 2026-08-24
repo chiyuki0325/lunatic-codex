@@ -59,7 +59,7 @@ impl ChatWidget {
         );
         let view = CustomPromptView::new(
             "保存对话".to_string(),
-            "Type a filename and press Enter".to_string(),
+            "输入文件名后按下 Enter".to_string(),
             filename,
             /*context_label*/ None,
             Box::new(move |filename| {
