@@ -116,11 +116,11 @@ impl ChatWidget {
         }
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
-            title: Some("Select a commit to review".to_string()),
+            title: Some("选择要审查的提交".to_string()),
             footer_hint: Some(standard_popup_hint_line()),
             items,
             is_searchable: true,
-            search_placeholder: Some("Type to search commits".to_string()),
+            search_placeholder: Some("输入内容以搜索提交".to_string()),
             ..Default::default()
         });
     }
@@ -129,7 +129,7 @@ impl ChatWidget {
         let tx = self.app_event_tx.clone();
         let view = CustomPromptView::new(
             "自定义审查说明".to_string(),
-            "Type instructions and press Enter".to_string(),
+            "输入说明后按下 Enter".to_string(),
             /*initial_text*/ String::new(),
             /*context_label*/ None,
             Box::new(move |prompt: String| {
@@ -172,11 +172,11 @@ pub(crate) fn show_review_commit_picker_with_entries(
     }
 
     chat.bottom_pane.show_selection_view(SelectionViewParams {
-        title: Some("Select a commit to review".to_string()),
+        title: Some("选择要审查的提交".to_string()),
         footer_hint: Some(standard_popup_hint_line()),
         items,
         is_searchable: true,
-        search_placeholder: Some("Type to search commits".to_string()),
+        search_placeholder: Some("输入内容以搜索提交".to_string()),
         ..Default::default()
     });
 }
