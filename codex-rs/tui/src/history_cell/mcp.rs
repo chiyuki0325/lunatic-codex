@@ -111,7 +111,7 @@ impl McpToolCallCell {
     pub(crate) fn mark_failed(&mut self) {
         let elapsed = self.start_time.elapsed();
         self.duration = Some(elapsed);
-        self.result = Some(Err("interrupted".to_string()));
+        self.result = Some(Err("已中断".to_string()));
     }
 
     fn result_kind(&self) -> McpResultKind {
