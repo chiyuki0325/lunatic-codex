@@ -1153,18 +1153,18 @@ fn permissions_display(config: &Config) -> String {
         return "Workspace".to_string();
     }
     if permission_profile == PermissionProfile::Disabled {
-        return "Full Access".to_string();
+        return "完全访问".to_string();
     }
 
-    "Custom permissions".to_string()
+    "自定义权限".to_string()
 }
 
 fn approval_mode_display(config: &Config) -> String {
     let approval_policy = AskForApproval::from(config.permissions.approval_policy.value());
     if approval_policy == AskForApproval::OnRequest {
         return match config.approvals_reviewer {
-            ApprovalsReviewer::AutoReview => "Approve for me".to_string(),
-            ApprovalsReviewer::User => "Ask for approval".to_string(),
+            ApprovalsReviewer::AutoReview => "为我批准".to_string(),
+            ApprovalsReviewer::User => "请求批准".to_string(),
         };
     }
 
