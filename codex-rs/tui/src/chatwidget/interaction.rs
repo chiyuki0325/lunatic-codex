@@ -124,7 +124,7 @@ impl ChatWidget {
             return;
         }
 
-        const REVIEW_STEER_UNAVAILABLE_MESSAGE: &str = "Steer messages aren't supported during /review. Press Ctrl+C now to cancel the review.";
+        const REVIEW_STEER_UNAVAILABLE_MESSAGE: &str = "/review 期间不支持引导消息。请立即按下 Ctrl+C 取消审核。";
 
         if self.chat_keymap.interrupt_turn.is_pressed(key_event)
             && self.review.is_review_mode
