@@ -571,13 +571,13 @@ impl ChatWidget {
     pub(super) fn plugins_error_popup_params(&self, err: &str) -> SelectionViewParams {
         let mut header = ColumnRenderable::new();
         header.push(Line::from("插件".bold()));
-        header.push(Line::from("Failed to load plugins.".dim()));
+        header.push(Line::from("无法加载插件。".dim()));
 
         SelectionViewParams {
             view_id: Some(PLUGINS_SELECTION_VIEW_ID),
             header: Box::new(header),
             items: vec![SelectionItem {
-                name: "Plugin marketplace unavailable".to_string(),
+                name: "插件市场不可用".to_string(),
                 description: Some(err.to_string()),
                 is_disabled: true,
                 ..Default::default()
