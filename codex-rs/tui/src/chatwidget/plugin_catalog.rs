@@ -814,7 +814,7 @@ impl ChatWidget {
         let (curated_empty_name, curated_empty_description) =
             if curated_loading && !curated_has_entries {
                 (
-                    "Loading OpenAI Curated plugins...",
+                    "正在加载 OpenAI 精选插件……",
                     OPENAI_CURATED_LOADING_DESCRIPTION,
                 )
             } else if let Some(section_error) = by_openai_section_error
@@ -1709,7 +1709,7 @@ fn is_personal_marketplace_path(marketplace_path: &AbsolutePathBuf) -> bool {
 
 fn remote_section_loading_item(label: &str, description: &str) -> SelectionItem {
     SelectionItem {
-        name: format!("Loading {label} plugins..."),
+        name: format!("正在加载 {label} 插件……"),
         description: Some(description.to_string()),
         is_disabled: true,
         ..Default::default()
