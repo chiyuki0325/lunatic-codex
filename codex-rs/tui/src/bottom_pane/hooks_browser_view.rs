@@ -513,10 +513,10 @@ impl HooksBrowserView {
                 ));
             }
             HookHandlerMetadata::Prompt {} => {
-                lines.push(detail_line("Handler", "Prompt"));
+                lines.push(detail_line("处理器", "提示"));
             }
             HookHandlerMetadata::Agent {} => {
-                lines.push(detail_line("Handler", "Agent"));
+                lines.push(detail_line("处理器", "智能体"));
             }
         }
         lines.push(detail_line("Timeout", &format!("{}s", hook.timeout_sec)));
