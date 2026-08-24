@@ -332,7 +332,7 @@ impl RequestUserInputOverlay {
     fn auto_resolution_countdown_text_at(&self, now: Instant) -> Option<String> {
         match self.auto_resolution_timing_at(now) {
             AutoResolutionTiming::VisibleCountdown { remaining } => Some(format!(
-                "auto-resolves in {}",
+                "将在 {} 后自动解析",
                 format_auto_resolution_remaining(remaining)
             )),
             AutoResolutionTiming::Disabled
