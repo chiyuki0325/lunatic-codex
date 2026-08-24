@@ -197,7 +197,7 @@ const PLAN_MODE_REASONING_SCOPE_ALL_MODES: &str = "应用到全局默认值和 P
 const CONNECTORS_SELECTION_VIEW_ID: &str = "connectors-selection";
 const PET_SELECTION_LOADING_VIEW_ID: &str = "pet-selection-loading";
 const AMBIENT_PET_WRAP_GAP_COLUMNS: u16 = 2;
-const TUI_STUB_MESSAGE: &str = "Not available in TUI yet.";
+const TUI_STUB_MESSAGE: &str = "TUI 暂不支持。";
 const PARENT_OWNED_INPUT_MESSAGE: &str =
     "This sub-agent is controlled by its parent. Direct input is disabled.";
 
