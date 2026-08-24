@@ -186,7 +186,7 @@ impl AppLinkViewParams {
         Self {
             app_id: elicitation_id.to_string(),
             title: "需要操作".to_string(),
-            description: Some(format!("Server: {server_name}")),
+            description: Some(format!("服务器：{server_name}")),
             instructions: "请在浏览器中完成请求的操作，然后返回此处。"
                 .to_string(),
             url: url.to_string(),
@@ -963,7 +963,7 @@ mod tests {
             AppLinkViewParams {
                 app_id: "payment-123".to_string(),
                 title: "需要操作".to_string(),
-                description: Some("Server: payments".to_string()),
+                description: Some("服务器：payments".to_string()),
                 instructions: "请在浏览器中完成请求的操作，然后返回此处。"
                     .to_string(),
                 url: "https://payments.example/checkout/123".to_string(),
