@@ -1491,10 +1491,10 @@ impl App {
                     let error = format_config_error(&err);
                     tracing::error!(error = %error, "failed to persist conversation model");
                     self.chat_widget
-                        .add_error_message(format!("Failed to save default model: {error}"));
+                        .add_error_message(format!("保存默认模型失败：{error}"));
                 } else {
                     self.chat_widget.add_info_message(
-                        format!("Model changed to {model} {effort} for this conversation"),
+                        format!("此会话的模型已更改为 {model} {effort}"),
                         /*hint*/ None,
                     );
                 }
@@ -2041,7 +2041,7 @@ impl App {
                             "failed to persist model selection"
                         );
                         self.chat_widget
-                            .add_error_message(format!("Failed to save default model: {error}"));
+                            .add_error_message(format!("保存默认模型失败：{error}"));
                     }
                 }
             }
