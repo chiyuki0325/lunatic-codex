@@ -236,11 +236,11 @@ impl WidgetRef for SkillPopup {
 
 fn skill_popup_hint_line() -> Line<'static> {
     Line::from(vec![
-        "Press ".into(),
+        "按下 ".into(),
         key_hint::plain(KeyCode::Enter).into(),
-        " to insert or ".into(),
+        " 以插入，或按下 ".into(),
         key_hint::plain(KeyCode::Esc).into(),
-        " to close".into(),
+        " 以关闭".into(),
     ])
 }
 
