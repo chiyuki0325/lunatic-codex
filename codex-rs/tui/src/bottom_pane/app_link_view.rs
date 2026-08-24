@@ -161,7 +161,7 @@ impl AppLinkViewParams {
             app_id,
             title,
             description: None,
-            instructions: "Sign in to this app in your browser, then return here.".to_string(),
+            instructions: "请在浏览器中登录此应用，然后返回此处。".to_string(),
             url: url.to_string(),
             is_installed: true,
             is_enabled: true,
@@ -185,7 +185,7 @@ impl AppLinkViewParams {
     ) -> Self {
         Self {
             app_id: elicitation_id.to_string(),
-            title: "Action required".to_string(),
+            title: "需要操作".to_string(),
             description: Some(format!("Server: {server_name}")),
             instructions: "Complete the requested action in your browser, then return here."
                 .to_string(),
@@ -962,7 +962,7 @@ mod tests {
             params,
             AppLinkViewParams {
                 app_id: "payment-123".to_string(),
-                title: "Action required".to_string(),
+                title: "需要操作".to_string(),
                 description: Some("Server: payments".to_string()),
                 instructions: "Complete the requested action in your browser, then return here."
                     .to_string(),
@@ -1645,7 +1645,7 @@ mod tests {
                 app_id: "connector_google_calendar".to_string(),
                 title: "Google Calendar".to_string(),
                 description: None,
-                instructions: "Sign in to this app in your browser, then return here.".to_string(),
+                instructions: "请在浏览器中登录此应用，然后返回此处。".to_string(),
                 url: "https://chatgpt.com/apps/google-calendar/connector_google_calendar"
                     .to_string(),
                 is_installed: true,
