@@ -17,19 +17,19 @@ struct McpImageOutputCell;
 
 impl HistoryCell for McpImageOutputCell {
     fn display_lines(&self, _width: u16) -> Vec<Line<'static>> {
-        vec!["tool result (image output)".into()]
+        vec!["工具结果（图像输出）".into()]
     }
 
     fn raw_lines(&self) -> Vec<Line<'static>> {
-        vec![Line::from("tool result (image output)")]
+        vec![Line::from("工具结果（图像输出）")]
     }
 }
 fn mcp_auth_status_label(status: McpAuthStatus) -> &'static str {
     match status {
-        McpAuthStatus::Unknown => "Unknown",
-        McpAuthStatus::Unsupported => "Unsupported",
-        McpAuthStatus::NotLoggedIn => "Not logged in",
-        McpAuthStatus::BearerToken => "Bearer token",
+        McpAuthStatus::Unknown => "未知",
+        McpAuthStatus::Unsupported => "不支持",
+        McpAuthStatus::NotLoggedIn => "未登录",
+        McpAuthStatus::BearerToken => "Bearer 令牌",
         McpAuthStatus::OAuth => "OAuth",
     }
 }
