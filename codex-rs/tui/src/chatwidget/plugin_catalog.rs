@@ -1415,18 +1415,18 @@ fn plugin_detail_status_label(plugin: &PluginSummary) -> &'static str {
         return if plugin.installed {
             "Installed by admin"
         } else {
-            "Enabled by Admin"
+            "由管理员启用"
         };
     }
     if plugin.installed {
         if plugin.enabled {
-            "Installed"
+            "已安装"
         } else {
-            "Disabled"
+            "已禁用"
         }
     } else {
         match plugin.install_policy {
-            PluginInstallPolicy::NotAvailable => "Not installable",
+            PluginInstallPolicy::NotAvailable => "不可安装",
             PluginInstallPolicy::Available => "Can be installed",
             PluginInstallPolicy::InstalledByDefault => "Installed by admin",
         }
@@ -1880,22 +1880,22 @@ fn plugin_brief_description_without_marketplace(
 
 fn plugin_status_label(plugin: &PluginSummary) -> &'static str {
     if plugin.availability == PluginAvailability::DisabledByAdmin {
-        return "Disabled";
+        return "已禁用";
     }
     if !plugin.installed && plugin.install_policy == PluginInstallPolicy::InstalledByDefault {
         return "Admin assigned";
     }
     if plugin.installed {
         if plugin.enabled {
-            "Installed"
+            "已安装"
         } else {
-            "Disabled"
+            "已禁用"
         }
     } else {
         match plugin.install_policy {
-            PluginInstallPolicy::NotAvailable => "Not installable",
+            PluginInstallPolicy::NotAvailable => "不可安装",
             PluginInstallPolicy::Available => "Available",
-            PluginInstallPolicy::InstalledByDefault => "Installed",
+            PluginInstallPolicy::InstalledByDefault => "已安装",
         }
     }
 }
