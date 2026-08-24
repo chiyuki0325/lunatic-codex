@@ -882,7 +882,7 @@ impl ChatWidget {
             });
         } else {
             items.push(SelectionItem {
-                name: "ChatGPT apps link unavailable".to_string(),
+                name: "ChatGPT 应用链接不可用".to_string(),
                 description: Some("This app did not provide an install/manage URL.".to_string()),
                 is_disabled: true,
                 ..Default::default()
@@ -891,7 +891,7 @@ impl ChatWidget {
 
         if is_installed {
             items.push(SelectionItem {
-                name: "Continue".to_string(),
+                name: "继续".to_string(),
                 description: Some("This app is already installed.".to_string()),
                 selected_description: Some("Advance to the next app.".to_string()),
                 actions: vec![Box::new(|tx| {
@@ -903,7 +903,7 @@ impl ChatWidget {
             });
         } else {
             items.push(SelectionItem {
-                name: "I've installed it".to_string(),
+                name: "我已安装".to_string(),
                 description: Some(
                     "Trust your confirmation and continue to the next app.".to_string(),
                 ),
