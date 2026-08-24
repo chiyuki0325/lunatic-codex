@@ -232,7 +232,7 @@ impl App {
             Ok(threads) => threads,
             Err(error) => {
                 self.chat_widget
-                    .add_error_message(format!("Failed to load shared agents: {error}"));
+                    .add_error_message(format!("加载共享智能体失败：{error}"));
                 if std::mem::take(&mut self.agents_overview.refresh_pending) {
                     self.refresh_agents_overview_threads(app_server);
                 }
@@ -394,7 +394,7 @@ impl App {
                 Ok(config) => config,
                 Err(error) => {
                     self.chat_widget
-                        .add_error_message(format!("Failed to load task settings: {error}"));
+                        .add_error_message(format!("加载任务设置失败：{error}"));
                     return Ok(AppRunControl::Continue);
                 }
             };
@@ -412,7 +412,7 @@ impl App {
                 Ok(resumed) => resumed,
                 Err(error) => {
                     self.chat_widget
-                        .add_error_message(format!("Failed to attach to task: {error}"));
+                        .add_error_message(format!("连接到任务失败：{error}"));
                     return Ok(AppRunControl::Continue);
                 }
             };
@@ -463,7 +463,7 @@ impl App {
                 .await
             {
                 self.chat_widget
-                    .add_error_message(format!("Failed to attach to task: {error}"));
+                    .add_error_message(format!("连接到任务失败：{error}"));
                 return Ok(AppRunControl::Continue);
             }
             let mut destination_config = self.chat_widget.config_ref().clone();
@@ -579,7 +579,7 @@ impl App {
                     }
                     return self
                         .chat_widget
-                        .add_error_message(format!("Failed to load project settings: {error}"));
+                        .add_error_message(format!("加载项目设置失败：{error}"));
                 }
             },
             None => self.fresh_session_config(),
@@ -625,7 +625,7 @@ impl App {
                     state.input = prompt;
                 }
                 self.chat_widget
-                    .add_error_message(format!("Failed to start background task: {error}"));
+                    .add_error_message(format!("启动后台任务失败：{error}"));
             }
         }
     }
@@ -655,7 +655,7 @@ impl App {
                 state.input = prompt;
             }
             self.chat_widget
-                .add_error_message(format!("Failed to send task message: {error}"));
+                .add_error_message(format!("发送任务消息失败：{error}"));
         }
     }
 
@@ -677,7 +677,7 @@ impl App {
                     .map(|turn| turn.id),
                 Err(error) => {
                     self.chat_widget
-                        .add_error_message(format!("Failed to stop background task: {error}"));
+                        .add_error_message(format!("停止后台任务失败：{error}"));
                     self.refresh_agents_overview_threads(app_server);
                     return;
                 }
@@ -688,7 +688,7 @@ impl App {
         };
         if let Err(error) = app_server.turn_interrupt(thread_id, turn_id).await {
             self.chat_widget
-                .add_error_message(format!("Failed to stop background task: {error}"));
+                .add_error_message(format!("停止后台任务失败：{error}"));
             self.refresh_agents_overview_threads(app_server);
         }
     }
