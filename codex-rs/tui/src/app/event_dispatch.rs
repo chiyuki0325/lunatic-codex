@@ -2386,7 +2386,7 @@ impl App {
                         state.renaming = true;
                     }
                     self.chat_widget
-                        .add_error_message(format!("Failed to rename task: {error}"));
+                        .add_error_message(format!("重命名任务失败：{error}"));
                 }
             }
             AppEvent::StopAgentsOverviewThread { thread_id } => {
@@ -2406,7 +2406,7 @@ impl App {
                 ),
                 Err(error) => self
                     .chat_widget
-                    .add_error_message(format!("Failed to start the background server: {error}")),
+                    .add_error_message(format!("启动后台服务器失败：{error}")),
             },
             AppEvent::OpenAgentPicker => {
                 self.open_agent_picker(app_server).await;
@@ -2713,7 +2713,7 @@ impl App {
                         self.refresh_status_line();
                         tracing::error!(error = %err, "failed to persist theme selection");
                         self.chat_widget
-                            .add_error_message(format!("Failed to save theme: {err}"));
+                            .add_error_message(format!("保存主题失败：{err}"));
                     }
                 }
             }
@@ -2827,7 +2827,7 @@ impl App {
             Err(err) => {
                 tracing::error!(error = %err, "failed to persist keymap binding");
                 self.chat_widget
-                    .add_error_message(format!("Failed to save shortcut: {err}"));
+                    .add_error_message(format!("保存快捷键失败：{err}"));
             }
         }
     }
@@ -2856,7 +2856,7 @@ impl App {
             Ok(runtime_keymap) => runtime_keymap,
             Err(err) => {
                 self.chat_widget
-                    .add_error_message(format!("Failed to refresh shortcuts: {err}"));
+                    .add_error_message(format!("刷新快捷键失败：{err}"));
                 return;
             }
         };
@@ -2884,7 +2884,7 @@ impl App {
             Err(err) => {
                 tracing::error!(error = %err, "failed to clear keymap binding");
                 self.chat_widget
-                    .add_error_message(format!("Failed to remove shortcut: {err}"));
+                    .add_error_message(format!("移除快捷键失败：{err}"));
             }
         }
     }
