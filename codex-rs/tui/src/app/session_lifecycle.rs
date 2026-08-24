@@ -146,7 +146,7 @@ impl App {
 
         if self.agent_navigation.is_empty() {
             self.chat_widget
-                .add_info_message("No agents available yet.".to_string(), /*hint*/ None);
+                .add_info_message("暂时没有可用智能体。".to_string(), /*hint*/ None);
             return;
         }
 

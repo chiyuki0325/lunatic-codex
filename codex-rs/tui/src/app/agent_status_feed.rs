@@ -47,7 +47,7 @@ impl HistoryCell for AgentStatusHistoryCell {
             let preview_width = width.saturating_sub(AGENT_STATUS_PREVIEW_INDENT).max(1);
             let preview_lines = entry.preview_lines(preview_width);
             if preview_lines.is_empty() {
-                lines.push(vec!["    ".into(), "No recent activity yet.".dim().italic()].into());
+                lines.push(vec!["    ".into(), "暂无近期活动。".dim().italic()].into());
             } else {
                 lines.extend(preview_lines.into_iter().map(indent_preview_line));
             }
