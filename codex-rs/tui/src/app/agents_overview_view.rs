@@ -66,10 +66,10 @@ impl AgentsOverviewGroup {
 
     fn label(self) -> &'static str {
         match self {
-            Self::NeedsYou => "Needs input",
-            Self::Working => "Working",
-            Self::Ready => "Ready",
-            Self::Finished => "Finished",
+            Self::NeedsYou => "需要输入",
+            Self::Working => "工作中",
+            Self::Ready => "就绪",
+            Self::Finished => "已完成",
         }
     }
 }
@@ -270,10 +270,10 @@ impl AgentsOverviewView {
 
     fn status(row: &AgentsOverviewRow) -> (&'static str, Span<'static>) {
         match row.group {
-            AgentsOverviewGroup::NeedsYou => ("Needs input", "●".red()),
-            AgentsOverviewGroup::Working => ("Working", "●".green()),
-            AgentsOverviewGroup::Ready => ("Ready", "○".cyan()),
-            AgentsOverviewGroup::Finished => ("Finished", "✓".dim()),
+            AgentsOverviewGroup::NeedsYou => ("需要输入", "●".red()),
+            AgentsOverviewGroup::Working => ("工作中", "●".green()),
+            AgentsOverviewGroup::Ready => ("就绪", "○".cyan()),
+            AgentsOverviewGroup::Finished => ("已完成", "✓".dim()),
         }
     }
 
@@ -350,7 +350,7 @@ impl AgentsOverviewView {
                 .name
                 .as_deref()
                 .or_else(|| (!row.thread.preview.is_empty()).then_some(row.thread.preview.as_str()))
-                .unwrap_or("Untitled task");
+                .unwrap_or("未命名任务");
             let (status, dot) = Self::status(row);
             let current = if row.is_current { "  current" } else { "" };
             let mut spans = vec![
@@ -375,12 +375,12 @@ impl AgentsOverviewView {
         };
         let (status, dot) = Self::status(row);
         let mut lines = vec![
-            Line::from("Task details".bold()),
+            Line::from("任务详情".bold()),
             Line::default(),
-            Line::from(row.thread.name.as_deref().unwrap_or("Untitled task").bold()),
+            Line::from(row.thread.name.as_deref().unwrap_or("未命名任务").bold()),
             Line::from(vec![dot, " ".into(), status.into()]),
             Line::default(),
-            Line::from("Project".dim()),
+            Line::from("项目".dim()),
             Line::from(row.thread.cwd.display().to_string()),
         ];
         if let Some(branch) = row
@@ -390,7 +390,7 @@ impl AgentsOverviewView {
             .and_then(|git| git.branch.as_ref())
         {
             lines.push(Line::default());
-            lines.push("Branch".dim().into());
+            lines.push("分支".dim().into());
             lines.push(branch.clone().into());
         }
         let preview = crate::text_formatting::truncate_text(
@@ -399,9 +399,9 @@ impl AgentsOverviewView {
         );
         lines.extend([
             Line::default(),
-            Line::from("Latest activity".dim()),
+            Line::from("最近活动".dim()),
             Line::from(match preview.as_str() {
-                "" => "No activity yet.",
+                "" => "暂无活动。",
                 preview => preview,
             }),
         ]);
@@ -592,7 +592,7 @@ impl Renderable for AgentsOverviewView {
         .areas(area);
         let inset =
             |rect: Rect| rect.inner(Margin::new(/*horizontal*/ 2, /*vertical*/ 0));
-        Line::from("Agent command center".bold()).render(inset(header), buf);
+        Line::from("智能体指挥中心".bold()).render(inset(header), buf);
         let (needs_you, working, ready) = self.rows.iter().fold((0, 0, 0), |counts, row| {
             let (needs_you, working, ready) = counts;
             match row.group {
@@ -627,14 +627,14 @@ impl Renderable for AgentsOverviewView {
         }
         let state = self.state().clone();
         let (label, input) = if state.searching {
-            ("Search › ", &state.search)
+            ("搜索 › ", &state.search)
         } else if state.renaming {
-            ("Rename › ", &state.input)
+            ("重命名 › ", &state.input)
         } else {
-            ("New task › ", &state.input)
+            ("新建任务 › ", &state.input)
         };
         let placeholder = if input.is_empty() && !state.searching && !state.renaming {
-            "Describe a task and press enter to dispatch it"
+            "描述任务后按下 Enter 以派发它"
         } else {
             ""
         };
