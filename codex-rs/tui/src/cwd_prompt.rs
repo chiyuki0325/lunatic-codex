@@ -169,7 +169,7 @@ async fn persist_remembered_cwd_selection(
         Ok(()) => None,
         Err(err) => {
             tracing::error!(error = %err, "failed to persist working directory preference");
-            Some(Line::from("Failed to save working directory preference.").red())
+            Some(Line::from("保存工作目录偏好失败。").red())
         }
     }
 }

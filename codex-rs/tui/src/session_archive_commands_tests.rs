@@ -192,7 +192,7 @@ async fn archives_by_sqlite_name() -> color_eyre::Result<()> {
                 .is_some_and(|metadata| metadata.archived_at.is_some()),
         ),
         (
-            format!("Archived session saved-session ({thread_id})."),
+            format!("已归档会话 saved-session（{thread_id}）。"),
             true,
         ),
     );
@@ -244,7 +244,7 @@ async fn unarchives_by_sqlite_name() -> color_eyre::Result<()> {
                 .is_some_and(|metadata| metadata.archived_at.is_some()),
         ),
         (
-            format!("Unarchived session saved-session ({thread_id})."),
+            format!("已取消归档会话 saved-session（{thread_id}）。"),
             false,
         ),
     );
@@ -314,7 +314,7 @@ async fn deletes_valid_duplicate_after_stale_sqlite_hit() -> color_eyre::Result<
                 .is_some(),
         ),
         (
-            format!("Deleted session saved-session ({thread_id})."),
+            format!("已删除会话 saved-session（{thread_id}）。"),
             false,
             true,
             None,
@@ -363,7 +363,7 @@ async fn trusts_sqlite_name_over_legacy_index_for_delete() -> color_eyre::Result
     .expect_err("stale legacy names must not select renamed threads");
     assert_eq!(
         error.to_string(),
-        "No active session found matching 'old-session'."
+        "未找到与“old-session”匹配的活动会话。"
     );
     let message = run_session_archive_action_with_app_server(
         &mut app_server,
@@ -384,7 +384,7 @@ async fn trusts_sqlite_name_over_legacy_index_for_delete() -> color_eyre::Result
                 .map_err(std::io::Error::other)?,
         ),
         (
-            format!("Deleted session new-session ({thread_id})."),
+            format!("已删除会话 new-session（{thread_id}）。"),
             false,
             None,
         ),

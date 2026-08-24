@@ -68,13 +68,13 @@ fn success_message(
     session_name: Option<&str>,
 ) -> String {
     let action = match action {
-        SessionArchiveAction::Archive => "Archived",
-        SessionArchiveAction::Delete(_) => "Deleted",
-        SessionArchiveAction::Unarchive => "Unarchived",
+        SessionArchiveAction::Archive => "已归档",
+        SessionArchiveAction::Delete(_) => "已删除",
+        SessionArchiveAction::Unarchive => "已取消归档",
     };
     match session_name {
-        Some(name) => format!("{action} session {name} ({session_id})."),
-        None => format!("{action} session {session_id}."),
+        Some(name) => format!("{action}会话 {name}（{session_id}）。"),
+        None => format!("{action}会话 {session_id}。"),
     }
 }
 
@@ -116,7 +116,7 @@ async fn run_session_archive_action_with_app_server(
             if matches!(confirmation, DeleteConfirmation::Prompt)
                 && !confirm_session_delete(&resolved)?
             {
-                return Ok("Delete cancelled.".to_string());
+                return Ok("已取消删除。".to_string());
             }
             app_server.thread_delete(resolved.session_id).await?;
             resolved.session_name
@@ -148,7 +148,7 @@ async fn resolve_session_target(
                 .thread_read(session_id, /*include_turns*/ false)
                 .await
                 .with_context(|| {
-                    format!("No active or archived session found matching '{target}'.")
+                    format!("未找到与“{target}”匹配的活动或已归档会话。")
                 })?;
             return Ok(ResolvedSessionTarget {
                 session_id,
@@ -162,9 +162,9 @@ async fn resolve_session_target(
     }
 
     let (search_scope, archived_values): (&str, &[bool]) = match action {
-        SessionArchiveAction::Archive => ("active", &[false]),
-        SessionArchiveAction::Delete(_) => ("active or archived", &[false, true]),
-        SessionArchiveAction::Unarchive => ("archived", &[true]),
+        SessionArchiveAction::Archive => ("活动", &[false]),
+        SessionArchiveAction::Delete(_) => ("活动或已归档", &[false, true]),
+        SessionArchiveAction::Unarchive => ("已归档", &[true]),
     };
     for &archived in archived_values {
         if let Some(thread) = lookup_session_by_exact_name(
@@ -179,9 +179,7 @@ async fn resolve_session_target(
             return session_target_from_app_server_thread(thread);
         }
     }
-    Err(eyre!(
-        "No {search_scope} session found matching '{target}'."
-    ))
+    Err(eyre!("未找到与“{target}”匹配的{search_scope}会话。"))
 }
 
 pub(super) async fn lookup_session_by_exact_name(
@@ -286,7 +284,7 @@ fn session_target_from_app_server_thread(thread: AppServerThread) -> Result<Reso
 fn confirm_session_delete(target: &ResolvedSessionTarget) -> Result<bool> {
     if !(std::io::stdin().is_terminal() && std::io::stderr().is_terminal()) {
         return Err(eyre!(
-            "cannot confirm session deletion without an interactive terminal; rerun with --force and a session UUID"
+            "无法在非交互式终端中确认删除会话；请使用 --force 和会话 UUID 重新运行"
         ));
     }
 
@@ -294,16 +292,13 @@ fn confirm_session_delete(target: &ResolvedSessionTarget) -> Result<bool> {
     match target.session_name.as_deref() {
         Some(name) => writeln!(
             stderr,
-            "Permanently delete session '{name}' ({})?",
+            "要永久删除会话“{name}”（{}）吗？",
             target.session_id
         ),
-        None => writeln!(stderr, "Permanently delete session {}?", target.session_id),
+        None => writeln!(stderr, "要永久删除会话 {} 吗？", target.session_id),
     }?;
-    writeln!(
-        stderr,
-        "This cannot be undone. Subagent threads will also be deleted."
-    )?;
-    write!(stderr, "Continue? [y/N]: ")?;
+    writeln!(stderr, "此操作无法撤销，子智能体会话也会被删除。")?;
+    write!(stderr, "继续吗？[y/N]：")?;
     stderr.flush()?;
 
     let mut input = String::new();
