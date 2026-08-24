@@ -508,7 +508,7 @@ impl AppLinkView {
         }
         let is_browser_action_suggestion = self.is_browser_action_suggestion();
         if self.is_installed && !is_browser_action_suggestion {
-            for line in wrap("Use $ to insert this app into the prompt.", usable_width) {
+            for line in wrap("使用 $ 将此应用插入提示词。", usable_width) {
                 lines.push(Line::from(line.into_owned()));
             }
             lines.push(Line::from(""));
@@ -529,14 +529,14 @@ impl AppLinkView {
             }
             if !is_browser_action_suggestion {
                 for line in wrap(
-                    "Newly installed apps can take a few minutes to appear in /apps.",
+                    "新安装的应用可能需要几分钟才会显示在 /apps 中。",
                     usable_width,
                 ) {
                     lines.push(Line::from(line.into_owned()));
                 }
                 if !self.is_installed {
                     for line in wrap(
-                        "After installed, use $ to insert this app into the prompt.",
+                        "安装后，使用 $ 将此应用插入提示词。",
                         usable_width,
                     ) {
                         lines.push(Line::from(line.into_owned()));
