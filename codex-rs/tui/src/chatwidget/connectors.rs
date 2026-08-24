@@ -263,11 +263,9 @@ impl ChatWidget {
             };
             let is_installed = connector.is_accessible;
             let selected_label = if is_installed {
-                format!(
-                    "{status_label}. Press Enter to open the app page to install, manage, or enable/disable this app."
-                )
+                format!("{status_label}。按下 Enter 打开应用页面，以安装、管理或启用/禁用此应用。")
             } else {
-                format!("{status_label}. Press Enter to open the app page to install this app.")
+                format!("{status_label}。按下 Enter 打开应用页面以安装此应用。")
             };
             let missing_label = format!("{status_label}. App link unavailable.");
             let instructions = if connector.is_accessible {
