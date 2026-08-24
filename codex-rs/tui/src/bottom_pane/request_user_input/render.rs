@@ -222,7 +222,7 @@ impl RequestUserInputOverlay {
             &layout.rows,
             &layout.state,
             layout.rows.len().max(1),
-            "No choices",
+            "没有可选项",
         );
 
         cursor_y = cursor_y.saturating_add(rows_height);
@@ -319,7 +319,7 @@ impl RequestUserInputOverlay {
                     &option_rows,
                     &options_state,
                     option_rows.len().max(1),
-                    "No options",
+                    "没有选项",
                 );
             }
         }
