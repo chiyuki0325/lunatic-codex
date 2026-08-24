@@ -307,11 +307,11 @@ impl AppLinkView {
             AppLinkScreen::Link => {
                 if self.is_installed {
                     vec![
-                        "Manage on ChatGPT",
+                        "在 ChatGPT 中管理",
                         if self.is_enabled {
-                            "Disable app"
+                            "禁用应用"
                         } else {
-                            "Enable app"
+                            "启用应用"
                         },
                         "返回",
                     ]
@@ -1066,7 +1066,7 @@ mod tests {
 
         assert_eq!(
             view.action_labels(),
-            vec!["Manage on ChatGPT", "Disable app", "返回"]
+            vec!["在 ChatGPT 中管理", "禁用应用", "返回"]
         );
     }
 
@@ -1217,7 +1217,7 @@ mod tests {
 
         assert_eq!(
             view.action_labels(),
-            vec!["Manage on ChatGPT", "Enable app", "返回"]
+            vec!["在 ChatGPT 中管理", "启用应用", "返回"]
         );
     }
 
