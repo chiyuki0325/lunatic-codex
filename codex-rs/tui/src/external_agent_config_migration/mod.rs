@@ -46,10 +46,10 @@ enum ActionMenuOption {
 impl ActionMenuOption {
     fn label(self) -> &'static str {
         match self {
-            Self::Proceed => "Import selected",
-            Self::Customize => "Customize selection",
-            Self::Skip => "Cancel",
-            Self::Back => "Review selection",
+            Self::Proceed => "导入所选项",
+            Self::Customize => "自定义选择",
+            Self::Skip => "取消",
+            Self::Back => "查看选择",
         }
     }
 }
