@@ -267,11 +267,11 @@ impl ChatWidget {
             } else {
                 format!("{status_label}。按下 Enter 打开应用页面以安装此应用。")
             };
-            let missing_label = format!("{status_label}. App link unavailable.");
+            let missing_label = format!("{status_label}。应用链接不可用。");
             let instructions = if connector.is_accessible {
-                "Manage this app in your browser."
+                "请在浏览器中管理此应用。"
             } else {
-                "Install this app in your browser, then reload Codex."
+                "请在浏览器中安装此应用，然后重新加载 Codex。"
             };
             if let Some(install_url) = connector.install_url.clone() {
                 let app_id = connector.id.clone();
