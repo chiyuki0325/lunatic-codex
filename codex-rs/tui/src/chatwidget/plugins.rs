@@ -741,7 +741,7 @@ impl ChatWidget {
 
         if let Err(err) = result {
             self.add_error_message(format!(
-                "Failed to update plugin config for {plugin_id}: {err}"
+                "更新插件 {plugin_id} 的配置失败：{err}"
             ));
             if let PluginsCacheState::Ready(response) = self.plugins_cache_for_current_cwd() {
                 self.refresh_plugins_popup_if_open(&response);
@@ -786,8 +786,8 @@ impl ChatWidget {
                 self.plugin_install_apps_needing_auth.clear();
                 self.plugin_install_auth_flow = None;
                 self.add_info_message(
-                    format!("Uninstalled {plugin_display_name} plugin."),
-                    Some("Bundled apps remain installed.".to_string()),
+                    format!("已卸载插件 {plugin_display_name}。"),
+                    Some("随附应用仍保持安装状态。".to_string()),
                 );
             }
             Err(err) => {
