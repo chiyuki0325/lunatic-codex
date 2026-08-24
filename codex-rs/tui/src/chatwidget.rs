@@ -199,7 +199,7 @@ const PET_SELECTION_LOADING_VIEW_ID: &str = "pet-selection-loading";
 const AMBIENT_PET_WRAP_GAP_COLUMNS: u16 = 2;
 const TUI_STUB_MESSAGE: &str = "TUI 暂不支持。";
 const PARENT_OWNED_INPUT_MESSAGE: &str =
-    "This sub-agent is controlled by its parent. Direct input is disabled.";
+    "此子智能体由其父智能体控制，已禁用直接输入。";
 
 /// Choose the keybinding used to edit the most-recently queued message.
 ///
