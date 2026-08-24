@@ -107,8 +107,8 @@ mod tests {
     #[test]
     fn reduced_motion_shimmer_text_is_plain_text() {
         assert_eq!(
-            shimmer_text("Loading", MotionMode::Reduced),
-            vec!["Loading".into()]
+            shimmer_text("正在加载", MotionMode::Reduced),
+            vec!["正在加载".into()]
         );
         assert_eq!(
             shimmer_text("", MotionMode::Reduced),
