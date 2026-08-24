@@ -135,7 +135,7 @@ const WIDE_PREVIEW_LEFT_INSET: u16 = 2;
 /// Minimum frame padding used for vertically centered wide preview.
 const PREVIEW_FRAME_PADDING: u16 = 1;
 
-const PREVIEW_FALLBACK_SUBTITLE: &str = "Move up/down to live preview themes";
+const PREVIEW_FALLBACK_SUBTITLE: &str = "使用上/下方向键实时预览主题";
 
 /// Side-by-side preview: syntax-highlighted Rust diff snippet, vertically
 /// centered with a 2-column left inset.  Fills the entire side panel height.
@@ -290,7 +290,7 @@ fn theme_picker_subtitle(codex_home: Option<&Path>, terminal_width: Option<u16>)
     if let Some(path) = themes_dir_display
         && path.starts_with('~')
     {
-        let subtitle = format!("Custom .tmTheme files can be added to the {path} directory.");
+        let subtitle = format!("可将自定义 .tmTheme 文件添加到 {path} 目录。");
         if UnicodeWidthStr::width(subtitle.as_str()) <= available_width {
             return subtitle;
         }
@@ -339,7 +339,7 @@ pub(crate) fn build_theme_picker_params(
         .enumerate()
         .map(|(idx, entry)| {
             let display_name = if entry.is_custom {
-                format!("{} (custom)", entry.name)
+                format!("{}（自定义）", entry.name)
             } else {
                 entry.name.clone()
             };
@@ -388,7 +388,7 @@ pub(crate) fn build_theme_picker_params(
         }) as Box<dyn Fn(&crate::app_event_sender::AppEventSender) + Send + Sync>,
     );
     SelectionViewParams {
-        title: Some("Select Syntax Theme".to_string()),
+        title: Some("选择语法高亮主题".to_string()),
         subtitle: Some(theme_picker_subtitle(
             codex_home_owned.as_deref(),
             terminal_width,
@@ -396,7 +396,7 @@ pub(crate) fn build_theme_picker_params(
         footer_hint: Some(standard_popup_hint_line()),
         items,
         is_searchable: true,
-        search_placeholder: Some("Type to filter themes...".to_string()),
+        search_placeholder: Some("输入以筛选主题……".to_string()),
         initial_selected_idx: initial_idx,
         side_content: Box::new(ThemePreviewWideRenderable),
         side_content_width: SideContentWidth::Half,
