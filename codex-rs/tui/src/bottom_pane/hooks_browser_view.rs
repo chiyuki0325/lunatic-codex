@@ -836,17 +836,17 @@ fn detail_source_value(hook: &HookMetadata) -> String {
 
 fn config_source_label(source: HookSource) -> &'static str {
     match source {
-        HookSource::System => "Admin config",
-        HookSource::User => "User config",
-        HookSource::Project => "Project config",
-        HookSource::Mdm => "Admin config",
-        HookSource::SessionFlags => "Session flags",
+        HookSource::System => "管理员配置",
+        HookSource::User => "用户配置",
+        HookSource::Project => "项目配置",
+        HookSource::Mdm => "管理员配置",
+        HookSource::SessionFlags => "会话标记",
         HookSource::Plugin => unreachable!("plugin hooks are handled by summary_source"),
-        HookSource::CloudRequirements => "Admin config",
-        HookSource::CloudManagedConfig => "Cloud-managed config",
-        HookSource::LegacyManagedConfigFile => "Admin config",
-        HookSource::LegacyManagedConfigMdm => "Admin config",
-        HookSource::Unknown => "Unknown source",
+        HookSource::CloudRequirements => "管理员配置",
+        HookSource::CloudManagedConfig => "云端管理配置",
+        HookSource::LegacyManagedConfigFile => "管理员配置",
+        HookSource::LegacyManagedConfigMdm => "管理员配置",
+        HookSource::Unknown => "未知来源",
     }
 }
 
