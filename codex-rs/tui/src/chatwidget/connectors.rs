@@ -237,10 +237,10 @@ impl ChatWidget {
         let mut header = ColumnRenderable::new();
         header.push(Line::from("应用".bold()));
         header.push(Line::from(
-            "Use $ to insert an installed app into your prompt.".dim(),
+            "使用 $ 将已安装应用插入提示词。".dim(),
         ));
         header.push(Line::from(
-            format!("Installed {installed} of {total} available apps.").dim(),
+            format!("已安装 {installed}/{total} 个可用应用。").dim(),
         ));
         let initial_selected_idx = selected_connector_id.and_then(|selected_connector_id| {
             connectors
