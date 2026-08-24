@@ -551,10 +551,7 @@ impl ChatWidget {
             return;
         }
         self.pending_rate_limit_reset_hint = Some(history_cell::new_info_event(
-            format!(
-                "You have {available_count} {} available. Run /usage to use one.",
-                reset_label(available_count)
-            ),
+            format!("可用 {available_count} 次重置。运行 /usage 使用一次。"),
             /*hint*/ None,
         ));
         self.bump_active_cell_revision();
@@ -567,13 +564,5 @@ impl ChatWidget {
             .next_rate_limit_reset_request_id
             .wrapping_add(/*rhs*/ 1);
         request_id
-    }
-}
-
-fn reset_label(count: i64) -> &'static str {
-    if count == 1 {
-        "usage limit reset"
-    } else {
-        "usage limit resets"
     }
 }
