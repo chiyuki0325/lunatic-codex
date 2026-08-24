@@ -315,19 +315,19 @@ fn left_side_line(
         SummaryHintKind::Shortcuts => {
             if let Some(key) = key_hints.toggle_shortcuts {
                 line.push_span(key);
-                line.push_span(" for shortcuts".dim());
+                line.push_span(" 查看快捷键".dim());
             }
         }
         SummaryHintKind::QueueMessage => {
             if let Some(key) = key_hints.queue {
                 line.push_span(key);
-                line.push_span(" to queue message".dim());
+                line.push_span(" 将消息加入队列".dim());
             }
         }
         SummaryHintKind::QueueShort => {
             if let Some(key) = key_hints.queue {
                 line.push_span(key);
-                line.push_span(" to queue".dim());
+                line.push_span(" 加入队列".dim());
             }
         }
     };
@@ -866,20 +866,15 @@ struct ShortcutsState {
 }
 
 fn quit_shortcut_reminder_line(key: KeyBinding) -> Line<'static> {
-    Line::from(vec![key.into(), " again to quit".into()]).dim()
+    Line::from(vec![key.into(), " 再次退出".into()]).dim()
 }
 
 fn esc_hint_line(esc_backtrack_hint: bool) -> Line<'static> {
     let esc = key_hint::plain(KeyCode::Esc);
     if esc_backtrack_hint {
-        Line::from(vec![esc.into(), " again to edit previous message".into()]).dim()
+        Line::from(vec![esc.into(), " 再次编辑上一条消息".into()]).dim()
     } else {
-        Line::from(vec![
-            esc.into(),
-            " ".into(),
-            esc.into(),
-            " to edit previous message".into(),
-        ])
+        Line::from(vec![esc.into(), " ".into(), esc.into(), " 编辑上一条消息".into()])
         .dim()
     }
 }
@@ -943,8 +938,9 @@ fn shortcut_overlay_lines(state: ShortcutsState) -> Vec<Line<'static>> {
     let mut lines = build_columns(ordered);
     lines.push(Line::from(""));
     lines.push(Line::from(vec![
-        "customize shortcuts with ".into(),
+        "使用 ".into(),
         "/keymap".cyan(),
+        " 自定义快捷键".into(),
     ]));
     lines
 }
@@ -1096,27 +1092,23 @@ impl ShortcutDescriptor {
         match self.id {
             ShortcutId::QueueMessageTab => {
                 if state.is_task_running || state.queue_submissions {
-                    line.push_span(" to queue message");
+                    line.push_span(" 将消息加入队列");
                 } else {
-                    line.push_span(" to submit message");
+                    line.push_span(" 发送消息");
                 }
             }
             ShortcutId::EditPrevious => {
                 if state.esc_backtrack_hint {
-                    line.push_span(" again to edit previous message");
+                    line.push_span(" 再次编辑上一条消息");
                 } else {
-                    line.extend(vec![
-                        " ".into(),
-                        key.into(),
-                        " to edit previous message".into(),
-                    ]);
+                    line.extend(vec![" ".into(), key.into(), " 编辑上一条消息".into()]);
                 }
             }
             ShortcutId::Quit => {
                 if state.is_task_running {
-                    line.push_span(" to interrupt");
+                    line.push_span(" 中断");
                 } else {
-                    line.push_span(" to exit");
+                    line.push_span(" 退出");
                 }
             }
             _ => line.push_span(self.label),
@@ -1133,7 +1125,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " for commands",
+        label: " 用于命令",
     },
     ShortcutDescriptor {
         id: ShortcutId::ShellCommands,
@@ -1142,7 +1134,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " for shell commands",
+        label: " 用于 shell 命令",
     },
     ShortcutDescriptor {
         id: ShortcutId::InsertNewline,
@@ -1157,7 +1149,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             },
         ],
         prefix: "",
-        label: " for newline",
+        label: " 换行",
     },
     ShortcutDescriptor {
         id: ShortcutId::QueueMessageTab,
@@ -1166,7 +1158,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " to queue message",
+        label: " 将消息加入队列",
     },
     ShortcutDescriptor {
         id: ShortcutId::FilePaths,
@@ -1175,7 +1167,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " for file paths",
+        label: " 插入文件路径",
     },
     ShortcutDescriptor {
         id: ShortcutId::PasteImage,
@@ -1192,7 +1184,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             },
         ],
         prefix: "",
-        label: " to paste images",
+        label: " 粘贴图像",
     },
     ShortcutDescriptor {
         id: ShortcutId::ExternalEditor,
@@ -1201,7 +1193,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " to edit in external editor",
+        label: " 在外部编辑器中编辑",
     },
     ShortcutDescriptor {
         id: ShortcutId::EditPrevious,
@@ -1219,7 +1211,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " search history",
+        label: " 搜索历史记录",
     },
     ShortcutDescriptor {
         id: ShortcutId::Quit,
@@ -1228,7 +1220,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " to exit",
+        label: " 退出",
     },
     ShortcutDescriptor {
         id: ShortcutId::ShowTranscript,
@@ -1237,7 +1229,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " to view transcript",
+        label: " 查看转录记录",
     },
     ShortcutDescriptor {
         id: ShortcutId::ChangeMode,
@@ -1246,7 +1238,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::WhenCollaborationModesEnabled,
         }],
         prefix: "",
-        label: " to change mode",
+        label: " 切换模式",
     },
     ShortcutDescriptor {
         id: ShortcutId::ReasoningDown,
@@ -1255,7 +1247,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " reasoning down",
+        label: " 降低推理强度",
     },
     ShortcutDescriptor {
         id: ShortcutId::ReasoningUp,
@@ -1264,7 +1256,7 @@ const SHORTCUTS: &[ShortcutDescriptor] = &[
             condition: DisplayCondition::Always,
         }],
         prefix: "",
-        label: " reasoning up",
+        label: " 提高推理强度",
     },
 ];
 
