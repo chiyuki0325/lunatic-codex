@@ -318,7 +318,7 @@ impl ExternalAgentConfigMigrationScreen {
                     .len()
                     .saturating_sub(plugin_names.len());
                 if hidden_plugin_count > 0 {
-                    plugin_names.push(format!("+{hidden_plugin_count} more"));
+                    plugin_names.push(format!("另有 {hidden_plugin_count} 项"));
                 }
                 Line::from(format!(
                     "      • {}: {}",
@@ -330,7 +330,7 @@ impl ExternalAgentConfigMigrationScreen {
         let hidden_marketplace_count = plugin_groups.len().saturating_sub(lines.len());
         if hidden_marketplace_count > 0 {
             lines.push(Line::from(format!(
-                "      • +{hidden_marketplace_count} more marketplaces"
+                "      • 另有 {hidden_marketplace_count} 个市场"
             )));
         }
         lines
@@ -590,10 +590,10 @@ impl ExternalAgentConfigMigrationScreen {
     fn section_title(cwd: Option<&std::path::Path>) -> Line<'static> {
         match cwd {
             Some(cwd) => Line::from(vec![
-                "Current project: ".bold(),
+                "当前项目：".bold(),
                 cwd.display().to_string().dim(),
             ]),
-            None => Line::from("Home".bold()),
+            None => Line::from("主目录".bold()),
         }
     }
 
