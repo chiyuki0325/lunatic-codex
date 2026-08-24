@@ -273,7 +273,7 @@ impl App {
                     }
                     None => {
                         self.chat_widget.add_error_message(format!(
-                            "No saved chat found matching '{id_or_name}'."
+                            "未找到与“{id_or_name}”匹配的已保存对话。"
                         ));
                     }
                 }
