@@ -163,7 +163,7 @@ pub fn new_approval_decision_cell(
                     match actor {
                         ApprovalDecisionActor::User => vec![
                             actor.subject().into(),
-                            "did not approve".bold(),
+                            "未批准".bold(),
                             " codex to run ".into(),
                             snippet,
                         ],
@@ -178,7 +178,7 @@ pub fn new_approval_decision_cell(
                     match actor {
                         ApprovalDecisionActor::User => vec![
                             actor.subject().into(),
-                            "did not approve".bold(),
+                            "未批准".bold(),
                             " this request".into(),
                         ],
                         ApprovalDecisionActor::Guardian => {
@@ -192,7 +192,7 @@ pub fn new_approval_decision_cell(
                 "✗ ".red(),
                 vec![
                     actor.subject().into(),
-                    "did not approve".bold(),
+                    "未批准".bold(),
                     " codex network access to ".into(),
                     Span::from(target).dim(),
                 ],
@@ -203,14 +203,14 @@ pub fn new_approval_decision_cell(
                 let summary = if let Some(snippet) = non_empty_exec_snippet(&command) {
                     vec![
                         "Review ".into(),
-                        "timed out".bold(),
+                        "已超时".bold(),
                         " before codex could run ".into(),
                         Span::from(snippet).dim(),
                     ]
                 } else {
                     vec![
                         "Review ".into(),
-                        "timed out".bold(),
+                        "已超时".bold(),
                         " before this request could be approved".into(),
                     ]
                 };
@@ -220,7 +220,7 @@ pub fn new_approval_decision_cell(
                 "✗ ".red(),
                 vec![
                     "Review ".into(),
-                    "timed out".bold(),
+                    "已超时".bold(),
                     " before codex could access ".into(),
                     Span::from(target).dim(),
                 ],
@@ -313,7 +313,7 @@ pub fn new_guardian_denied_action_request(summary: String) -> Box<dyn HistoryCel
 pub fn new_guardian_timed_out_patch_request(files: Vec<String>) -> Box<dyn HistoryCell> {
     let mut summary = vec![
         "Review ".into(),
-        "timed out".bold(),
+        "已超时".bold(),
         " before codex could apply ".into(),
     ];
     if files.len() == 1 {
@@ -335,7 +335,7 @@ pub fn new_guardian_timed_out_patch_request(files: Vec<String>) -> Box<dyn Histo
 pub fn new_guardian_timed_out_action_request(summary: String) -> Box<dyn HistoryCell> {
     let line = Line::from(vec![
         "Review ".into(),
-        "timed out".bold(),
+        "已超时".bold(),
         " before ".into(),
         Span::from(summary).dim(),
     ]);
