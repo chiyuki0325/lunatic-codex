@@ -21,7 +21,7 @@ impl ChatWidget {
         if self.status_state.current_status.is_guardian_review() {
             let header = self
                 .mcp_startup_status_header()
-                .unwrap_or_else(|| String::from("Working"));
+                .unwrap_or_else(|| String::from("工作中"));
             self.set_status_header(header);
         }
     }
@@ -90,7 +90,7 @@ impl ChatWidget {
             .set_interrupt_hint_visible(/*visible*/ true);
         self.status_state.terminal_title_status_kind = TerminalTitleStatusKind::Working;
         if self.mcp_startup_status.is_none() || !self.status_header_is_mcp_startup_owned() {
-            self.set_status_header(String::from("Working"));
+            self.set_status_header(String::from("工作中"));
         }
         self.reasoning_summary_parts.clear();
         self.reasoning_buffer.clear();

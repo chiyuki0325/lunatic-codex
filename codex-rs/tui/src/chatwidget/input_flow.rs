@@ -46,7 +46,7 @@ impl ChatWidget {
                     self.reasoning_buffer.clear();
                     self.reasoning_header = None;
                     self.reasoning_summary_parts.clear();
-                    self.set_status_header(String::from("Working"));
+                    self.set_status_header(String::from("工作中"));
                     self.submit_user_message(user_message);
                 } else {
                     self.queue_user_message(user_message);

@@ -138,12 +138,12 @@ impl ChatWidget {
                     status.details_max_lines,
                 );
             } else if self.status_state.current_status.is_guardian_review() {
-                self.set_status_header(String::from("Working"));
+                self.set_status_header(String::from("工作中"));
             }
         } else if self.status_state.pending_guardian_review_status.is_empty()
             && self.status_state.current_status.is_guardian_review()
         {
-            self.set_status_header(String::from("Working"));
+            self.set_status_header(String::from("工作中"));
         }
 
         if ev.status == GuardianAssessmentStatus::Approved {

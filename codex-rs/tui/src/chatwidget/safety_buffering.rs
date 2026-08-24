@@ -150,7 +150,7 @@ impl ChatWidget {
         };
         self.bottom_pane.ensure_status_indicator();
         self.set_status(
-            "Working".to_string(),
+            "工作中".to_string(),
             Some(status_details),
             StatusDetailsCapitalization::Preserve,
             /*details_max_lines*/ 6,
@@ -177,7 +177,7 @@ impl ChatWidget {
             (faster_model, retry_turn, retry_prompt, thread_id)
         {
             items.push(SelectionItem {
-                name: "Retry with a faster model".to_string(),
+                name: "使用更快的模型重试".to_string(),
                 actions: vec![Box::new(move |tx| {
                     tx.send(AppEvent::RetrySafetyBufferedTurn {
                         thread_id,
@@ -193,12 +193,12 @@ impl ChatWidget {
         }
         items.extend([
             SelectionItem {
-                name: "Dismiss and keep waiting".to_string(),
+                name: "关闭并继续等待".to_string(),
                 dismiss_on_select: true,
                 ..Default::default()
             },
             SelectionItem {
-                name: "Learn more".to_string(),
+                name: "了解更多".to_string(),
                 actions: vec![Box::new(|tx| {
                     tx.send(AppEvent::OpenUrlInBrowser {
                         url: SAFETY_BUFFERING_LEARN_MORE_URL.to_string(),
