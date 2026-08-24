@@ -447,7 +447,7 @@ impl HookRunCell {
         match &self.state {
             HookRunState::VisibleRunning { start_time, .. }
             | HookRunState::QuietLinger { start_time, .. } => {
-                let hook_text = format!("Running {label} hook");
+                let hook_text = format!("正在运行 {label} Hook");
                 push_running_hook_header(
                     lines,
                     &hook_text,
@@ -465,9 +465,9 @@ impl HookRunCell {
                 let header_text = if let Some(first_line) =
                     system_message_lines.as_mut().and_then(Iterator::next)
                 {
-                    format!("{label} ({status_text}) says: {first_line}")
+                    format!("{label} Hook（{status_text}）提示：{first_line}")
                 } else {
-                    format!("{label} hook ({status_text})")
+                    format!("{label} Hook（{status_text}）")
                 };
                 lines.push(
                     vec![
@@ -734,9 +734,9 @@ fn push_running_hook_group(
     push_hook_line_separator(lines);
     let label = hook_event_label(group.key.event_name);
     let hook_text = if group.count == 1 {
-        format!("Running {label} hook")
+        format!("正在运行 {label} Hook")
     } else {
-        format!("Running {} {label} hooks", group.count)
+        format!("正在运行 {} 个 {label} Hook", group.count)
     };
     push_running_hook_header(
         lines,
@@ -825,11 +825,11 @@ fn hook_completed_bullet(status: HookRunStatus, entries: &[HookOutputEntry]) -> 
 
 fn hook_output_prefix(kind: HookOutputEntryKind) -> &'static str {
     match kind {
-        HookOutputEntryKind::Warning => "warning: ",
-        HookOutputEntryKind::Stop => "stop: ",
-        HookOutputEntryKind::Feedback => "feedback: ",
-        HookOutputEntryKind::Context => "hook context: ",
-        HookOutputEntryKind::Error => "error: ",
+        HookOutputEntryKind::Warning => "警告：",
+        HookOutputEntryKind::Stop => "停止：",
+        HookOutputEntryKind::Feedback => "反馈：",
+        HookOutputEntryKind::Context => "Hook 上下文：",
+        HookOutputEntryKind::Error => "错误：",
     }
 }
 
