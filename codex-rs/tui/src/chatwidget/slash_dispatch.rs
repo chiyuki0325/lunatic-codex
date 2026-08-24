@@ -31,12 +31,12 @@ struct PreparedSlashCommandArgs {
     source: SlashCommandDispatchSource,
 }
 
-const SIDE_STARTING_CONTEXT_LABEL: &str = "Side starting...";
+const SIDE_STARTING_CONTEXT_LABEL: &str = "正在启动侧边对话…";
 const SIDE_SLASH_COMMAND_UNAVAILABLE_HINT: &str =
-    "Press Ctrl+C to return to the main thread first.";
-const GOAL_USAGE_HINT: &str = "Example: /goal improve benchmark coverage";
-const RAW_USAGE: &str = "Usage: /raw [on|off]";
-const USAGE_CHATGPT_LOGIN_REQUIRED: &str = "Sign in with ChatGPT to use /usage.";
+    "请先按下 Ctrl+C 返回主线程。";
+const GOAL_USAGE_HINT: &str = "示例：/goal improve benchmark coverage";
+const RAW_USAGE: &str = "用法：/raw [on|off]";
+const USAGE_CHATGPT_LOGIN_REQUIRED: &str = "请登录 ChatGPT 后使用 /usage。";
 
 impl ChatWidget {
     /// Dispatch a bare slash command and record its staged local-history entry.
@@ -84,8 +84,8 @@ impl ChatWidget {
     fn apply_plan_slash_command(&mut self) -> bool {
         if !self.collaboration_modes_enabled() {
             self.add_info_message(
-                "Collaboration modes are disabled.".to_string(),
-                Some("Enable collaboration modes to use /plan.".to_string()),
+                "协作模式已禁用。".to_string(),
+                Some("启用协作模式后即可使用 /plan。".to_string()),
             );
             return false;
         }
@@ -94,7 +94,7 @@ impl ChatWidget {
             true
         } else {
             self.add_info_message(
-                "Plan mode unavailable right now.".to_string(),
+                "当前无法使用计划模式。".to_string(),
                 /*hint*/ None,
             );
             false
@@ -117,9 +117,7 @@ impl ChatWidget {
     fn request_empty_side_conversation(&mut self, cmd: SlashCommand) {
         let Some(parent_thread_id) = self.thread_id else {
             let command = cmd.command();
-            self.add_error_message(format!(
-                "'/{command}' is unavailable before the session starts."
-            ));
+            self.add_error_message(format!("会话开始前无法使用 /{command}。"));
             return;
         };
 
@@ -379,7 +377,7 @@ impl ChatWidget {
             }
             SlashCommand::SandboxReadRoot => {
                 self.add_error_message(
-                    "Usage: /sandbox-add-read-dir <absolute-directory-path>".to_string(),
+                    "用法：/sandbox-add-read-dir <绝对目录路径>".to_string(),
                 );
             }
             SlashCommand::Experimental => {
@@ -425,10 +423,9 @@ impl ChatWidget {
                                     "`/diff` — _not inside a git repository_".to_string()
                                 }
                             }
-                            Err(e) => format!("Failed to compute diff: {e}"),
+                            Err(e) => format!("无法计算差异：{e}"),
                         },
-                        None => "Failed to compute diff: workspace command runner unavailable"
-                            .to_string(),
+                        None => "无法计算差异：工作区命令执行器不可用".to_string(),
                     };
                     tx.send(AppEvent::DiffResult(cwd, text));
                 });
@@ -466,7 +463,7 @@ impl ChatWidget {
             }
             SlashCommand::Pwd => {
                 self.add_info_message(
-                    format!("Current working directory: {}", self.config.cwd.display()),
+                    format!("当前工作目录：{}", self.config.cwd.display()),
                     /*hint*/ None,
                 );
             }
@@ -500,10 +497,10 @@ impl ChatWidget {
                 self.clean_background_terminals();
             }
             SlashCommand::MemoryDrop => {
-                self.add_app_server_stub_message("Memory maintenance");
+                self.add_app_server_stub_message("内存维护");
             }
             SlashCommand::MemoryUpdate => {
-                self.add_app_server_stub_message("Memory maintenance");
+                self.add_app_server_stub_message("内存维护");
             }
             SlashCommand::Mcp => {
                 self.add_mcp_output(McpServerStatusDetail::ToolsAndAuthOnly);
@@ -517,12 +514,12 @@ impl ChatWidget {
             SlashCommand::Rollout => {
                 if let Some(path) = self.rollout_path() {
                     self.add_info_message(
-                        format!("Current rollout path: {}", path.display()),
+                        format!("当前会话记录路径：{}", path.display()),
                         /*hint*/ None,
                     );
                 } else {
                     self.add_info_message(
-                        "Rollout path is not available yet.".to_string(),
+                        "会话记录路径暂不可用。".to_string(),
                         /*hint*/ None,
                     );
                 }
@@ -849,7 +846,7 @@ impl ChatWidget {
                         self.add_info_message(
                             GOAL_USAGE.to_string(),
                             Some(
-                                "The session must start before you can change a goal.".to_string(),
+                                "会话开始后才能更改目标。".to_string(),
                             ),
                         );
                         if source == SlashCommandDispatchSource::Live {
@@ -908,7 +905,7 @@ impl ChatWidget {
                     } else {
                         self.add_info_message(
                             GOAL_USAGE.to_string(),
-                            Some("The session must start before you can set a goal.".to_string()),
+                            Some("会话开始后才能设置目标。".to_string()),
                         );
                     }
                     return;
@@ -1016,9 +1013,7 @@ impl ChatWidget {
             find_slash_command(name, self.builtin_command_flags(), &service_tier_commands)
         else {
             self.add_info_message(
-                format!(
-                    r#"Unrecognized command '/{name}'. Type "/" for a list of supported commands."#
-                ),
+                format!(r#"无法识别命令 '/{name}'。输入 "/" 可查看支持的命令列表。"#),
                 /*hint*/ None,
             );
             return QueueDrain::Continue;
