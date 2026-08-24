@@ -7,7 +7,7 @@ use super::*;
 use crate::terminal_hyperlinks::HyperlinkLine;
 use std::sync::Weak;
 
-const DESKTOP_THREAD_OPENED_MESSAGE: &str = "Opened this session in the Desktop app.";
+const DESKTOP_THREAD_OPENED_MESSAGE: &str = "已在桌面应用中打开此会话。";
 
 pub(super) struct RenderedHistoryTail {
     pub(super) cell: Weak<dyn HistoryCell>,
