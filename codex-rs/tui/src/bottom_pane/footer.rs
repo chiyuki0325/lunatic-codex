@@ -535,26 +535,26 @@ pub(crate) fn goal_status_indicator_line(
     let label = match indicator {
         GoalStatusIndicator::Active { usage } => {
             if let Some(usage) = usage {
-                format!("Pursuing goal ({usage})")
+                format!("正在完成目标（{usage}）")
             } else {
-                "Pursuing goal".to_string()
+                "正在完成目标".to_string()
             }
         }
-        GoalStatusIndicator::Paused => "Goal paused (/goal resume)".to_string(),
-        GoalStatusIndicator::Blocked => "Goal stalled (/goal resume)".to_string(),
-        GoalStatusIndicator::UsageLimited => "Goal hit usage limits (/goal resume)".to_string(),
+        GoalStatusIndicator::Paused => "目标已暂停（/goal resume）".to_string(),
+        GoalStatusIndicator::Blocked => "目标已停滞（/goal resume）".to_string(),
+        GoalStatusIndicator::UsageLimited => "目标已达到用量限制（/goal resume）".to_string(),
         GoalStatusIndicator::BudgetLimited { usage } => {
             if let Some(usage) = usage {
-                format!("Goal unmet ({usage})")
+                format!("目标未完成（{usage}）")
             } else {
-                "Goal abandoned".to_string()
+                "目标已放弃".to_string()
             }
         }
         GoalStatusIndicator::Complete { usage } => {
             if let Some(usage) = usage {
-                format!("Goal achieved ({usage})")
+                format!("已完成目标（{usage}）")
             } else {
-                "Goal achieved".to_string()
+                "已完成目标".to_string()
             }
         }
     };
@@ -570,7 +570,7 @@ pub(crate) fn status_line_right_indicator_line(
 ) -> Option<Line<'static>> {
     let primary_indicator = mode_indicator_line(collaboration_mode_indicator, show_cycle_hint)
         .or_else(|| goal_status_indicator_line(goal_status_indicator));
-    let ide_context_indicator = ide_context_active.then(|| Line::from(vec!["IDE context".cyan()]));
+    let ide_context_indicator = ide_context_active.then(|| Line::from(vec!["IDE 上下文".cyan()]));
     let mut line: Option<Line<'static>> = None;
 
     for indicator in [primary_indicator, ide_context_indicator]
@@ -592,7 +592,7 @@ pub(crate) fn status_line_right_indicator_line(
 
 pub(crate) fn side_conversation_context_line(label: &str) -> Line<'static> {
     if let Some(rest) = label.strip_prefix("Side ") {
-        Line::from(vec!["Side".magenta().bold(), format!(" {rest}").magenta()])
+        Line::from(vec!["侧边".magenta().bold(), format!(" {rest}").magenta()])
     } else {
         Line::from(vec![Span::from(label.to_string()).magenta()])
     }
