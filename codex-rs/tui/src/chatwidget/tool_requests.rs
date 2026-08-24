@@ -411,8 +411,8 @@ impl ChatWidget {
         let summary = Notification::user_input_request_summary(&ev.questions);
         let title = match (question_count, summary.as_deref()) {
             (1, Some(summary)) => summary.to_string(),
-            (1, None) => "Question requested".to_string(),
-            (count, _) => format!("{count} questions requested"),
+            (1, None) => "请求了一个问题".to_string(),
+            (count, _) => format!("请求了 {count} 个问题"),
         };
         self.notify(Notification::PlanModePrompt { title });
         self.bottom_pane.push_user_input_request(ev);
