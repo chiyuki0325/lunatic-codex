@@ -1739,7 +1739,7 @@ fn remote_section_loading_tab(id: &str, label: &str, item_description: &str) -> 
         id: format!("{REMOTE_LOADING_TAB_ID_PREFIX}{id}"),
         label: label.to_string(),
         header: plugins_header(
-            format!("Loading {label} plugins."),
+            format!("正在加载 {label} 插件。"),
             "Local plugin functionality is already available.".to_string(),
         ),
         items: vec![remote_section_loading_item(label, item_description)],
