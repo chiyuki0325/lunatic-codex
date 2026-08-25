@@ -205,11 +205,7 @@ impl ChatWidget {
         SelectionViewParams {
             view_id: Some(RATE_LIMIT_RESET_VIEW_ID),
             title: Some("用量限额重置".to_string()),
-            subtitle: Some(format!(
-                "{} {} available.",
-                reset_credits.available_count,
-                reset_label(reset_credits.available_count)
-            )),
+            subtitle: Some(format!("可用 {} 次重置。", reset_credits.available_count)),
             footer_hint: Some(standard_popup_hint_line()),
             items,
             initial_selected_idx: Some(0),
