@@ -182,7 +182,6 @@ impl ChatWidget {
                 self.bottom_pane.show_selection_view(SelectionViewParams {
                     title: Some("归档此会话？".to_string()),
                     subtitle: Some("确定吗？这将归档当前会话并退出 Codex".to_string()),
-                    ),
                     footer_hint: Some(standard_popup_hint_line()),
                     items: vec![
                         SelectionItem {
