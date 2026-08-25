@@ -4,9 +4,9 @@ use super::*;
 
 fn web_search_header(completed: bool) -> &'static str {
     if completed {
-        "Searched the web"
+        "已搜索网页"
     } else {
-        "Searching the web"
+        "正在搜索网页"
     }
 }
 
@@ -28,7 +28,7 @@ fn web_search_action_detail(action: &WebSearchAction) -> String {
         }
         WebSearchAction::OpenPage { url } => url.clone().unwrap_or_default(),
         WebSearchAction::FindInPage { url, pattern } => match (pattern, url) {
-            (Some(pattern), Some(url)) => format!("'{pattern}' in {url}"),
+            (Some(pattern), Some(url)) => format!("'{pattern}'，页面：{url}"),
             (Some(pattern), None) => format!("'{pattern}'"),
             (None, Some(url)) => url.clone(),
             (None, None) => String::new(),
@@ -104,8 +104,7 @@ impl HistoryCell for WebSearchCell {
         let text: Text<'static> = if detail.is_empty() {
             Line::from(vec![header.bold()]).into()
         } else {
-            let separator = if self.completed { " for " } else { " " };
-            Line::from(vec![header.bold(), separator.into(), detail.into()]).into()
+            Line::from(vec![header.bold(), "：".into(), detail.into()]).into()
         };
         PrefixedWrappedHistoryCell::new(text, vec![bullet, " ".into()], "  ").display_lines(width)
     }
@@ -116,8 +115,7 @@ impl HistoryCell for WebSearchCell {
         if detail.is_empty() {
             vec![Line::from(header)]
         } else {
-            let separator = if self.completed { " for " } else { " " };
-            vec![Line::from(format!("{header}{separator}{detail}"))]
+            vec![Line::from(format!("{header}：{detail}"))]
         }
     }
 }

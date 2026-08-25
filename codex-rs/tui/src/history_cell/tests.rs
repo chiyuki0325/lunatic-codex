@@ -448,7 +448,7 @@ fn structured_tool_cell_renders_raw_plain_text_without_prefix_or_style() {
 
     let lines = cell.raw_lines();
     let rendered = render_lines(&lines);
-    assert!(rendered[0].starts_with("Called search.find_docs("));
+    assert!(rendered[0].starts_with("已调用 search.find_docs("));
     assert_eq!(rendered[1..], ["alpha".to_string(), "beta".to_string()]);
     assert_unstyled_lines(&lines);
 }
@@ -570,7 +570,7 @@ fn unified_exec_interaction_cell_renders_input() {
     assert_eq!(
         lines,
         vec![
-            "↳ Interacted with background terminal · echo hello",
+            "↳ 已与 background terminal · echo hello",
             "  └ ls",
             "    pwd",
         ],
@@ -1168,7 +1168,7 @@ fn unified_exec_interaction_cell_height_matches_wrapped_rendering() {
         })
         .collect::<String>();
     assert!(
-        first_row.contains("Interacted with"),
+        first_row.contains("已与"),
         "expected first rendered row to keep the header visible, got: {first_row:?}"
     );
 }
@@ -1240,7 +1240,7 @@ fn web_search_history_cell_wraps_with_indented_continuation() {
     assert_eq!(
         rendered,
         vec![
-            "• Searched the web for example search query with several generic".to_string(),
+            "• 已搜索网页：example search query with several generic".to_string(),
             "  words to exercise wrapping".to_string(),
         ]
     );
@@ -1261,7 +1261,7 @@ fn web_search_history_cell_short_query_does_not_wrap() {
 
     assert_eq!(
         rendered,
-        vec!["• Searched the web for short query".to_string()]
+        vec!["• 已搜索网页：short query".to_string()]
     );
 }
 
@@ -1336,7 +1336,7 @@ fn code_mode_tool_call_uses_title_and_preserves_full_transcript() {
     let transcript = render_lines(&cell.transcript_lines(/*width*/ 180)).join("\n");
     insta::assert_snapshot!(format!("history:\n{history}\n\ntranscript:\n{transcript}"), @r#"
     history:
-    • Called Inspect Spotify workspace
+    • 已调用 Inspect Spotify workspace
       └ 012345678901234567890123456789012345
             67890123456789012345678901234567
             89012345678901234567890123456789
@@ -1345,7 +1345,7 @@ fn code_mode_tool_call_uses_title_and_preserves_full_transcript() {
             45678901...
 
     transcript:
-    • Called node_repl.js({"title":"Inspect Spotify workspace","code":"await tools.exec_command({ cmd: 'git status' })"})
+    • 已调用 node_repl.js({"title":"Inspect Spotify workspace","code":"await tools.exec_command({ cmd: 'git status' })"})
       └ Script completed
         Wall time 0.1 seconds
         Output:
@@ -1380,13 +1380,13 @@ fn code_mode_tool_call_preserves_failure_details() {
     let transcript = render_lines(&cell.transcript_lines(/*width*/ 120)).join("\n");
     insta::assert_snapshot!(format!("history:\n{history}\n\ntranscript:\n{transcript}"), @r#"
     history:
-    • Called Inspect workspace
+    • 已调用 Inspect workspace
       └ Script failed
         Output:
         permission denied
 
     transcript:
-    • Called node_repl.js({"title":"Inspect workspace","code":"throw Error('denied')"})
+    • 已调用 node_repl.js({"title":"Inspect workspace","code":"throw Error('denied')"})
       └ Script failed
         Output:
         permission denied

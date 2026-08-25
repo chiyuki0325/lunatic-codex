@@ -29,7 +29,7 @@ fn mcp_auth_status_label(status: McpAuthStatus) -> &'static str {
         McpAuthStatus::Unknown => "未知",
         McpAuthStatus::Unsupported => "不支持",
         McpAuthStatus::NotLoggedIn => "未登录",
-        McpAuthStatus::BearerToken => "Bearer 令牌",
+        McpAuthStatus::BearerToken => "Bearer Token",
         McpAuthStatus::OAuth => "OAuth",
     }
 }

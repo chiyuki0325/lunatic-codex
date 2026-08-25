@@ -2,4 +2,4 @@
 source: tui/src/chatwidget/tests.rs
 expression: active_blob(&chat)
 ---
-• Ran 3 commands · ctrl + t to view transcript
+• 已运行 3 个命令 · ctrl + t 查看转录记录

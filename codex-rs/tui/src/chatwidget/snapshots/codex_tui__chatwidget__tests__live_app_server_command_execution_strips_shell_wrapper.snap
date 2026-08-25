@@ -2,5 +2,5 @@
 source: tui/src/chatwidget/tests.rs
 expression: blob
 ---
-• You ran python3 -c 'print("Hello, world!")'
+• 你运行了 python3 -c 'print("Hello, world!")'
   └ Hello, world!

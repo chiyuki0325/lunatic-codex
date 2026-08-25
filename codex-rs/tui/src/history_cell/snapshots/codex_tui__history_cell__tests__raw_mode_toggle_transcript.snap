@@ -34,7 +34,7 @@ for copying
 ```text
 copy me
 ```
-Called workspace.inspect({"path":"README.md"})
+已调用 workspace.inspect({"path":"README.md"})
 structured output
 second line
 

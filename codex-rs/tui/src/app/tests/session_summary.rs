@@ -54,7 +54,7 @@ async fn session_summary_includes_resume_hint_for_persisted_rollout() {
     .expect("summary");
     assert_eq!(
         summary.usage_line,
-        Some("令牌用量：总计=12 输入=10 输出=2".to_string())
+        Some("Token 用量：总计=12 输入=10 输出=2".to_string())
     );
     assert_eq!(
         summary.resume_hint,

@@ -2,7 +2,7 @@
 source: tui/src/chatwidget/tests/exec_flow.rs
 expression: combined
 ---
-• Ran echo preparing
+• 已运行 echo preparing
   └ preparing
 
 ────────────────────────────────────────────────────────────────────────────────

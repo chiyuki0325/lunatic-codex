@@ -50,7 +50,7 @@ impl ChatWidget {
             items: vec![
                 SelectionItem {
                     name: "查看用量".to_string(),
-                    description: Some("查看近期账户令牌用量。".to_string()),
+                    description: Some("查看近期账户 Token 用量。".to_string()),
                     actions: vec![Box::new(|tx| {
                         tx.send(AppEvent::OpenTokenActivity);
                     })],

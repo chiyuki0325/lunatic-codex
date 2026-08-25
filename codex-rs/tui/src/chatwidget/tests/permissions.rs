@@ -386,7 +386,7 @@ async fn preset_matching_does_not_treat_non_cwd_writable_profile_as_read_only() 
             cwd.as_path(),
             &preset
         ),
-        "profiles with any writable root should not be classified as Read Only"
+        "profiles with any writable root should not be classified as 读取 Only"
     );
 }
 
@@ -771,7 +771,7 @@ async fn permissions_selection_emits_history_cell_when_selection_changes() {
         2,
         "expected command and permissions selection history cells"
     );
-    assert!(lines_to_single_string(&cells[0]).contains("Ran printf before"));
+    assert!(lines_to_single_string(&cells[0]).contains("已运行 printf before"));
     let rendered = lines_to_single_string(&cells[1]);
     assert!(
         rendered.contains("权限已更新为"),

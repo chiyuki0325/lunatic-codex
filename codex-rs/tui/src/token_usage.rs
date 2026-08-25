@@ -64,7 +64,7 @@ impl fmt::Display for TokenUsage {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "令牌用量：总计={} 输入={}{} 输出={}{}",
+            "Token 用量：总计={} 输入={}{} 输出={}{}",
             format_with_separators(self.blended_total()),
             format_with_separators(self.non_cached_input()),
             if self.cached_input() > 0 {

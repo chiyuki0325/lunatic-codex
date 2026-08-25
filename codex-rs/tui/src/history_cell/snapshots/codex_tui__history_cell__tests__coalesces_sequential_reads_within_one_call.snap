@@ -4,5 +4,5 @@ expression: rendered
 ---
 • Explored
   └ Search shimmer_spans
-    Read shimmer.rs
-    Read status_indicator_widget.rs
+    读取 shimmer.rs
+    读取 status_indicator_widget.rs

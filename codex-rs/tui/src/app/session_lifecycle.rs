@@ -776,7 +776,7 @@ impl App {
                         }
                         if let Some(command) = summary.resume_hint {
                             let spans =
-                                vec!["To continue this session, run ".into(), command.cyan()];
+                                vec!["要继续此会话，请运行 ".into(), command.cyan()];
                             lines.push(spans.into());
                         }
                         self.chat_widget.add_plain_history_lines(lines);
@@ -1107,7 +1107,7 @@ impl App {
                             }
                             if let Some(command) = summary.resume_hint {
                                 let spans =
-                                    vec!["To continue this session, run ".into(), command.cyan()];
+                                    vec!["要继续此会话，请运行 ".into(), command.cyan()];
                                 lines.push(spans.into());
                             }
                             self.chat_widget.add_plain_history_lines(lines);
