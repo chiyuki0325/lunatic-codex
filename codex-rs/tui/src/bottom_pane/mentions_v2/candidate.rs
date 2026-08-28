@@ -3,8 +3,9 @@ use std::path::PathBuf;
 use ratatui::style::Style;
 use ratatui::style::Styled;
 use ratatui::text::Span;
+use unicode_width::UnicodeWidthStr;
 
-const TAG_WIDTH: usize = "Plugin".len();
+const TAG_WIDTH: usize = 6;
 
 #[derive(Clone, Debug)]
 pub(crate) enum Selection {
@@ -35,15 +36,17 @@ impl MentionType {
             Self::File => base_style.cyan(),
             Self::Directory => base_style,
         };
-        format!("{:<width$}", self.label(), width = TAG_WIDTH).set_style(style)
+        let label = self.label();
+        let padding = TAG_WIDTH.saturating_sub(UnicodeWidthStr::width(label));
+        format!("{label}{}", " ".repeat(padding)).set_style(style)
     }
 
     fn label(self) -> &'static str {
         match self {
-            Self::Plugin => "Plugin",
+            Self::Plugin => "插件",
             Self::Skill => "Skill",
-            Self::File => "File",
-            Self::Directory => "Dir",
+            Self::File => "文件",
+            Self::Directory => "目录",
         }
     }
 }

@@ -294,9 +294,9 @@ impl Renderable for CustomPromptView {
             let mut hint_line = if self.textarea.uses_vim_insert_cursor() {
                 accept_cancel_hint_line(
                     Some(key_hint::plain(KeyCode::Enter).into()),
-                    "to confirm",
+                    "以确认",
                     Some(key_hint::plain(KeyCode::Esc).into()),
-                    "to enter normal mode",
+                    "以进入普通模式",
                 )
             } else {
                 standard_popup_hint_line()

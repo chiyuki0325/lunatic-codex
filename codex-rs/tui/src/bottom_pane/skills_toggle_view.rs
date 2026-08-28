@@ -33,7 +33,7 @@ use super::scroll_state::ScrollState;
 use super::selection_popup_common::GenericDisplayRow;
 use super::selection_popup_common::render_rows_single_line;
 
-const SEARCH_PLACEHOLDER: &str = "输入以搜索技能";
+const SEARCH_PLACEHOLDER: &str = "输入以搜索 Skill";
 const SEARCH_PROMPT_PREFIX: &str = "> ";
 
 pub(crate) struct SkillsToggleItem {
@@ -63,8 +63,8 @@ impl SkillsToggleView {
         keymap: ListKeymap,
     ) -> Self {
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("启用/禁用技能".bold()));
-        header.push(Line::from("开启或关闭技能。更改会自动保存。".dim()));
+        header.push(Line::from("启用/禁用 Skill".bold()));
+        header.push(Line::from("开启或关闭 Skill。更改会自动保存。".dim()));
 
         let mut view = Self {
             items,

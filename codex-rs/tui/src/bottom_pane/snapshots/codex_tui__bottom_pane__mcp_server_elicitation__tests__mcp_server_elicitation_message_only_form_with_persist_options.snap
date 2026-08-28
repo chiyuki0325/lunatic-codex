@@ -3,17 +3,17 @@ source: tui/src/bottom_pane/mcp_server_elicitation.rs
 expression: "render_snapshot(&overlay, Rect::new(0, 0, 120, 16))"
 ---
                                                                                                                         
-  Field 1/1                                                                                                             
+  字段 1/1                                                                                                              
   Boolean elicit MCP example: do you confirm?                                                                           
-  › 1. Allow                   Allow this request and continue.                                                         
-    2. Allow for this session  Allow this request and remember this choice for this session.                            
-    3. Always allow            Allow this request and remember this choice for future requests.                         
-    4. Deny                    Decline this request and continue.                                                       
-    5. Cancel                  Cancel this request                                                                      
+  › 1. 允许                   允许此请求并继续。                                                                        
+    2. 在本次会话中允许          允许此请求，并在本次会话中记住此选择。                                                 
+    3. 始终允许                允许此请求，并为后续请求记住此选择。                                                     
+    4. 拒绝                    拒绝此请求并继续。                                                                       
+    5. 取消                    取消此请求                                                                               
                                                                                                                         
                                                                                                                         
                                                                                                                         
                                                                                                                         
                                                                                                                         
                                                                                                                         
-  enter to submit | esc to cancel
+  Enter 以提交 | Esc 以取消      

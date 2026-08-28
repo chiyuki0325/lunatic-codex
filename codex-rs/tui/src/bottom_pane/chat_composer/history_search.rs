@@ -354,22 +354,19 @@ impl ChatComposer {
     /// cannot allocate a distinct hint row.
     pub(super) fn history_search_footer_line(&self) -> Option<Line<'static>> {
         let search = self.history_search.as_ref()?;
-        let mut line = Line::from(vec![
-            "reverse-i-search: ".dim(),
-            search.query.clone().cyan(),
-        ]);
+        let mut line = Line::from(vec!["反向搜索：".dim(), search.query.clone().cyan()]);
         match search.status {
             HistorySearchStatus::Idle => {}
-            HistorySearchStatus::Searching => line.push_span("  searching".dim()),
+            HistorySearchStatus::Searching => line.push_span("  正在搜索".dim()),
             HistorySearchStatus::Match => {
                 line.push_span("  ".dim());
                 line.push_span(Self::history_search_action_key_span(KeyCode::Enter));
-                line.push_span(" accept".dim());
+                line.push_span(" 接受".dim());
                 line.push_span(" · ".dim());
                 line.push_span(Self::history_search_action_key_span(KeyCode::Esc));
-                line.push_span(" cancel".dim());
+                line.push_span(" 取消".dim());
             }
-            HistorySearchStatus::NoMatch => line.push_span("  no match".red()),
+            HistorySearchStatus::NoMatch => line.push_span("  无匹配".red()),
         }
         Some(line)
     }
@@ -715,14 +712,14 @@ mod tests {
                 .map(|span| span.content.as_ref())
                 .collect::<Vec<_>>(),
             vec![
-                "reverse-i-search: ",
+                "反向搜索：",
                 "c",
                 "  ",
-                "enter",
-                " accept",
+                "Enter",
+                " 接受",
                 " · ",
-                "esc",
-                " cancel"
+                "Esc",
+                " 取消"
             ]
         );
 

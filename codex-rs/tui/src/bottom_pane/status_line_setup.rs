@@ -175,13 +175,15 @@ impl StatusLineItem {
             StatusLineItem::TotalInputTokens => "会话已用输入 Token 总数",
             StatusLineItem::TotalOutputTokens => "会话已生成输出 Token 总数",
             StatusLineItem::ThreadCredits => "当前对话的预估额度（仅企业工作区；不可用时省略）",
-            StatusLineItem::EstimatedThreadCost => "当前对话的预估美元成本（仅企业工作区；不可用时省略）",
+            StatusLineItem::EstimatedThreadCost => {
+                "当前对话的预估美元成本（仅企业工作区；不可用时省略）"
+            }
             StatusLineItem::SessionId => "当前对话标识符（对话开始前省略）",
             StatusLineItem::FastMode => "快速模式当前是否启用",
             StatusLineItem::RawOutput => "原始滚动缓冲区模式当前是否启用",
             StatusLineItem::ThreadTitle => "当前对话标题；未命名时显示对话标识符",
             StatusLineItem::WorkspaceHeadline => "工作区通知标题（仅企业工作区；不可用时省略）",
-            StatusLineItem::TaskProgress => "来自 update_plan 的最新任务进度（可用前省略）"
+            StatusLineItem::TaskProgress => "来自 update_plan 的最新任务进度（可用前省略）",
         }
     }
 

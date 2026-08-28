@@ -42,7 +42,7 @@ pub(crate) fn accept_cancel_hint_line(
         (Some(accept), Some(cancel)) => Line::from(vec![
             "按下 ".into(),
             accept.into(),
-            format!(" {accept_label} or ").into(),
+            format!(" {accept_label}，或按下 ").into(),
             cancel.into(),
             format!(" {cancel_label}").into(),
         ]),

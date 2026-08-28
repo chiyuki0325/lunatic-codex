@@ -1,6 +1,6 @@
 use super::TerminalTitleItem;
 
-pub(crate) const ACTION_REQUIRED_PREVIEW_PREFIX: &str = "[ ! ] Action Required";
+pub(crate) const ACTION_REQUIRED_PREVIEW_PREFIX: &str = "[ ! ] 需要操作";
 
 pub(crate) fn build_action_required_title_text<I, F>(
     prefix: &str,

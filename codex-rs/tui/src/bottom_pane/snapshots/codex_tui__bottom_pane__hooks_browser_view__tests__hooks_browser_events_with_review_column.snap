@@ -3,22 +3,22 @@ source: tui/src/bottom_pane/hooks_browser_view.rs
 expression: "render_lines(&view, 112)"
 ---
                                                                                                                 
-  Hooks                                                                                                         
-  Lifecycle hooks from config and enabled plugins.                                                              
+  Hook                                                                                                          
+  来 自 配 置 和 已 启 用 插 件 的 生 命 周 期  Hook。                                                                          
                                                                                                                 
-  ⚠ 1 hook needs review before it can run.                                                                      
+  ⚠ 1 个  Hook 需 要 审 核 后 才 能 运 行 。                                                                               
                                                                                                                 
-  Event                 Installed   Active      Review      Description                                         
-  PreToolUse            1           0           1           Before a tool executes                              
-  PermissionRequest     0           0           0           When permission is requested                        
-  PostToolUse           0           0           0           After a tool executes                               
-  PreCompact            0           0           0           Before context compaction                           
-  PostCompact           0           0           0           After context compaction                            
-  SessionStart          0           0           0           When a new session starts                           
-  SessionEnd            0           0           0           Right before a session ends                         
-  UserPromptSubmit      0           0           0           When the user submits a prompt                      
-  SubagentStart         0           0           0           When a subagent is created                          
-  SubagentStop          0           0           0           Right before a subagent ends its turn               
-  Stop                  0           0           0           Right before Codex ends its turn                    
+  事 件                   已 安 装       已 启 用       待 审 核       说 明                                                 
+  PreToolUse            1           0           1           工 具 执 行 前                                           
+  PermissionRequest     0           0           0           请 求 权 限 时                                           
+  PostToolUse           0           0           0           工 具 执 行 后                                           
+  PreCompact            0           0           0           压 缩 上 下 文 前                                         
+  PostCompact           0           0           0           压 缩 上 下 文 后                                         
+  SessionStart          0           0           0           新 会 话 开 始 时                                         
+  SessionEnd            0           0           0           会 话 结 束 前                                           
+  UserPromptSubmit      0           0           0           用 户 提 交 提 示 时                                       
+  SubagentStart         0           0           0           创 建  subagent 时                                     
+  SubagentStop          0           0           0           subagent 结 束 轮 次 前                                  
+  Stop                  0           0           0           Codex 结 束 轮 次 前                                     
                                                                                                                 
-  Press t to trust all; enter to review hooks; esc to close
+  按 下  T 以 全 部 信 任 ； Enter 以 查 看  Hook； Esc 以 关 闭                                                               

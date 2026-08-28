@@ -365,8 +365,8 @@ impl TextArea {
             return None;
         }
         Some(match self.vim_mode {
-            VimMode::Normal => "Normal",
-            VimMode::Insert => "Insert",
+            VimMode::Normal => "普通",
+            VimMode::Insert => "插入",
         })
     }
 
@@ -376,8 +376,8 @@ impl TextArea {
             return None;
         }
         Some(match self.vim_mode {
-            VimMode::Normal => "Vim: Normal".magenta(),
-            VimMode::Insert => "Vim: Insert".green(),
+            VimMode::Normal => "Vim：普通".magenta(),
+            VimMode::Insert => "Vim：插入".green(),
         })
     }
 
@@ -2388,7 +2388,7 @@ mod tests {
         t.input(KeyEvent::new(KeyCode::Esc, KeyModifiers::NONE));
 
         assert_eq!(t.text(), "h");
-        assert_eq!(t.vim_mode_label(), Some("Normal"));
+        assert_eq!(t.vim_mode_label(), Some("普通"));
         assert_eq!(t.cursor(), 0);
     }
 
@@ -2401,7 +2401,7 @@ mod tests {
         t.input(KeyEvent::new(KeyCode::Char('h'), KeyModifiers::NONE));
 
         assert_eq!(t.text(), "h");
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
     }
 
     #[test]
@@ -2431,7 +2431,7 @@ mod tests {
         t.input(KeyEvent::new(KeyCode::Char('z'), KeyModifiers::NONE));
         t.input(KeyEvent::new(KeyCode::Esc, KeyModifiers::NONE));
 
-        assert_eq!(t.vim_mode_label(), Some("Normal"));
+        assert_eq!(t.vim_mode_label(), Some("普通"));
         assert_eq!(t.cursor(), 0);
     }
 
@@ -2444,7 +2444,7 @@ mod tests {
         t.input(KeyEvent::new(KeyCode::Char('i'), KeyModifiers::NONE));
         t.input(KeyEvent::new(KeyCode::Esc, KeyModifiers::NONE));
 
-        assert_eq!(t.vim_mode_label(), Some("Normal"));
+        assert_eq!(t.vim_mode_label(), Some("普通"));
         assert_eq!(t.cursor(), "one\n".len());
     }
 
@@ -2457,7 +2457,7 @@ mod tests {
         t.input(KeyEvent::new(KeyCode::Char('i'), KeyModifiers::NONE));
         t.input(KeyEvent::new(KeyCode::Esc, KeyModifiers::NONE));
 
-        assert_eq!(t.vim_mode_label(), Some("Normal"));
+        assert_eq!(t.vim_mode_label(), Some("普通"));
         assert_eq!(t.cursor(), "👍".len());
     }
 
@@ -2471,7 +2471,7 @@ mod tests {
         t.input(KeyEvent::new(KeyCode::Char('i'), KeyModifiers::NONE));
         t.input(KeyEvent::new(KeyCode::Esc, KeyModifiers::NONE));
 
-        assert_eq!(t.vim_mode_label(), Some("Normal"));
+        assert_eq!(t.vim_mode_label(), Some("普通"));
         assert_eq!(t.cursor(), 1);
     }
 
@@ -2484,7 +2484,7 @@ mod tests {
 
         t.input(KeyEvent::new(KeyCode::Char('I'), KeyModifiers::NONE));
 
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
         assert_eq!(t.cursor(), "hello\n  ".len());
     }
 
@@ -2497,7 +2497,7 @@ mod tests {
 
         t.input(KeyEvent::new(KeyCode::Char('A'), KeyModifiers::NONE));
 
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
         assert_eq!(t.cursor(), 11);
     }
 
@@ -2510,7 +2510,7 @@ mod tests {
         t.input(KeyEvent::new(KeyCode::Char('c'), KeyModifiers::SHIFT));
 
         assert_eq!(t.text(), "hello \nnext line");
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
         assert_eq!(t.cursor(), 6);
         assert_eq!(t.kill_buffer, "world");
     }
@@ -2524,7 +2524,7 @@ mod tests {
         t.input(KeyEvent::new(KeyCode::Char('C'), KeyModifiers::NONE));
 
         assert_eq!(t.text(), "hello \nnext line");
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
         assert_eq!(t.cursor(), 6);
     }
 
@@ -2538,13 +2538,13 @@ mod tests {
 
         assert_eq!(t.text(), "ac");
         assert_eq!(t.cursor(), 1);
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
 
         t.input(KeyEvent::new(KeyCode::Char('X'), KeyModifiers::NONE));
 
         assert_eq!(t.text(), "aXc");
         assert_eq!(t.cursor(), 2);
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
     }
 
     #[test]
@@ -2557,7 +2557,7 @@ mod tests {
 
         assert_eq!(t.text(), "before\n\nnext");
         assert_eq!(t.cursor(), "before\n".len());
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
     }
 
     #[test]
@@ -2569,7 +2569,7 @@ mod tests {
         t.input(KeyEvent::new(KeyCode::Char('D'), KeyModifiers::NONE));
 
         assert_eq!(t.text(), "hello\nworld");
-        assert_eq!(t.vim_mode_label(), Some("Normal"));
+        assert_eq!(t.vim_mode_label(), Some("普通"));
         assert_eq!(t.kill_buffer, "");
     }
 
@@ -2582,7 +2582,7 @@ mod tests {
         t.input(KeyEvent::new(KeyCode::Char('C'), KeyModifiers::NONE));
 
         assert_eq!(t.text(), "hello\nworld");
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
         assert_eq!(t.cursor(), "hello".len());
         assert_eq!(t.kill_buffer, "");
     }
@@ -2597,7 +2597,7 @@ mod tests {
         t.input(KeyEvent::new(KeyCode::Char('O'), KeyModifiers::NONE));
 
         assert_eq!(t.text(), "hello\n\nworld");
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
         assert_eq!(t.cursor(), 6);
     }
 
@@ -2610,7 +2610,7 @@ mod tests {
         t.input(KeyEvent::new(KeyCode::Char('o'), KeyModifiers::NONE));
 
         assert_eq!(t.text(), "one\n\ntwo");
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
         assert_eq!(t.cursor(), "one\n".len());
     }
 
@@ -2623,7 +2623,7 @@ mod tests {
         t.input(KeyEvent::new(KeyCode::Char('o'), KeyModifiers::NONE));
 
         assert_eq!(t.text(), "one\n");
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
         assert_eq!(t.cursor(), "one\n".len());
     }
 
@@ -2653,7 +2653,7 @@ mod tests {
         assert_eq!(t.text(), "hello ");
         assert_eq!(t.kill_buffer, "world");
         assert_eq!(t.cursor(), "hello ".len());
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
     }
 
     #[test]
@@ -2668,7 +2668,7 @@ mod tests {
 
         assert_eq!(t.text(), "hello world");
         assert_eq!(t.kill_buffer, "hello ");
-        assert_eq!(t.vim_mode_label(), Some("Normal"));
+        assert_eq!(t.vim_mode_label(), Some("普通"));
 
         let mut t = ta_with("foo.bar/baz qux");
         t.set_cursor(/*pos*/ "foo.".len());
@@ -2706,7 +2706,7 @@ mod tests {
         assert_eq!(t.text(), "foo ");
         assert_eq!(t.kill_buffer, "bar");
         assert_eq!(t.cursor(), "foo ".len());
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
     }
 
     #[test]
@@ -2721,7 +2721,7 @@ mod tests {
 
         assert_eq!(t.text(), "a(b()d)e");
         assert_eq!(t.kill_buffer, "c");
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
 
         let mut t = ta_with("a [b] c");
         t.set_cursor(/*pos*/ "a [".len());
@@ -2748,7 +2748,7 @@ mod tests {
         assert_eq!(t.text(), "call()");
         assert_eq!(t.kill_buffer, "");
         assert_eq!(t.cursor(), "call(".len());
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
 
         let mut t = ta_with(r#"say "" now"#);
         t.set_cursor(/*pos*/ r#"say ""#.len());
@@ -2761,7 +2761,7 @@ mod tests {
         assert_eq!(t.text(), r#"say "" now"#);
         assert_eq!(t.kill_buffer, "");
         assert_eq!(t.cursor(), r#"say ""#.len());
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
     }
 
     #[test]
@@ -2776,7 +2776,7 @@ mod tests {
 
         assert_eq!(t.text(), r#"say "" now"#);
         assert_eq!(t.kill_buffer, r#"a \"b\" c"#);
-        assert_eq!(t.vim_mode_label(), Some("Insert"));
+        assert_eq!(t.vim_mode_label(), Some("插入"));
 
         let mut t = ta_with("one \"two\nthree\" four");
         t.set_cursor(/*pos*/ "one \"two\n".len());
@@ -2818,7 +2818,7 @@ mod tests {
         t.input(KeyEvent::new(KeyCode::Char('z'), KeyModifiers::NONE));
 
         assert_eq!(t.text(), "hello");
-        assert_eq!(t.vim_mode_label(), Some("Normal"));
+        assert_eq!(t.vim_mode_label(), Some("普通"));
         assert_eq!(t.cursor(), 0);
         assert!(!t.is_vim_operator_pending());
     }

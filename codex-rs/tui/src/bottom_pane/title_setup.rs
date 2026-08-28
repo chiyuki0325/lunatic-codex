@@ -111,13 +111,15 @@ impl TerminalTitleItem {
             TerminalTitleItem::TotalInputTokens => "会话已用输入 Token 总数",
             TerminalTitleItem::TotalOutputTokens => "会话已生成输出 Token 总数",
             TerminalTitleItem::ThreadCredits => "当前对话的预估额度（仅企业工作区；不可用时省略）",
-            TerminalTitleItem::EstimatedThreadCost => "当前对话的预估成本（仅企业工作区；不可用时省略）",
+            TerminalTitleItem::EstimatedThreadCost => {
+                "当前对话的预估成本（仅企业工作区；不可用时省略）"
+            }
             TerminalTitleItem::SessionId => "当前对话标识符（对话开始前省略）",
             TerminalTitleItem::FastMode => "快速模式当前是否启用",
             TerminalTitleItem::Model => "当前模型名称",
             TerminalTitleItem::ModelWithReasoning => "当前模型名称及推理级别",
             TerminalTitleItem::Reasoning => "当前推理级别",
-            TerminalTitleItem::TaskProgress => "来自 update_plan 的最新任务进度（可用前省略）"
+            TerminalTitleItem::TaskProgress => "来自 update_plan 的最新任务进度（可用前省略）",
         }
     }
 

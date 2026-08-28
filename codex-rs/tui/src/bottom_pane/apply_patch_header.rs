@@ -13,7 +13,7 @@ pub(super) fn build_header(request: &ApplyPatchApprovalRequest) -> Box<dyn Rende
     let mut header = Vec::new();
     if let Some(thread_label) = &request.thread_label {
         header.push(Line::from(vec![
-            "Thread: ".into(),
+            "线程：".into(),
             thread_label.clone().bold(),
         ]));
     }
@@ -26,9 +26,9 @@ pub(super) fn build_header(request: &ApplyPatchApprovalRequest) -> Box<dyn Rende
         .reason
         .as_deref()
         .filter(|reason| !reason.is_empty())
-        .unwrap_or("Apply proposed file edits");
+        .unwrap_or("应用建议的文件编辑");
     header.push(Line::from_iter([
-        "Description: ".into(),
+        "说明：".into(),
         description.to_string().italic(),
     ]));
 
@@ -59,16 +59,10 @@ pub(super) fn build_header(request: &ApplyPatchApprovalRequest) -> Box<dyn Rende
     destinations.sort();
     destinations.dedup();
     if destinations.is_empty() {
-        header.push(Line::from(vec![
-            "目标位置：".into(),
-            "不可用".bold(),
-        ]));
+        header.push(Line::from(vec!["目标位置：".into(), "不可用".bold()]));
     }
     for destination in destinations {
-        header.push(Line::from_iter([
-            "目标位置：".into(),
-            destination.bold(),
-        ]));
+        header.push(Line::from_iter(["目标位置：".into(), destination.bold()]));
     }
     Box::new(Paragraph::new(header).wrap(Wrap { trim: false }))
 }

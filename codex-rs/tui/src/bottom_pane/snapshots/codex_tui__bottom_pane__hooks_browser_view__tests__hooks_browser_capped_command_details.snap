@@ -3,19 +3,19 @@ source: tui/src/bottom_pane/hooks_browser_view.rs
 expression: "render_lines(&view, 44)"
 ---
                                             
-  PreToolUse hooks                          
-  Turn hooks on or off. Your changes are s  
+  PreToolUse 个  Hook                        
+  启 用 或 禁 用  Hook。 更 改 会 自 动 保 存 。          
                                             
-  [x] Hook 1                                
+  [x] 第  1 个  Hook                          
                                             
-  Event     PreToolUse                      
-  Matcher   Bash                            
-  Source    User config - /tmp/h.json       
-  Command   one two three four five six     
+  事 件       PreToolUse                    
+  匹 配 器      Bash                         
+  来 源       用 户 配 置  - /tmp/h.json        
+  命 令       one two three four five six   
             seven eight nine ten eleven     
             twelve thirteen fourteen…       
-  Mode      Sync                            
-  Timeout   30s                             
-  Trust     Trusted                         
+  模 式       同 步                           
+  超 时       30 秒                          
+  信 任       已 信 任                         
                                             
-  Press space or enter to toggle; esc to go
+  按 下  Space 或  Enter 以 切 换 ； Esc 以 返 回     

@@ -114,7 +114,7 @@
 //! Large pastes insert an element placeholder in the buffer and store the full text in
 //! `pending_pastes`. The placeholder label is derived from the pasted character count:
 //!
-//! - First paste of a given size uses `[Pasted Content N chars]`.
+//! - First paste of a given size uses `[粘贴内容 N 个字符]`.
 //! - Additional pending pastes of the same size add a numeric suffix (`#2`, `#3`, ...), where the
 //!   next suffix is computed from the placeholders that still exist in `pending_pastes`.
 //! - When all placeholders for a size are cleared or deleted, the next paste of that size reuses
@@ -334,9 +334,7 @@ use ratatui::style::Color;
 const LARGE_PASTE_CHAR_THRESHOLD: usize = 1000;
 
 fn user_input_too_large_message(actual_chars: usize) -> String {
-    format!(
-        "Message exceeds the maximum length of {MAX_USER_INPUT_TEXT_CHARS} characters ({actual_chars} provided)."
-    )
+    format!("消息超过 {MAX_USER_INPUT_TEXT_CHARS} 个字符的最大长度（已输入 {actual_chars} 个）。")
 }
 
 /// Result returned when the user interacts with the text area.
@@ -559,13 +557,13 @@ const FOOTER_SPACING_HEIGHT: u16 = 0;
 /// Builds the one-line nudge that replaces the ambient footer without adding layout height.
 fn plan_mode_nudge_line() -> Line<'static> {
     Line::from(vec![
-        "Create a plan?".magenta(),
+        "要创建计划吗？".magenta(),
         "  ".into(),
         key_hint::shift(KeyCode::Tab).into(),
-        " use Plan mode".into(),
+        " 使用 Plan 模式".into(),
         "   ".into(),
         key_hint::plain(KeyCode::Esc).into(),
-        " dismiss".into(),
+        " 关闭".into(),
     ])
 }
 
@@ -1631,7 +1629,7 @@ impl ChatComposer {
 
     pub(crate) fn set_parent_owned_thread(&mut self) {
         self.blocks_direct_input = true;
-        self.placeholder_text = "Viewing sub-agent — direct input is disabled".to_string();
+        self.placeholder_text = "正在查看 subagent — 已禁用直接输入".to_string();
     }
 
     /// Move the cursor to the end of the current text buffer.
@@ -1891,7 +1889,7 @@ impl ChatComposer {
     }
 
     fn next_large_paste_placeholder(&self, char_count: usize) -> String {
-        let base = format!("[Pasted Content {char_count} chars]");
+        let base = format!("[粘贴内容 {char_count} 个字符]");
         let prefix = format!("{base} #");
         let mut max_suffix = 0usize;
 
@@ -2958,9 +2956,7 @@ impl ChatComposer {
                 .slash_input()
                 .validate_submission(&text, input_starts_with_space)
         {
-            let message = format!(
-                r#"Unrecognized command '/{name}'. Type "/" for a list of supported commands."#
-            );
+            let message = format!("无法识别命令 '/{name}'。输入 \"/\" 可查看支持的命令列表。");
             self.app_event_tx.send(AppEvent::InsertHistoryCell(Box::new(
                 history_cell::new_info_event(message, /*hint*/ None),
             )));
@@ -3319,10 +3315,7 @@ impl ChatComposer {
         if !self.is_task_running || command.available_during_task() {
             return false;
         }
-        let message = format!(
-            "'/{}' is disabled while a task is in progress.",
-            command.command()
-        );
+        let message = format!("任务进行期间已禁用 '/{}'。", command.command());
         self.app_event_tx.send(AppEvent::InsertHistoryCell(Box::new(
             history_cell::new_error_event(message),
         )));
@@ -3516,7 +3509,7 @@ impl ChatComposer {
     fn shell_mode_footer_line(&self) -> Option<Line<'static>> {
         self.is_bang_shell_command()
             .then_some(())
-            .map(|_| Line::from(vec![Span::from("Shell mode").light_red()]))
+            .map(|_| Line::from(vec![Span::from("Shell 模式").light_red()]))
     }
 
     /// Applies any due `PasteBurst` flush at time `now`.
@@ -4171,29 +4164,21 @@ impl ChatComposer {
                     .unwrap_or((plugin.config_name.as_str(), ""));
                 let mut capability_labels = Vec::new();
                 if plugin.has_skills {
-                    capability_labels.push("skills".to_string());
+                    capability_labels.push("Skill".to_string());
                 }
                 if !plugin.mcp_server_names.is_empty() {
                     let mcp_server_count = plugin.mcp_server_names.len();
-                    capability_labels.push(if mcp_server_count == 1 {
-                        "1 MCP server".to_string()
-                    } else {
-                        format!("{mcp_server_count} MCP servers")
-                    });
+                    capability_labels.push(format!("{mcp_server_count} 个 MCP 服务器"));
                 }
                 if !plugin.app_connector_ids.is_empty() {
                     let app_count = plugin.app_connector_ids.len();
-                    capability_labels.push(if app_count == 1 {
-                        "1 app".to_string()
-                    } else {
-                        format!("{app_count} apps")
-                    });
+                    capability_labels.push(format!("{app_count} 个应用"));
                 }
                 let description = plugin.description.clone().or_else(|| {
                     Some(if capability_labels.is_empty() {
-                        "Plugin".to_string()
+                        "插件".to_string()
                     } else {
-                        format!("Plugin · {}", capability_labels.join(" · "))
+                        format!("插件 · {}", capability_labels.join(" · "))
                     })
                 });
                 let mut search_terms = vec![plugin_name.to_string(), plugin.config_name.clone()];
@@ -4209,7 +4194,7 @@ impl ChatComposer {
                     insert_text: format!("${plugin_name}"),
                     search_terms,
                     path: Some(format!("plugin://{}", plugin.config_name)),
-                    category_tag: Some("[Plugin]".to_string()),
+                    category_tag: Some("[插件]".to_string()),
                     sort_rank: 0,
                 });
             }
@@ -4233,7 +4218,7 @@ impl ChatComposer {
                     insert_text: format!("${slug}"),
                     search_terms,
                     path: Some(format!("app://{connector_id}")),
-                    category_tag: Some("[App]".to_string()),
+                    category_tag: Some("[应用]".to_string()),
                     sort_rank: 1,
                 });
             }
@@ -4271,7 +4256,7 @@ impl ChatComposer {
     }
 
     pub(crate) fn show_shutdown_in_progress(&mut self) {
-        self.set_input_enabled(/*enabled*/ false, Some("Shutting down...".to_string()));
+        self.set_input_enabled(/*enabled*/ false, Some("正在关闭...".to_string()));
         self.footer.quit_shortcut_expires_at = None;
         self.footer.mode = FooterMode::ComposerEmpty;
         self.footer.hint_override = Some(Vec::new());
@@ -4890,7 +4875,7 @@ impl ChatComposer {
                 self.draft
                     .input_disabled_placeholder
                     .as_deref()
-                    .unwrap_or("Input disabled.")
+                    .unwrap_or("输入已禁用。")
                     .to_string()
             };
             if !textarea_rect.is_empty() {
@@ -5431,7 +5416,7 @@ mod tests {
             .map(|x| buf[(x, footer_y)].symbol().chars().next().unwrap_or(' '))
             .collect::<String>();
         let shell_label_x = footer_text
-            .find("Shell mode")
+            .find("Shell 模式")
             .expect("expected shell mode footer label");
         assert_eq!(
             buf[(shell_label_x as u16, footer_y)].style().fg,
@@ -5956,7 +5941,7 @@ mod tests {
         assert!(composer.is_empty());
         assert_eq!(
             composer.vim_mode_indicator_span(),
-            Some("Vim: Insert".green())
+            Some("Vim：插入".green())
         );
 
         let (result, needs_redraw) =
@@ -5967,7 +5952,7 @@ mod tests {
         assert!(composer.is_empty());
         assert_eq!(
             composer.vim_mode_indicator_span(),
-            Some("Vim: Normal".magenta())
+            Some("Vim：普通".magenta())
         );
         assert_eq!(composer.footer.mode, FooterMode::ComposerEmpty);
         assert!(!composer.footer.esc_backtrack_hint);
@@ -6000,7 +5985,7 @@ mod tests {
         assert!(matches!(composer.popups.active, ActivePopup::Command(_)));
         assert_eq!(
             composer.vim_mode_indicator_span(),
-            Some("Vim: Insert".green())
+            Some("Vim：插入".green())
         );
     }
 
@@ -6034,7 +6019,7 @@ mod tests {
         assert!(composer.is_empty());
         assert_eq!(
             composer.vim_mode_indicator_span(),
-            Some("Vim: Normal".magenta())
+            Some("Vim：普通".magenta())
         );
         assert!(matches!(result, InputResult::Command(SlashCommand::Diff)));
     }
@@ -6066,7 +6051,7 @@ mod tests {
         assert!(needs_redraw);
         assert_eq!(
             composer.vim_mode_indicator_span(),
-            Some("Vim: Normal".magenta())
+            Some("Vim：普通".magenta())
         );
         match result {
             InputResult::CommandWithArgs(cmd, args, text_elements) => {
@@ -6105,7 +6090,7 @@ mod tests {
         assert_eq!(composer.draft.textarea.text(), "");
         assert_eq!(
             composer.vim_mode_indicator_span(),
-            Some("Vim: Insert".green())
+            Some("Vim：插入".green())
         );
     }
 
@@ -6203,7 +6188,7 @@ mod tests {
         let large = "x".repeat(LARGE_PASTE_CHAR_THRESHOLD + 5);
         composer.handle_paste(large.clone());
         let char_count = large.chars().count();
-        let placeholder = format!("[Pasted Content {char_count} chars]");
+        let placeholder = format!("[粘贴内容 {char_count} 个字符]");
         assert_eq!(composer.draft.textarea.text(), placeholder);
         assert_eq!(
             composer.draft.pending_pastes,
@@ -6269,7 +6254,7 @@ mod tests {
         );
 
         let paste = "x".repeat(LARGE_PASTE_CHAR_THRESHOLD + 4);
-        let base = format!("[Pasted Content {} chars]", paste.chars().count());
+        let base = format!("[粘贴内容 {} 个字符]", paste.chars().count());
 
         composer.handle_paste(paste.clone());
         assert_eq!(composer.draft.textarea.text(), base);
@@ -6306,7 +6291,7 @@ mod tests {
         assert!(composer.draft.textarea.is_vim_enabled());
         assert_eq!(
             composer.vim_mode_indicator_span(),
-            Some("Vim: Normal".magenta())
+            Some("Vim：普通".magenta())
         );
 
         composer.handle_key_event(KeyEvent::new(KeyCode::Char('i'), KeyModifiers::NONE));
@@ -6317,7 +6302,7 @@ mod tests {
         assert!(composer.draft.textarea.is_vim_enabled());
         assert_eq!(
             composer.vim_mode_indicator_span(),
-            Some("Vim: Normal".magenta())
+            Some("Vim：普通".magenta())
         );
         assert!(composer.is_empty());
         match result {
@@ -6351,7 +6336,7 @@ mod tests {
 
         assert_eq!(
             composer.vim_mode_indicator_span(),
-            Some("Vim: Normal".magenta())
+            Some("Vim：普通".magenta())
         );
         assert!(composer.is_empty());
         match result {
@@ -6387,7 +6372,7 @@ mod tests {
         assert_eq!(composer.draft.textarea.text(), "/not-a-command");
         assert_eq!(
             composer.vim_mode_indicator_span(),
-            Some("Vim: Insert".green())
+            Some("Vim：插入".green())
         );
     }
 
@@ -6416,14 +6401,14 @@ mod tests {
             .set_cursor(composer.draft.textarea.text().len());
         assert_eq!(
             composer.vim_mode_indicator_span(),
-            Some("Vim: Insert".green())
+            Some("Vim：插入".green())
         );
         assert_eq!(composer.draft.textarea.cursor(), "hey".len());
 
         composer.handle_key_event(KeyEvent::new(KeyCode::Esc, KeyModifiers::NONE));
         assert_eq!(
             composer.vim_mode_indicator_span(),
-            Some("Vim: Normal".magenta())
+            Some("Vim：普通".magenta())
         );
         assert_eq!(composer.draft.textarea.cursor(), "he".len());
     }
@@ -8830,7 +8815,7 @@ mod tests {
         let large = "x".repeat(LARGE_PASTE_CHAR_THRESHOLD + 10);
         let needs_redraw = composer.handle_paste(large.clone());
         assert!(needs_redraw);
-        let placeholder = format!("[Pasted Content {} chars]", large.chars().count());
+        let placeholder = format!("[粘贴内容 {} 个字符]", large.chars().count());
         assert_eq!(composer.draft.textarea.text(), placeholder);
         assert_eq!(composer.draft.pending_pastes.len(), 1);
         assert_eq!(composer.draft.pending_pastes[0].0, placeholder);
@@ -10296,7 +10281,7 @@ mod tests {
         );
 
         let large = "x".repeat(LARGE_PASTE_CHAR_THRESHOLD + 5);
-        let placeholder = format!("[Pasted Content {} chars]", large.chars().count());
+        let placeholder = format!("[粘贴内容 {} 个字符]", large.chars().count());
 
         composer.handle_paste(large.clone());
         composer.insert_str(" @ma");
@@ -10574,7 +10559,7 @@ mod tests {
             .map(|(content, is_large)| {
                 composer.handle_paste(content.clone());
                 if *is_large {
-                    let placeholder = format!("[Pasted Content {} chars]", content.chars().count());
+                    let placeholder = format!("[粘贴内容 {} 个字符]", content.chars().count());
                     expected_text.push_str(&placeholder);
                     expected_pending_count += 1;
                 } else {
@@ -10589,19 +10574,16 @@ mod tests {
             states,
             vec![
                 (
-                    format!("[Pasted Content {} chars]", test_cases[0].0.chars().count()),
+                    format!("[粘贴内容 {} 个字符]", test_cases[0].0.chars().count()),
+                    1
+                ),
+                (
+                    format!("[粘贴内容 {} 个字符] and ", test_cases[0].0.chars().count()),
                     1
                 ),
                 (
                     format!(
-                        "[Pasted Content {} chars] and ",
-                        test_cases[0].0.chars().count()
-                    ),
-                    1
-                ),
-                (
-                    format!(
-                        "[Pasted Content {} chars] and [Pasted Content {} chars]",
+                        "[粘贴内容 {} 个字符] and [粘贴内容 {} 个字符]",
                         test_cases[0].0.chars().count(),
                         test_cases[2].0.chars().count()
                     ),
@@ -10650,7 +10632,7 @@ mod tests {
             .map(|(content, is_large)| {
                 composer.handle_paste(content.clone());
                 if *is_large {
-                    let placeholder = format!("[Pasted Content {} chars]", content.chars().count());
+                    let placeholder = format!("[粘贴内容 {} 个字符]", content.chars().count());
                     current_pos += placeholder.len();
                 } else {
                     current_pos += content.len();
@@ -10689,7 +10671,7 @@ mod tests {
         assert_eq!(
             deletion_states,
             vec![
-                (" and [Pasted Content 1006 chars]".to_string(), 1),
+                (" and [粘贴内容 1006 个字符]".to_string(), 1),
                 (" and ".to_string(), 0),
             ]
         );
@@ -10714,7 +10696,7 @@ mod tests {
         );
 
         let paste = "x".repeat(LARGE_PASTE_CHAR_THRESHOLD + 4);
-        let placeholder_base = format!("[Pasted Content {} chars]", paste.chars().count());
+        let placeholder_base = format!("[粘贴内容 {} 个字符]", paste.chars().count());
         let placeholder_second = format!("{placeholder_base} #2");
 
         composer.handle_paste(paste.clone());
@@ -10756,7 +10738,7 @@ mod tests {
         );
 
         let paste = "x".repeat(LARGE_PASTE_CHAR_THRESHOLD + 4);
-        let base = format!("[Pasted Content {} chars]", paste.chars().count());
+        let base = format!("[粘贴内容 {} 个字符]", paste.chars().count());
         let second = format!("{base} #2");
         let third = format!("{base} #3");
 
@@ -10801,7 +10783,7 @@ mod tests {
         );
 
         let paste = "x".repeat(LARGE_PASTE_CHAR_THRESHOLD + 4);
-        let base = format!("[Pasted Content {} chars]", paste.chars().count());
+        let base = format!("[粘贴内容 {} 个字符]", paste.chars().count());
 
         composer.handle_paste(paste.clone());
         assert_eq!(composer.draft.textarea.text(), base);
@@ -10844,7 +10826,7 @@ mod tests {
         ];
 
         let paste = "x".repeat(LARGE_PASTE_CHAR_THRESHOLD + 4);
-        let placeholder = format!("[Pasted Content {} chars]", paste.chars().count());
+        let placeholder = format!("[粘贴内容 {} 个字符]", paste.chars().count());
 
         let states: Vec<_> = test_cases
             .into_iter()
@@ -11233,7 +11215,7 @@ mod tests {
         assert_eq!(composer.draft.textarea.text(), "hello");
         assert_eq!(
             composer.vim_mode_indicator_span(),
-            Some("Vim: Normal".magenta())
+            Some("Vim：普通".magenta())
         );
         assert!(!composer.draft.textarea.is_vim_operator_pending());
     }
@@ -12197,7 +12179,7 @@ mod tests {
         let flushed = composer.handle_paste_burst_flush(flush_time);
         assert!(flushed, "expected flush after stopping fast input");
 
-        let expected_placeholder = format!("[Pasted Content {count} chars]");
+        let expected_placeholder = format!("[粘贴内容 {count} 个字符]");
         assert_eq!(composer.draft.textarea.text(), expected_placeholder);
         assert_eq!(composer.draft.pending_pastes.len(), 1);
         assert_eq!(composer.draft.pending_pastes[0].0, expected_placeholder);
@@ -12569,7 +12551,7 @@ mod tests {
             /*disable_paste_burst*/ false,
         );
 
-        let placeholder = "[Pasted Content 5 chars]".to_string();
+        let placeholder = "[粘贴内容 5 个字符]".to_string();
         composer.draft.textarea.insert_element(&placeholder);
         composer
             .draft
@@ -12597,7 +12579,7 @@ mod tests {
 
         let first_paste = "a".repeat(LARGE_PASTE_CHAR_THRESHOLD + 4);
         let second_paste = "b".repeat(LARGE_PASTE_CHAR_THRESHOLD + 4);
-        let base = format!("[Pasted Content {} chars]", first_paste.chars().count());
+        let base = format!("[粘贴内容 {} 个字符]", first_paste.chars().count());
         let second = format!("{base} #2");
 
         composer.handle_paste(first_paste.clone());

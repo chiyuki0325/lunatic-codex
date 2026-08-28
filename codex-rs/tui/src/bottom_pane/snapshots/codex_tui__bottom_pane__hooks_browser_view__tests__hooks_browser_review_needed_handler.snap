@@ -3,17 +3,17 @@ source: tui/src/bottom_pane/hooks_browser_view.rs
 expression: "render_lines(&view, 112)"
 ---
                                                                                                                 
-  PreToolUse hooks                                                                                              
+  PreToolUse 个  Hook                                                                                            
   1 hook needs review before it can run.                                                                        
                                                                                                                 
-  [!] Hook 1 · new                                                                                              
+  [!] 第  1 个  Hook · 新 增                                                                                        
                                                                                                                 
-  Event     PreToolUse                                                                                          
-  Matcher   Bash                                                                                                
-  Source    User config - /tmp/hooks.json                                                                       
-  Command   /tmp/pre-tool-use-check.sh                                                                          
-  Mode      Sync                                                                                                
-  Timeout   30s                                                                                                 
-  Trust     New hook - review required                                                                          
+  事 件       PreToolUse                                                                                        
+  匹 配 器      Bash                                                                                             
+  来 源       用 户 配 置  - /tmp/hooks.json                                                                        
+  命 令       /tmp/pre-tool-use-check.sh                                                                        
+  模 式       同 步                                                                                               
+  超 时       30 秒                                                                                              
+  信 任       新  Hook - 需 要 审 核                                                                                 
                                                                                                                 
-  Press t to trust; esc to go back
+  按 下  T 以 信 任 ； Esc 以 返 回                                                                                      

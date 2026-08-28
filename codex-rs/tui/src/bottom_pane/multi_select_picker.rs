@@ -672,7 +672,7 @@ impl Renderable for MultiSelectPicker {
                 &rows.rows,
                 &rows.state,
                 render_area.height as usize,
-                "no matches",
+                "无匹配项",
             );
         }
 
@@ -850,7 +850,7 @@ impl MultiSelectPickerBuilder {
             if let Some(cancel) = self.keymap.primary_hint(ListAction::Cancel) {
                 spans.push("; ".into());
                 spans.push(cancel.into());
-                spans.push(" to close".into());
+                spans.push(" 以关闭".into());
             }
             spans
         } else {

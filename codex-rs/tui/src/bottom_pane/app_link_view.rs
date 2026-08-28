@@ -187,8 +187,7 @@ impl AppLinkViewParams {
             app_id: elicitation_id.to_string(),
             title: "需要操作".to_string(),
             description: Some(format!("服务器：{server_name}")),
-            instructions: "请在浏览器中完成请求的操作，然后返回此处。"
-                .to_string(),
+            instructions: "请在浏览器中完成请求的操作，然后返回此处。".to_string(),
             url: url.to_string(),
             is_installed: true,
             is_enabled: true,
@@ -535,10 +534,8 @@ impl AppLinkView {
                     lines.push(Line::from(line.into_owned()));
                 }
                 if !self.is_installed {
-                    for line in wrap(
-                        "安装后，使用 $ 将此应用插入提示词。",
-                        usable_width,
-                    ) {
+                    for line in wrap("安装后，使用 $ 将此应用插入提示词。", usable_width)
+                    {
                         lines.push(Line::from(line.into_owned()));
                     }
                 }
@@ -587,17 +584,12 @@ impl AppLinkView {
             ) {
                 lines.push(Line::from(line.into_owned()));
             }
-            for line in wrap(
-                "然后返回此处并选择“我已登录”。",
-                usable_width,
-            ) {
+            for line in wrap("然后返回此处并选择“我已登录”。", usable_width) {
                 lines.push(Line::from(line.into_owned()));
             }
         } else if is_external_action_suggestion {
-            for line in wrap(
-                "请在刚打开的浏览器窗口中完成请求的操作。",
-                usable_width,
-            ) {
+            for line in wrap("请在刚打开的浏览器窗口中完成请求的操作。", usable_width)
+            {
                 lines.push(Line::from(line.into_owned()));
             }
             for line in wrap("然后返回此处并选择“我已完成”。", usable_width) {
@@ -964,8 +956,7 @@ mod tests {
                 app_id: "payment-123".to_string(),
                 title: "需要操作".to_string(),
                 description: Some("服务器：payments".to_string()),
-                instructions: "请在浏览器中完成请求的操作，然后返回此处。"
-                    .to_string(),
+                instructions: "请在浏览器中完成请求的操作，然后返回此处。".to_string(),
                 url: "https://payments.example/checkout/123".to_string(),
                 is_installed: true,
                 is_enabled: true,

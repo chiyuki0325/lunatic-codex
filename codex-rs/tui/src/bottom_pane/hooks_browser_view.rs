@@ -297,9 +297,7 @@ impl HooksBrowserView {
     fn event_header_lines() -> Vec<Line<'static>> {
         vec![
             "Hook".bold().into(),
-            "来自配置和已启用插件的生命周期 Hook。"
-                .dim()
-                .into(),
+            "来自配置和已启用插件的生命周期 Hook。".dim().into(),
         ]
     }
 
@@ -316,13 +314,9 @@ impl HooksBrowserView {
         event_name: HookEventName,
         review_needed_count: usize,
     ) -> Vec<Line<'static>> {
-        let mut lines = vec![format!("{} hooks", event_label(event_name)).bold().into()];
+        let mut lines = vec![format!("{} 个 Hook", event_label(event_name)).bold().into()];
         match review_needed_message(review_needed_count) {
-            None => lines.push(
-                "启用或禁用 Hook。更改会自动保存。"
-                    .dim()
-                    .into(),
-            ),
+            None => lines.push("启用或禁用 Hook。更改会自动保存。".dim().into()),
             Some(message) => lines.push(message.yellow().into()),
         }
         lines
@@ -448,9 +442,9 @@ impl HooksBrowserView {
                 };
                 let row = match hook.trust_status {
                     HookTrustStatus::Modified => {
-                        format!("[{marker}] {} · modified", hook_title(idx))
+                        format!("[{marker}] {} · 已修改", hook_title(idx))
                     }
-                    HookTrustStatus::Untrusted => format!("[{marker}] {} · new", hook_title(idx)),
+                    HookTrustStatus::Untrusted => format!("[{marker}] {} · 新增", hook_title(idx)),
                     HookTrustStatus::Managed | HookTrustStatus::Trusted => {
                         format!("[{marker}] {}", hook_title(idx))
                     }
@@ -482,7 +476,10 @@ impl HooksBrowserView {
         let mut lines = vec![detail_line("事件", event_label(event_name))];
         if let Some(matcher) = hook.matcher.as_deref() {
             lines.extend(detail_wrapped_lines(
-                "匹配器", matcher, width, /*max_lines*/ None,
+                "匹配器",
+                matcher,
+                width,
+                /*max_lines*/ None,
             ));
         }
         lines.extend(detail_wrapped_lines(
@@ -509,14 +506,17 @@ impl HooksBrowserView {
                     /*max_lines*/ None,
                 ));
                 lines.extend(detail_wrapped_lines(
-                    "MCP 工具", tool, width, /*max_lines*/ None,
+                    "MCP 工具",
+                    tool,
+                    width,
+                    /*max_lines*/ None,
                 ));
             }
             HookHandlerMetadata::Prompt {} => {
                 lines.push(detail_line("处理器", "提示"));
             }
             HookHandlerMetadata::Agent {} => {
-                lines.push(detail_line("处理器", "智能体"));
+                lines.push(detail_line("处理器", "agent"));
             }
         }
         lines.push(detail_line("超时", &format!("{} 秒", hook.timeout_sec)));
@@ -548,7 +548,7 @@ impl HooksBrowserView {
             HooksBrowserPage::Events if self.review_needed_total_count() > 0 => {
                 let mut spans = vec![
                     "按下 ".into(),
-                    key_hint::plain(KeyCode::Char('t')).into(),
+                    key_hint::plain(KeyCode::Char('T')).into(),
                     " 以全部信任；".into(),
                 ];
                 if let Some(accept) = accept {
@@ -578,7 +578,7 @@ impl HooksBrowserView {
                 } else if selected_hook.is_some_and(hook_needs_review) {
                     Line::from(vec![
                         "按下 ".into(),
-                        key_hint::plain(KeyCode::Char('t')).into(),
+                        key_hint::plain(KeyCode::Char('T')).into(),
                         " 以信任；".into(),
                         cancel.into(),
                         " 以返回".into(),
@@ -702,9 +702,7 @@ impl Renderable for HooksBrowserView {
                 let rows = self.handler_row_lines(event_name, width);
                 if rows.is_empty() {
                     lines.push(Line::default());
-                    lines.push(Line::from(
-                        "此事件未安装 Hook。".dim().italic(),
-                    ));
+                    lines.push(Line::from("此事件未安装 Hook。".dim().italic()));
                     lines.push(Line::default());
                     Paragraph::new(lines).render(content_area, buf);
                     self.render_footer(footer_area, buf);
@@ -796,8 +794,8 @@ fn event_description(event_name: HookEventName) -> &'static str {
         HookEventName::SessionStart => "新会话开始时",
         HookEventName::SessionEnd => "会话结束前",
         HookEventName::UserPromptSubmit => "用户提交提示时",
-        HookEventName::SubagentStart => "创建子智能体时",
-        HookEventName::SubagentStop => "子智能体结束轮次前",
+        HookEventName::SubagentStart => "创建 subagent 时",
+        HookEventName::SubagentStop => "subagent 结束轮次前",
         HookEventName::Stop => "Codex 结束轮次前",
     }
 }
@@ -811,8 +809,8 @@ fn hook_source_summary(hook: &HookMetadata) -> String {
         HookSource::Plugin => hook
             .plugin_id
             .as_deref()
-            .map(|plugin_id| format!("Plugin - {plugin_id}"))
-            .unwrap_or_else(|| "Plugin".to_string()),
+            .map(|plugin_id| format!("插件 - {plugin_id}"))
+            .unwrap_or_else(|| "插件".to_string()),
         _ => config_source_label(hook.source).to_string(),
     }
 }
@@ -851,7 +849,11 @@ fn config_source_label(source: HookSource) -> &'static str {
 }
 
 fn detail_line(label: &str, value: &str) -> Line<'static> {
-    Line::from(vec![format!("{label:<10}").into(), value.to_string().dim()])
+    let padding = 10usize.saturating_sub(UnicodeWidthStr::width(label));
+    Line::from(vec![
+        format!("{label}{}", " ".repeat(padding)).into(),
+        value.to_string().dim(),
+    ])
 }
 
 fn detail_wrapped_lines(
@@ -1047,7 +1049,7 @@ mod tests {
         let mut view = view();
         assert_snapshot!("hooks_browser_events", render_lines(&view, /*width*/ 112));
         view.keymap.accept.clear();
-        assert!(!render_lines(&view, /*width*/ 112).contains("enter to view hooks"));
+        assert!(!render_lines(&view, /*width*/ 112).contains("Enter 以查看 Hook"));
     }
 
     #[test]

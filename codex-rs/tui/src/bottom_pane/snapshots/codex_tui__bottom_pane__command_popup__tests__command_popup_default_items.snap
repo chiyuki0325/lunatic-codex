@@ -23,14 +23,14 @@ expression: commands
 /app - 在桌面应用中继续此会话
 /init - 创建包含 Codex 指令的 AGENTS.md 文件
 /compact - 压缩对话，避免达到上下文限制
-/agents - 查看并切换所有活跃智能体会话
-/side - 在临时分叉中开始侧边对话
+/agents - 查看并切换所有活跃 agent 会话
+/side - 在临时分叉中开始平行对话
 /copy - 将上一条回复复制为 Markdown
 /export - 将对话导出为 Markdown
 /raw - 切换原始回滚模式，便于在终端中复制
 /diff - 显示 Git diff（包含未跟踪文件）
 /mention - 提及文件
-/status - 显示当前会话配置和 token 用量
+/status - 显示当前会话配置和 Token 用量
 /cd - 切换当前工作目录
 /pwd - 显示当前工作目录
 /title - 配置终端标题中显示的项目
@@ -46,4 +46,4 @@ expression: commands
 /stop - 停止所有后台终端
 /clear - 清空终端并开始新聊天
 /test-approval - 测试审批请求
-/subagents - 切换此会话的子智能体
+/subagents - 切换此会话的 subagent

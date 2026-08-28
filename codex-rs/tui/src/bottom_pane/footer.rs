@@ -102,7 +102,7 @@ pub(crate) enum GoalStatusIndicator {
     Complete { usage: Option<String> },
 }
 
-const MODE_CYCLE_HINT: &str = "shift+tab 切换";
+const MODE_CYCLE_HINT: &str = "Shift+Tab 切换";
 const FOOTER_CONTEXT_GAP_COLS: u16 = 1;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -143,7 +143,7 @@ impl CollaborationModeIndicator {
             String::new()
         };
         match self {
-            CollaborationModeIndicator::Plan => format!("Plan mode{suffix}"),
+            CollaborationModeIndicator::Plan => format!("规划模式{suffix}"),
         }
     }
 
@@ -592,7 +592,10 @@ pub(crate) fn status_line_right_indicator_line(
 
 pub(crate) fn side_conversation_context_line(label: &str) -> Line<'static> {
     if let Some(rest) = label.strip_prefix("Side ") {
-        Line::from(vec!["侧边".magenta().bold(), format!(" {rest}").magenta()])
+        Line::from(vec![
+            "平行对话".magenta().bold(),
+            format!(" {rest}").magenta(),
+        ])
     } else {
         Line::from(vec![Span::from(label.to_string()).magenta()])
     }
@@ -874,7 +877,12 @@ fn esc_hint_line(esc_backtrack_hint: bool) -> Line<'static> {
     if esc_backtrack_hint {
         Line::from(vec![esc.into(), " 再次编辑上一条消息".into()]).dim()
     } else {
-        Line::from(vec![esc.into(), " ".into(), esc.into(), " 编辑上一条消息".into()])
+        Line::from(vec![
+            esc.into(),
+            " ".into(),
+            esc.into(),
+            " 编辑上一条消息".into(),
+        ])
         .dim()
     }
 }

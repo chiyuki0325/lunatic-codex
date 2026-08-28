@@ -220,7 +220,7 @@ impl WidgetRef for SkillPopup {
             &rows,
             &self.state,
             MAX_POPUP_ROWS,
-            "no matches",
+            "无匹配项",
         );
         if let Some(hint_area) = hint_area {
             let hint_area = Rect {

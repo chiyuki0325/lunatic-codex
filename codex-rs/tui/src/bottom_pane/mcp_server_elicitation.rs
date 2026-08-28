@@ -270,12 +270,12 @@ impl McpServerElicitationFormRequest {
             (McpServerElicitationResponseMode::FormContent, Vec::new())
         } else if is_message_only_schema {
             let allow_description = if is_tool_approval_action {
-                "Run the tool and continue."
+                "运行工具并继续。"
             } else {
-                "Allow this request and continue."
+                "允许此请求并继续。"
             };
             let mut options = vec![McpServerElicitationOption {
-                label: "Allow".to_string(),
+                label: "允许".to_string(),
                 description: Some(allow_description.to_string()),
                 value: Value::String(APPROVAL_ACCEPT_ONCE_VALUE.to_string()),
             }];
@@ -582,7 +582,7 @@ fn parse_field(
             let options = [true, false]
                 .into_iter()
                 .map(|value| {
-                    let label = if value { "True" } else { "False" }.to_string();
+                    let label = if value { "是" } else { "否" }.to_string();
                     McpServerElicitationOption {
                         label,
                         description: None,
@@ -998,23 +998,21 @@ impl McpServerElicitationOverlay {
         };
         if let Some(submit_hint) = submit_hint.map(ShortcutHint::display_label) {
             if self.field_count() == 1 {
-                tips.push(FooterTip::highlighted(format!("{submit_hint} to submit")));
+                tips.push(FooterTip::highlighted(format!("{submit_hint} 以提交")));
             } else if is_last_field {
-                tips.push(FooterTip::highlighted(format!(
-                    "{submit_hint} to submit all"
-                )));
+                tips.push(FooterTip::highlighted(format!("{submit_hint} 以全部提交")));
             } else {
-                tips.push(FooterTip::new(format!("{submit_hint} to submit answer")));
+                tips.push(FooterTip::new(format!("{submit_hint} 以提交回答")));
             }
         }
         if self.field_count() > 1 {
             if self.current_field_is_select() {
-                tips.push(FooterTip::new("←/→ to navigate fields"));
+                tips.push(FooterTip::new("←/→ 以切换字段"));
             } else {
-                tips.push(FooterTip::new("ctrl + p / ctrl + n change field"));
+                tips.push(FooterTip::new("Ctrl + P / Ctrl + N 以切换字段"));
             }
         }
-        tips.push(FooterTip::new("esc to cancel"));
+        tips.push(FooterTip::new("Esc 以取消"));
         tips
     }
 
@@ -1164,7 +1162,7 @@ impl McpServerElicitationOverlay {
     fn submit_answers(&mut self) {
         self.save_current_draft();
         if let Some(idx) = self.first_required_unanswered_index() {
-            self.validation_error = Some("Answer required fields before submitting.".to_string());
+            self.validation_error = Some("请先回答必填字段再提交。".to_string());
             self.jump_to_field(idx);
             return;
         }
@@ -1350,7 +1348,7 @@ impl McpServerElicitationOverlay {
         let option_tip = if options_hidden {
             let selected = self.selected_option_index().unwrap_or(0).saturating_add(1);
             let total = self.options_len();
-            Some(FooterTip::new(format!("option {selected}/{total}")))
+            Some(FooterTip::new(format!("选项 {selected}/{total}")))
         } else {
             None
         };
@@ -1464,9 +1462,9 @@ impl Renderable for McpServerElicitationOverlay {
         let progress_line = if self.field_count() > 0 {
             let idx = self.current_index() + 1;
             let total = self.field_count();
-            let base = format!("Field {idx}/{total}");
+            let base = format!("字段 {idx}/{total}");
             if unanswered > 0 {
-                Line::from(format!("{base} ({unanswered} required unanswered)").dim())
+                Line::from(format!("{base}（{unanswered} 个必填字段未回答）").dim())
             } else {
                 Line::from(base.dim())
             }
@@ -1910,12 +1908,12 @@ mod tests {
                     input: McpServerElicitationFieldInput::Select {
                         options: vec![
                             McpServerElicitationOption {
-                                label: "True".to_string(),
+                                label: "是".to_string(),
                                 description: None,
                                 value: Value::Bool(true),
                             },
                             McpServerElicitationOption {
-                                label: "False".to_string(),
+                                label: "否".to_string(),
                                 description: None,
                                 value: Value::Bool(false),
                             },
@@ -1980,8 +1978,8 @@ mod tests {
                     input: McpServerElicitationFieldInput::Select {
                         options: vec![
                             McpServerElicitationOption {
-                                label: "Allow".to_string(),
-                                description: Some("Allow this request and continue.".to_string()),
+                                label: "允许".to_string(),
+                                description: Some("允许此请求并继续。".to_string()),
                                 value: Value::String(APPROVAL_ACCEPT_ONCE_VALUE.to_string()),
                             },
                             McpServerElicitationOption {
@@ -2037,8 +2035,8 @@ mod tests {
                     input: McpServerElicitationFieldInput::Select {
                         options: vec![
                             McpServerElicitationOption {
-                                label: "Allow".to_string(),
-                                description: Some("Run the tool and continue.".to_string()),
+                                label: "允许".to_string(),
+                                description: Some("运行工具并继续。".to_string()),
                                 value: Value::String(APPROVAL_ACCEPT_ONCE_VALUE.to_string()),
                             },
                             McpServerElicitationOption {

@@ -3,9 +3,9 @@ source: tui/src/bottom_pane/hooks_browser_view.rs
 expression: "render_lines(&view, 112)"
 ---
                                                                                                                 
-  PermissionRequest hooks                                                                                       
-  Turn hooks on or off. Your changes are saved automatically.                                                   
+  PermissionRequest 个  Hook                                                                                     
+  启 用 或 禁 用  Hook。 更 改 会 自 动 保 存 。                                                                              
                                                                                                                 
-  No hooks installed for this event.                                                                            
+  此 事 件 未 安 装  Hook。                                                                                            
                                                                                                                 
-  Press esc to go back
+  按 下  Esc 以 返 回                                                                                                

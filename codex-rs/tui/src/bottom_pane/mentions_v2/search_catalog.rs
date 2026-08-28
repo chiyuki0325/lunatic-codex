@@ -151,9 +151,9 @@ fn plugin_description(plugin: &PluginCapabilitySummary) -> Option<String> {
     let capability_labels = plugin_capability_labels(plugin);
     plugin.description.clone().or_else(|| {
         Some(if capability_labels.is_empty() {
-            "Plugin".to_string()
+            "插件".to_string()
         } else {
-            format!("Plugin - {}", capability_labels.join(" - "))
+            format!("插件 - {}", capability_labels.join(" - "))
         })
     })
 }
@@ -161,23 +161,15 @@ fn plugin_description(plugin: &PluginCapabilitySummary) -> Option<String> {
 fn plugin_capability_labels(plugin: &PluginCapabilitySummary) -> Vec<String> {
     let mut labels = Vec::new();
     if plugin.has_skills {
-        labels.push("skills".to_string());
+        labels.push("Skill".to_string());
     }
     if !plugin.mcp_server_names.is_empty() {
         let mcp_server_count = plugin.mcp_server_names.len();
-        labels.push(if mcp_server_count == 1 {
-            "1 MCP server".to_string()
-        } else {
-            format!("{mcp_server_count} MCP servers")
-        });
+        labels.push(format!("{mcp_server_count} 个 MCP 服务器"));
     }
     if !plugin.app_connector_ids.is_empty() {
         let app_count = plugin.app_connector_ids.len();
-        labels.push(if app_count == 1 {
-            "1 app".to_string()
-        } else {
-            format!("{app_count} apps")
-        });
+        labels.push(format!("{app_count} 个应用"));
     }
     labels
 }

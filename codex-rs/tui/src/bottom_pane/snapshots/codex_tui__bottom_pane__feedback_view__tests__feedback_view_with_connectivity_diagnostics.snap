@@ -2,8 +2,8 @@
 source: tui/src/bottom_pane/feedback_view.rs
 expression: rendered
 ---
-▌ Tell us more (bug)
+▌ 请提供更多信息（Bug）
 ▌
-▌ (optional) Write a short description to help us further
+▌ （可选）简要说明情况，以帮助我们进一步改进
 
-Press enter to confirm or esc to go back
+按下 Enter 以确认，或按下 Esc 以返回

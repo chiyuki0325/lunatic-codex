@@ -36,9 +36,9 @@ impl SearchMode {
 
     pub(super) fn label(self) -> &'static str {
         match self {
-            Self::Results => "All Results",
-            Self::FilesystemOnly => "Filesystem Only",
-            Self::Tools => "Plugins",
+            Self::Results => "全部结果",
+            Self::FilesystemOnly => "仅文件系统",
+            Self::Tools => "插件",
         }
     }
 }

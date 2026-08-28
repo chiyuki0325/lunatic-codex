@@ -278,24 +278,24 @@ fn gutter() -> Span<'static> {
 fn feedback_title_and_placeholder(category: FeedbackCategory) -> (String, String) {
     match category {
         FeedbackCategory::BadResult => (
-            "Tell us more (bad result)".to_string(),
-            "(optional) Write a short description to help us further".to_string(),
+            "请提供更多信息（结果不佳）".to_string(),
+            "（可选）简要说明情况，以帮助我们进一步改进".to_string(),
         ),
         FeedbackCategory::GoodResult => (
-            "Tell us more (good result)".to_string(),
-            "(optional) Write a short description to help us further".to_string(),
+            "请提供更多信息（结果良好）".to_string(),
+            "（可选）简要说明情况，以帮助我们进一步改进".to_string(),
         ),
         FeedbackCategory::Bug => (
-            "Tell us more (bug)".to_string(),
-            "(optional) Write a short description to help us further".to_string(),
+            "请提供更多信息（Bug）".to_string(),
+            "（可选）简要说明情况，以帮助我们进一步改进".to_string(),
         ),
         FeedbackCategory::SafetyCheck => (
-            "Tell us more (safety check)".to_string(),
-            "(optional) Share what was refused and why it should have been allowed".to_string(),
+            "请提供更多信息（安全检查）".to_string(),
+            "（可选）说明哪些内容遭到拒绝，以及为何应该允许".to_string(),
         ),
         FeedbackCategory::Other => (
-            "Tell us more (other)".to_string(),
-            "(optional) Write a short description to help us further".to_string(),
+            "请提供更多信息（其他）".to_string(),
+            "（可选）简要说明情况，以帮助我们进一步改进".to_string(),
         ),
     }
 }
@@ -317,17 +317,17 @@ pub(crate) fn feedback_success_cell(
     feedback_audience: FeedbackAudience,
 ) -> history_cell::WebHyperlinkHistoryCell {
     let prefix = if include_logs {
-        "• Feedback uploaded."
+        "• 反馈已上传。"
     } else {
-        "• Feedback recorded (no logs)."
+        "• 反馈已记录（不含日志）。"
     };
     let issue_url = issue_url_for_category(category, thread_id, feedback_audience);
     let mut lines = vec![Line::from(match issue_url.as_ref() {
         Some(_) if feedback_audience == FeedbackAudience::OpenAiEmployee => {
-            format!("{prefix} Please report this in #codex-feedback:")
+            format!("{prefix} 请在 #codex-feedback 中报告：")
         }
-        Some(_) => format!("{prefix} Please open an issue using the following URL:"),
-        None => format!("{prefix} Thanks for the feedback!"),
+        Some(_) => format!("{prefix} 请使用以下 URL 创建 issue："),
+        None => format!("{prefix} 感谢你的反馈！"),
     })];
     match issue_url {
         Some(url) if feedback_audience == FeedbackAudience::OpenAiEmployee => {
@@ -335,7 +335,7 @@ pub(crate) fn feedback_success_cell(
                 "".into(),
                 Line::from(vec!["  ".into(), url.cyan().underlined()]),
                 "".into(),
-                Line::from("  Share this and add some info about your problem:"),
+                Line::from("  请分享此链接，并补充一些问题信息："),
                 Line::from(vec![
                     "    ".into(),
                     format!("https://go/codex-feedback/{thread_id}").bold(),
@@ -348,16 +348,16 @@ pub(crate) fn feedback_success_cell(
                 Line::from(vec!["  ".into(), url.cyan().underlined()]),
                 "".into(),
                 Line::from(vec![
-                    "  Or mention your thread ID ".into(),
+                    "  也可以在现有 issue 中提及线程 ID ".into(),
                     thread_id.to_string().bold(),
-                    " in an existing issue.".into(),
+                    "。".into(),
                 ]),
             ]);
         }
         None => {
             lines.extend([
                 "".into(),
-                Line::from(vec!["  Thread ID: ".into(), thread_id.to_string().bold()]),
+                Line::from(vec!["  线程 ID：".into(), thread_id.to_string().bold()]),
             ]);
         }
     }
@@ -566,7 +566,9 @@ pub(crate) fn feedback_upload_consent_params(
         items: vec![
             super::SelectionItem {
                 name: "是".to_string(),
-                description: Some("将当前 Codex 会话日志和诊断信息分享给团队以便排查问题。".to_string()),
+                description: Some(
+                    "将当前 Codex 会话日志和诊断信息分享给团队以便排查问题。".to_string(),
+                ),
                 actions: vec![yes_action],
                 dismiss_on_select: true,
                 ..Default::default()
@@ -881,7 +883,7 @@ mod tests {
         );
         assert_eq!(
             rendered,
-            "• Feedback uploaded. Please open an issue using the following URL:\n\n  https://github.com/openai/codex/issues/new?template=3-cli.yml&steps=Uploaded%20thread:%20thread-1\n\n  Or mention your thread ID thread-1 in an existing issue."
+            "• 反馈已上传。请使用以下 URL 创建 issue：\n\n  https://github.com/openai/codex/issues/new?template=3-cli.yml&steps=Uploaded%20thread:%20thread-1\n\n  也可以在现有 issue 中提及线程 ID thread-1。"
         );
     }
 
@@ -898,7 +900,7 @@ mod tests {
         );
         assert_eq!(
             rendered,
-            "• Feedback uploaded. Please report this in #codex-feedback:\n\n  http://go/codex-feedback-internal\n\n  Share this and add some info about your problem:\n    https://go/codex-feedback/thread-2"
+            "• 反馈已上传。请在 #codex-feedback 中报告：\n\n  http://go/codex-feedback-internal\n\n  请分享此链接，并补充一些问题信息：\n    https://go/codex-feedback/thread-2"
         );
     }
 
@@ -915,7 +917,7 @@ mod tests {
         );
         assert_eq!(
             rendered,
-            "• Feedback recorded (no logs). Thanks for the feedback!\n\n  Thread ID: thread-3"
+            "• 反馈已记录（不含日志）。感谢你的反馈！\n\n  线程 ID：thread-3"
         );
     }
 
@@ -935,7 +937,7 @@ mod tests {
                 ),
                 /*width*/ 120,
             );
-            assert!(rendered.contains("Please open an issue using the following URL:"));
+            assert!(rendered.contains("请使用以下 URL 创建 issue："));
             assert!(rendered.contains("thread-4"));
         }
     }
