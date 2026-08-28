@@ -78,7 +78,7 @@ impl WidgetRef for &ExternalAgentConfigMigrationScreen {
         let error_height = u16::from(self.error.is_some());
         let intro_lines = match self.view {
             MigrationView::Summary => vec![
-                Line::from("从其他编程智能体迁移受支持的配置。"),
+                Line::from("从其他编程 agent 迁移受支持的配置。"),
                 Line::from("Codex 可能会向当前项目文件夹添加文件。"),
                 Line::from("不会更改现有配置。"),
             ],

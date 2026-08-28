@@ -569,11 +569,7 @@ fn unified_exec_interaction_cell_renders_input() {
     let lines = render_transcript(&cell);
     assert_eq!(
         lines,
-        vec![
-            "↳ 已与 background terminal · echo hello",
-            "  └ ls",
-            "    pwd",
-        ],
+        vec!["↳ 已与后台终端交互 · echo hello", "  └ ls", "    pwd",],
     );
 }
 
@@ -581,7 +577,7 @@ fn unified_exec_interaction_cell_renders_input() {
 fn unified_exec_interaction_cell_renders_wait() {
     let cell = new_unified_exec_interaction(/*command_display*/ None, String::new());
     let lines = render_transcript(&cell);
-    assert_eq!(lines, vec!["• Waited for background terminal"]);
+    assert_eq!(lines, vec!["• 已等待后台终端"]);
 }
 
 #[test]
@@ -1259,10 +1255,7 @@ fn web_search_history_cell_short_query_does_not_wrap() {
     );
     let rendered = render_lines(&cell.display_lines(/*width*/ 64));
 
-    assert_eq!(
-        rendered,
-        vec!["• 已搜索网页：short query".to_string()]
-    );
+    assert_eq!(rendered, vec!["• 已搜索网页：short query".to_string()]);
 }
 
 #[test]

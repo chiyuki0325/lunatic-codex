@@ -102,10 +102,7 @@ fn rewrites_complete_directive_to_trusted_static_file_placeholder() {
             .expect("file URL")
             .is_file()
     );
-    assert_eq!(
-        destination.display_label,
-        "在浏览器中打开 chart 可视化"
-    );
+    assert_eq!(destination.display_label, "在浏览器中打开 chart 可视化");
     assert!(rewritten.markdown.contains(&format!(
         "  \n[{}](",
         destination.markdown_destination_label

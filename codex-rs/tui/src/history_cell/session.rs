@@ -148,8 +148,7 @@ pub(crate) fn new_session_info(
     if is_first_event {
         // Help lines below the header (new copy and list)
         let help_lines: Vec<Line<'static>> = vec![
-            "  请描述任务以开始，或试试以下命令：".dim()
-                .into(),
+            "  请描述任务以开始，或试试以下命令：".dim().into(),
             Line::from(""),
             Line::from(vec![
                 "  ".into(),

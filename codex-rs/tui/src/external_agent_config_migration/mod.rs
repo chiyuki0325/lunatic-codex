@@ -223,7 +223,9 @@ impl ExternalAgentConfigMigrationScreen {
             ))
         }
 
-        if let Some(reformatted) = reformat_description(&description, "导入 ", " into ", " 至 ", cwd) {
+        if let Some(reformatted) =
+            reformat_description(&description, "导入 ", " into ", " 至 ", cwd)
+        {
             return reformatted;
         }
 
@@ -231,13 +233,14 @@ impl ExternalAgentConfigMigrationScreen {
             &description,
             "导入 skills from ",
             " to ",
-            " 导入技能至 ",
+            " 导入 Skill 至 ",
             cwd,
         ) {
             return reformatted;
         }
 
-        if let Some(reformatted) = reformat_description(&description, "导入 ", " to ", " 至 ", cwd) {
+        if let Some(reformatted) = reformat_description(&description, "导入 ", " to ", " 至 ", cwd)
+        {
             return reformatted;
         }
 
@@ -583,10 +586,7 @@ impl ExternalAgentConfigMigrationScreen {
 
     fn section_title(cwd: Option<&std::path::Path>) -> Line<'static> {
         match cwd {
-            Some(cwd) => Line::from(vec![
-                "当前项目：".bold(),
-                cwd.display().to_string().dim(),
-            ]),
+            Some(cwd) => Line::from(vec!["当前项目：".bold(), cwd.display().to_string().dim()]),
             None => Line::from("主目录".bold()),
         }
     }

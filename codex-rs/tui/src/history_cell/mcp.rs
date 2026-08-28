@@ -411,15 +411,15 @@ pub(crate) fn new_mcp_tools_output(
                     format!(" {}", args.join(" "))
                 };
                 let cmd_display = format!("{command}{args_suffix}");
-                lines.push(vec!["    • Command: ".into(), cmd_display.into()].into());
+                lines.push(vec!["    • 命令：".into(), cmd_display.into()].into());
 
                 if let Some(cwd) = cwd.as_ref() {
-                    lines.push(vec!["    • Cwd: ".into(), cwd.to_string().into()].into());
+                    lines.push(vec!["    • 工作目录：".into(), cwd.to_string().into()].into());
                 }
 
                 let env_display = format_env_display(env.as_ref(), env_vars);
                 if env_display != "-" {
-                    lines.push(vec!["    • Env: ".into(), env_display.into()].into());
+                    lines.push(vec!["    • 环境变量：".into(), env_display.into()].into());
                 }
             }
             McpServerTransportConfig::StreamableHttp {
@@ -439,7 +439,7 @@ pub(crate) fn new_mcp_tools_output(
                         .map(|(name, _)| format!("{name}=*****"))
                         .collect::<Vec<_>>()
                         .join(", ");
-                    lines.push(vec!["    • HTTP headers: ".into(), display.into()].into());
+                    lines.push(vec!["    • HTTP 标头：".into(), display.into()].into());
                 }
                 if let Some(headers) = env_http_headers.as_ref()
                     && !headers.is_empty()
@@ -451,23 +451,23 @@ pub(crate) fn new_mcp_tools_output(
                         .map(|(name, var)| format!("{name}={var}"))
                         .collect::<Vec<_>>()
                         .join(", ");
-                    lines.push(vec!["    • Env HTTP headers: ".into(), display.into()].into());
+                    lines.push(vec!["    • 环境变量 HTTP 标头：".into(), display.into()].into());
                 }
             }
         }
 
         if names.is_empty() {
-            lines.push("    • Tools: (none)".into());
+            lines.push("    • 工具：（无）".into());
         } else {
-            lines.push(vec!["    • Tools: ".into(), names.join(", ").into()].into());
+            lines.push(vec!["    • 工具：".into(), names.join(", ").into()].into());
         }
 
         let server_resources: Vec<Resource> =
             resources.get(server.as_str()).cloned().unwrap_or_default();
         if server_resources.is_empty() {
-            lines.push("    • Resources: (none)".into());
+            lines.push("    • 资源：（无）".into());
         } else {
-            let mut spans: Vec<Span<'static>> = vec!["    • Resources: ".into()];
+            let mut spans: Vec<Span<'static>> = vec!["    • 资源：".into()];
 
             for (idx, resource) in server_resources.iter().enumerate() {
                 if idx > 0 {
@@ -488,9 +488,9 @@ pub(crate) fn new_mcp_tools_output(
             .cloned()
             .unwrap_or_default();
         if server_templates.is_empty() {
-            lines.push("    • Resource templates: (none)".into());
+            lines.push("    • 资源模板：（无）".into());
         } else {
-            let mut spans: Vec<Span<'static>> = vec!["    • Resource templates: ".into()];
+            let mut spans: Vec<Span<'static>> = vec!["    • 资源模板：".into()];
 
             for (idx, template) in server_templates.iter().enumerate() {
                 if idx > 0 {
@@ -563,17 +563,17 @@ pub(crate) fn new_mcp_tools_output_from_statuses(
         let mut names = status.tools.keys().cloned().collect::<Vec<_>>();
         names.sort();
         if names.is_empty() {
-            lines.push("    • Tools: (none)".into());
+            lines.push("    • 工具：（无）".into());
         } else {
-            lines.push(vec!["    • Tools: ".into(), names.join(", ").into()].into());
+            lines.push(vec!["    • 工具：".into(), names.join(", ").into()].into());
         }
 
         if matches!(detail, McpServerStatusDetail::Full) {
             let server_resources = status.resources.clone();
             if server_resources.is_empty() {
-                lines.push("    • Resources: (none)".into());
+                lines.push("    • 资源：（无）".into());
             } else {
-                let mut spans: Vec<Span<'static>> = vec!["    • Resources: ".into()];
+                let mut spans: Vec<Span<'static>> = vec!["    • 资源：".into()];
 
                 for (idx, resource) in server_resources.iter().enumerate() {
                     if idx > 0 {
@@ -591,9 +591,9 @@ pub(crate) fn new_mcp_tools_output_from_statuses(
 
             let server_templates = status.resource_templates.clone();
             if server_templates.is_empty() {
-                lines.push("    • Resource templates: (none)".into());
+                lines.push("    • 资源模板：（无）".into());
             } else {
-                let mut spans: Vec<Span<'static>> = vec!["    • Resource templates: ".into()];
+                let mut spans: Vec<Span<'static>> = vec!["    • 资源模板：".into()];
 
                 for (idx, template) in server_templates.iter().enumerate() {
                     if idx > 0 {

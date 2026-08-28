@@ -75,9 +75,7 @@ impl McpToolResult {
                         }
                         McpContentDisplay::Summary("<图像内容>".into())
                     }
-                    Ok(ContentBlock::Audio(_)) => {
-                        McpContentDisplay::Summary("<音频内容>".into())
-                    }
+                    Ok(ContentBlock::Audio(_)) => McpContentDisplay::Summary("<音频内容>".into()),
                     Ok(ContentBlock::Resource(resource)) => {
                         let summary = match resource.resource {
                             ResourceContents::TextResourceContents { uri, .. }

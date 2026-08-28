@@ -5,12 +5,12 @@ expression: rendered
 ---
 /mcp
 
-🔌  MCP Tools
+🔌  MCP 工具
 
   • some-server
-    • Status: enabled
-    • Auth: Unsupported
-    • Command: docs-server --stdio
-    • Tools: lookup
-    • Resources: (none)
-    • Resource templates: (none)
+    • 状态：已启用
+    • 认证：不支持
+    • 命令：docs-server --stdio
+    • 工具：lookup
+    • 资源：（无）
+    • 资源模板：（无）

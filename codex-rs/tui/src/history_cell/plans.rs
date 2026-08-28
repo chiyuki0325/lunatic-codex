@@ -239,7 +239,12 @@ impl HistoryCell for PlanUpdateCell {
             lines.push(Line::from("（未提供步骤）"));
         } else {
             for PlanItemArg { step, status } in &self.plan {
-                lines.push(Line::from(format!("{status:?}: {step}")));
+                let status_label = match status {
+                    codex_protocol::plan_tool::StepStatus::Pending => "待处理",
+                    codex_protocol::plan_tool::StepStatus::InProgress => "进行中",
+                    codex_protocol::plan_tool::StepStatus::Completed => "已完成",
+                };
+                lines.push(Line::from(format!("{status_label}：{step}")));
             }
         }
         lines

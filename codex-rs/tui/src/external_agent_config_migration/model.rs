@@ -40,7 +40,7 @@ pub(crate) fn external_agent_config_migration_groups(
     if !tools_and_setup.is_empty() {
         groups.push(ExternalAgentConfigMigrationGroupModel {
             label: "工具与设置".to_string(),
-            description: "设置、说明、集成、智能体、命令和技能",
+            description: "设置、说明、集成、agent、命令和 Skill",
             item_indices: tools_and_setup,
         });
     }
@@ -81,10 +81,10 @@ pub(crate) fn external_agent_config_migration_item_label(
     match item.item_type {
         ExternalAgentConfigMigrationItemType::AgentsMd => "说明",
         ExternalAgentConfigMigrationItemType::Config => "设置",
-        ExternalAgentConfigMigrationItemType::Skills => "技能",
+        ExternalAgentConfigMigrationItemType::Skills => "Skill",
         ExternalAgentConfigMigrationItemType::Plugins => "插件",
         ExternalAgentConfigMigrationItemType::McpServerConfig => "MCP 服务器",
-        ExternalAgentConfigMigrationItemType::Subagents => "智能体",
+        ExternalAgentConfigMigrationItemType::Subagents => "agent",
         ExternalAgentConfigMigrationItemType::Hooks => "Hook",
         ExternalAgentConfigMigrationItemType::Commands => "斜杠命令",
         ExternalAgentConfigMigrationItemType::Memory => "记忆",
@@ -98,10 +98,10 @@ pub(crate) fn external_agent_config_migration_type_label(
     match item_type {
         ExternalAgentConfigMigrationItemType::AgentsMd => "说明",
         ExternalAgentConfigMigrationItemType::Config => "设置",
-        ExternalAgentConfigMigrationItemType::Skills => "技能",
+        ExternalAgentConfigMigrationItemType::Skills => "Skill",
         ExternalAgentConfigMigrationItemType::Plugins => "插件",
         ExternalAgentConfigMigrationItemType::McpServerConfig => "MCP 服务器",
-        ExternalAgentConfigMigrationItemType::Subagents => "智能体",
+        ExternalAgentConfigMigrationItemType::Subagents => "agent",
         ExternalAgentConfigMigrationItemType::Hooks => "Hook",
         ExternalAgentConfigMigrationItemType::Commands => "斜杠命令",
         ExternalAgentConfigMigrationItemType::Memory => "记忆",
@@ -194,7 +194,7 @@ pub(crate) fn external_agent_config_migration_item_detail(
     match item.item_type {
         ExternalAgentConfigMigrationItemType::Plugins => None,
         ExternalAgentConfigMigrationItemType::Skills => Some(format_counted_details(
-            "技能",
+            "Skill",
             details.skills.len(),
             details.skills.iter().map(|skill| skill.name.as_str()),
         )),
@@ -207,7 +207,7 @@ pub(crate) fn external_agent_config_migration_item_detail(
                 .map(|server| server.name.as_str()),
         )),
         ExternalAgentConfigMigrationItemType::Subagents => Some(format_counted_details(
-            "智能体",
+            "agent",
             details.subagents.len(),
             details.subagents.iter().map(|agent| agent.name.as_str()),
         )),

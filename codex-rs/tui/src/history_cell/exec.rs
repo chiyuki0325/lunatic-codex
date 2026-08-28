@@ -27,7 +27,7 @@ impl HistoryCell for UnifiedExecInteractionCell {
         let waited_only = self.stdin.is_empty();
 
         let mut header_spans = if waited_only {
-            vec!["• Waited for background terminal".bold()]
+            vec!["• 已等待后台终端".bold()]
         } else {
             vec!["↳ ".dim(), "已与后台终端交互".bold()]
         };
@@ -71,9 +71,7 @@ impl HistoryCell for UnifiedExecInteractionCell {
                 .as_ref()
                 .filter(|command| !command.is_empty())
             {
-                out.push(Line::from(format!(
-                    "等待后台终端：{command}"
-                )));
+                out.push(Line::from(format!("等待后台终端：{command}")));
             } else {
                 out.push(Line::from("正在等待后台终端"));
             }
@@ -85,9 +83,7 @@ impl HistoryCell for UnifiedExecInteractionCell {
             .as_ref()
             .filter(|command| !command.is_empty())
         {
-            out.push(Line::from(format!(
-                "与后台终端交互：{command}"
-            )));
+            out.push(Line::from(format!("与后台终端交互：{command}")));
         } else {
             out.push(Line::from("已与后台终端交互"));
         }
@@ -212,7 +208,7 @@ impl HistoryCell for UnifiedExecProcessesCell {
 
         let remaining = self.processes.len().saturating_sub(shown);
         if remaining > 0 {
-            let more_text = format!("... and {remaining} more running");
+            let more_text = format!("……另有 {remaining} 个仍在运行");
             if wrap_width <= prefix_width {
                 out.push(Line::from(prefix.dim()));
             } else {

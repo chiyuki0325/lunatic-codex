@@ -18,7 +18,8 @@ use super::source::run_external_agent_config_source_prompt;
 
 pub(crate) const EXTERNAL_AGENT_CONFIG_MIGRATION_NO_ITEMS_MESSAGE: &str =
     "未找到可导入的兼容设置。";
-pub(crate) const EXTERNAL_AGENT_CONFIG_MIGRATION_REMOTE_UNAVAILABLE_MESSAGE: &str = "远程会话中无法从其他应用导入。请在本地启动 Codex 并运行 /import。";
+pub(crate) const EXTERNAL_AGENT_CONFIG_MIGRATION_REMOTE_UNAVAILABLE_MESSAGE: &str =
+    "远程会话中无法从其他应用导入。请在本地启动 Codex 并运行 /import。";
 pub(crate) const EXTERNAL_AGENT_CONFIG_MIGRATION_DAEMON_UNAVAILABLE_MESSAGE: &str = "Codex 连接到本地 app-server 守护进程时，无法从其他应用导入。请停止守护进程，重启 Codex 后运行 /import。";
 
 pub(crate) enum ExternalAgentConfigMigrationFlowOutcome {
