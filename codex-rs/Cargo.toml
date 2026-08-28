@@ -558,7 +558,7 @@ debug = "none"
 strip = "symbols"
 
 [profile.release]
-lto = "thin"
+lto = "off"
 debug = "line-tables-only"
 split-debuginfo = "off"
 # Keep release binaries symbolicateable until packaging has archived the
