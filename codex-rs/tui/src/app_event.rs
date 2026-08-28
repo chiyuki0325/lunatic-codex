@@ -893,6 +893,13 @@ pub(crate) enum AppEvent {
     SettingsSelectionClosed,
     /// Run after any nested settings events emitted while handling the close event.
     SettingsSelectionSettled,
+    /// Deliver the result of one serialized background settings update.
+    SettingsUpdateCompleted {
+        success_message: Option<String>,
+        error_message: Option<String>,
+        cyber_model_auto_review_notice: bool,
+        thread_settings_supported: bool,
+    },
 
     /// Persist the selected model and reasoning effort to the appropriate config.
     PersistModelSelection {

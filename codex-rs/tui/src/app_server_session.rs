@@ -231,10 +231,32 @@ async fn request_thread_start_with_history_fallback(
     }
 }
 
-fn is_thread_settings_update_unsupported(source: &JSONRPCErrorError) -> bool {
+pub(crate) fn is_thread_settings_update_unsupported(source: &JSONRPCErrorError) -> bool {
     source.code == JSONRPC_METHOD_NOT_FOUND
         || (source.code == JSONRPC_INVALID_REQUEST
             && source.message.contains(THREAD_SETTINGS_UPDATE_METHOD))
+}
+
+pub(crate) async fn thread_settings_update_with_request_handle(
+    request_handle: AppServerRequestHandle,
+    params: ThreadSettingsUpdateParams,
+) -> Result<bool> {
+    let request_id = RequestId::String(format!("tui-thread-settings-update-{}", Uuid::new_v4()));
+    match request_handle
+        .request_typed::<ThreadSettingsUpdateResponse>(ClientRequest::ThreadSettingsUpdate {
+            request_id,
+            params,
+        })
+        .await
+    {
+        Ok(_) => Ok(true),
+        Err(TypedRequestError::Server { source, .. })
+            if is_thread_settings_update_unsupported(&source) =>
+        {
+            Ok(false)
+        }
+        Err(err) => Err(err).wrap_err("thread/settings/update failed in TUI"),
+    }
 }
 
 /// Data collected during the TUI bootstrap phase that the main event loop
@@ -987,30 +1009,18 @@ impl AppServerSession {
         if !self.thread_settings_update_supported {
             return Ok(false);
         }
-        let request_id = self.next_request_id();
-        match self
-            .client
-            .request_typed::<ThreadSettingsUpdateResponse>(ClientRequest::ThreadSettingsUpdate {
-                request_id,
-                params,
-            })
-            .await
-        {
-            Ok(_) => Ok(true),
-            Err(TypedRequestError::Server { source, .. })
-                if is_thread_settings_update_unsupported(&source) =>
-            {
-                // Older remote app servers can reject this experimental method as
-                // method-not-found, experimental-capability-gated, or an unknown
-                // request variant. Treat those as a session-level capability
-                // downgrade so local TUI setting changes stay best-effort instead
-                // of showing an error every time the user changes model, effort,
-                // personality, or mode.
-                self.thread_settings_update_supported = false;
-                Ok(false)
-            }
-            Err(err) => Err(err).wrap_err("thread/settings/update failed in TUI"),
+        let settings_updated =
+            thread_settings_update_with_request_handle(self.request_handle(), params).await?;
+        if !settings_updated {
+            // Older remote app servers can reject this experimental method as
+            // method-not-found, experimental-capability-gated, or an unknown
+            // request variant. Treat those as a session-level capability
+            // downgrade so local TUI setting changes stay best-effort instead
+            // of showing an error every time the user changes model, effort,
+            // personality, or mode.
+            self.thread_settings_update_supported = false;
         }
+        Ok(settings_updated)
     }
 
     pub(crate) async fn thread_inject_items(

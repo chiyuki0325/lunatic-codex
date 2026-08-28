@@ -811,8 +811,7 @@ impl App {
                 Ok(true)
             }
             AppCommand::OverrideTurnContext { .. } => {
-                self.sync_override_turn_context_settings(app_server, thread_id, op)
-                    .await;
+                self.queue_override_turn_context_settings(app_server, thread_id, op);
                 Ok(true)
             }
             AppCommand::ApproveGuardianDeniedAction { event } => {

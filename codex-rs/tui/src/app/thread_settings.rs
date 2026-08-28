@@ -8,6 +8,7 @@ use crate::chatwidget::cyber_model_approval_reviewer;
 use crate::session_state::ThreadSessionState;
 use codex_app_server_protocol::ApprovalsReviewer as AppServerApprovalsReviewer;
 use codex_app_server_protocol::AskForApproval as AppServerAskForApproval;
+use codex_app_server_protocol::ConfigEdit;
 use codex_app_server_protocol::ThreadSettings;
 use codex_app_server_protocol::ThreadSettingsUpdateParams;
 use codex_config::types::ApprovalsReviewer;
@@ -16,11 +17,192 @@ use codex_protocol::config_types::ModeKind;
 use codex_protocol::models::BUILT_IN_PERMISSION_PROFILE_WORKSPACE;
 use codex_protocol::models::PermissionProfile;
 use codex_protocol::openai_models::MODEL_SPECIALTY_CYBER;
+use std::collections::VecDeque;
+
+pub(super) enum BackgroundSettingsUpdate {
+    Thread {
+        params: ThreadSettingsUpdateParams,
+        cyber_model_auto_review_notice: bool,
+    },
+    Config {
+        edits: Vec<ConfigEdit>,
+        success_message: Option<String>,
+        error_prefix: String,
+    },
+}
+
+#[derive(Default)]
+pub(super) struct SettingsUpdateState {
+    queue: VecDeque<BackgroundSettingsUpdate>,
+    in_flight: bool,
+    selection_closed: bool,
+    thread_settings_supported: bool,
+}
+
+impl SettingsUpdateState {
+    pub(super) fn new() -> Self {
+        Self {
+            thread_settings_supported: true,
+            ..Self::default()
+        }
+    }
+
+    fn is_idle(&self) -> bool {
+        !self.in_flight && self.queue.is_empty()
+    }
+}
 
 impl App {
-    pub(super) async fn sync_active_thread_model_setting(
+    pub(super) fn queue_config_settings_update(
         &mut self,
-        app_server: &mut AppServerSession,
+        app_server: &AppServerSession,
+        edits: Vec<ConfigEdit>,
+        success_message: Option<String>,
+        error_prefix: String,
+    ) {
+        self.enqueue_background_settings_update(
+            app_server,
+            BackgroundSettingsUpdate::Config {
+                edits,
+                success_message,
+                error_prefix,
+            },
+        );
+    }
+
+    pub(super) fn queue_thread_settings_update(
+        &mut self,
+        app_server: &AppServerSession,
+        params: ThreadSettingsUpdateParams,
+        cyber_model_auto_review_notice: bool,
+    ) -> bool {
+        if !thread_settings_update_has_changes(&params) {
+            return false;
+        }
+        self.enqueue_background_settings_update(
+            app_server,
+            BackgroundSettingsUpdate::Thread {
+                params,
+                cyber_model_auto_review_notice,
+            },
+        );
+        true
+    }
+
+    fn enqueue_background_settings_update(
+        &mut self,
+        app_server: &AppServerSession,
+        update: BackgroundSettingsUpdate,
+    ) {
+        self.settings_updates.queue.push_back(update);
+        self.start_next_background_settings_update(app_server);
+    }
+
+    fn start_next_background_settings_update(&mut self, app_server: &AppServerSession) {
+        if self.settings_updates.in_flight {
+            return;
+        }
+        let Some(update) = self.settings_updates.queue.pop_front() else {
+            return;
+        };
+        self.settings_updates.in_flight = true;
+        let request_handle = app_server.request_handle();
+        let app_event_tx = self.app_event_tx.clone();
+        let thread_settings_supported = self.settings_updates.thread_settings_supported;
+        tokio::spawn(async move {
+            let (
+                success_message,
+                error_message,
+                cyber_model_auto_review_notice,
+                thread_settings_supported,
+            ) = match update {
+                BackgroundSettingsUpdate::Thread {
+                    params,
+                    cyber_model_auto_review_notice,
+                } if thread_settings_supported => {
+                    match crate::app_server_session::thread_settings_update_with_request_handle(
+                        request_handle,
+                        params,
+                    )
+                    .await
+                    {
+                        Ok(settings_updated) => (
+                            None,
+                            None,
+                            cyber_model_auto_review_notice && settings_updated,
+                            settings_updated,
+                        ),
+                        Err(err) => (
+                            None,
+                            Some(format!("Failed to update thread settings: {err}")),
+                            false,
+                            true,
+                        ),
+                    }
+                }
+                BackgroundSettingsUpdate::Thread { .. } => (None, None, false, false),
+                BackgroundSettingsUpdate::Config {
+                    edits,
+                    success_message,
+                    error_prefix,
+                } => match crate::config_update::write_config_batch(request_handle, edits).await {
+                    Ok(_) => (success_message, None, false, thread_settings_supported),
+                    Err(err) => (
+                        None,
+                        Some(format!("{error_prefix}: {err}")),
+                        false,
+                        thread_settings_supported,
+                    ),
+                },
+            };
+            app_event_tx.send(AppEvent::SettingsUpdateCompleted {
+                success_message,
+                error_message,
+                cyber_model_auto_review_notice,
+                thread_settings_supported,
+            });
+        });
+    }
+
+    pub(super) fn handle_settings_update_completed(
+        &mut self,
+        app_server: &AppServerSession,
+        success_message: Option<String>,
+        error_message: Option<String>,
+        cyber_model_auto_review_notice: bool,
+        thread_settings_supported: bool,
+    ) {
+        self.settings_updates.in_flight = false;
+        self.settings_updates.thread_settings_supported = thread_settings_supported;
+        if let Some(message) = success_message {
+            self.chat_widget.add_info_message(message, /*hint*/ None);
+        }
+        if let Some(message) = error_message {
+            tracing::warn!("background settings update failed: {message}");
+            self.chat_widget.add_error_message(message);
+        }
+        if cyber_model_auto_review_notice {
+            self.app_event_tx.send(AppEvent::CyberModelAutoReviewNotice);
+        }
+        self.start_next_background_settings_update(app_server);
+        self.maybe_settle_settings_selection();
+    }
+
+    pub(super) fn handle_settings_selection_closed(&mut self) {
+        self.settings_updates.selection_closed = true;
+        self.maybe_settle_settings_selection();
+    }
+
+    fn maybe_settle_settings_selection(&mut self) {
+        if self.settings_updates.selection_closed && self.settings_updates.is_idle() {
+            self.settings_updates.selection_closed = false;
+            self.app_event_tx.send(AppEvent::SettingsSelectionSettled);
+        }
+    }
+
+    pub(super) fn queue_active_thread_model_setting(
+        &mut self,
+        app_server: &AppServerSession,
         model: String,
         effort: Option<codex_protocol::openai_models::ReasoningEffort>,
     ) {
@@ -38,10 +220,7 @@ impl App {
                         .approval_policy
                         .value(),
                 ) != AppServerAskForApproval::OnRequest);
-        let settings_updated = self.send_thread_settings_update(app_server, params).await;
-        if defaulted_to_auto_review && settings_updated {
-            self.app_event_tx.send(AppEvent::CyberModelAutoReviewNotice);
-        }
+        self.queue_thread_settings_update(app_server, params, defaulted_to_auto_review);
     }
 
     pub(super) fn active_thread_model_setting_update_params(
@@ -86,15 +265,17 @@ impl App {
         Some(params)
     }
 
-    pub(super) async fn sync_active_thread_reasoning_setting(
+    pub(super) fn queue_active_thread_reasoning_setting(
         &mut self,
-        app_server: &mut AppServerSession,
+        app_server: &AppServerSession,
         effort: Option<codex_protocol::openai_models::ReasoningEffort>,
     ) {
         let Some(params) = self.active_thread_reasoning_setting_update_params(effort) else {
             return;
         };
-        self.send_thread_settings_update(app_server, params).await;
+        self.queue_thread_settings_update(
+            app_server, params, /*cyber_model_auto_review_notice*/ false,
+        );
     }
 
     pub(super) fn active_thread_reasoning_setting_update_params(
@@ -110,9 +291,9 @@ impl App {
         })
     }
 
-    pub(super) async fn sync_active_thread_plan_mode_reasoning_setting(
+    pub(super) fn queue_active_thread_plan_mode_reasoning_setting(
         &mut self,
-        app_server: &mut AppServerSession,
+        app_server: &AppServerSession,
     ) {
         let Some(thread_id) = self.active_thread_id else {
             return;
@@ -122,12 +303,14 @@ impl App {
             collaboration_mode: Some(self.chat_widget.effective_collaboration_mode()),
             ..ThreadSettingsUpdateParams::default()
         };
-        self.send_thread_settings_update(app_server, params).await;
+        self.queue_thread_settings_update(
+            app_server, params, /*cyber_model_auto_review_notice*/ false,
+        );
     }
 
-    pub(super) async fn sync_active_thread_personality_setting(
+    pub(super) fn queue_active_thread_personality_setting(
         &mut self,
-        app_server: &mut AppServerSession,
+        app_server: &AppServerSession,
         personality: codex_protocol::config_types::Personality,
     ) {
         let Some(thread_id) = self.active_thread_id else {
@@ -138,12 +321,14 @@ impl App {
             personality: Some(personality),
             ..ThreadSettingsUpdateParams::default()
         };
-        self.send_thread_settings_update(app_server, params).await;
+        self.queue_thread_settings_update(
+            app_server, params, /*cyber_model_auto_review_notice*/ false,
+        );
     }
 
-    pub(super) async fn sync_override_turn_context_settings(
+    pub(super) fn queue_override_turn_context_settings(
         &mut self,
-        app_server: &mut AppServerSession,
+        app_server: &AppServerSession,
         thread_id: ThreadId,
         op: &AppCommand,
     ) {
@@ -181,7 +366,9 @@ impl App {
             personality: *personality,
             ..ThreadSettingsUpdateParams::default()
         };
-        self.send_thread_settings_update(app_server, params).await;
+        self.queue_thread_settings_update(
+            app_server, params, /*cyber_model_auto_review_notice*/ false,
+        );
     }
 
     pub(super) async fn apply_thread_settings_to_cached_session(
@@ -199,25 +386,6 @@ impl App {
             let mut store = channel.store.lock().await;
             if let Some(session) = store.session.as_mut() {
                 apply_thread_settings_to_session(session, settings);
-            }
-        }
-    }
-
-    pub(super) async fn send_thread_settings_update(
-        &mut self,
-        app_server: &mut AppServerSession,
-        params: ThreadSettingsUpdateParams,
-    ) -> bool {
-        if !thread_settings_update_has_changes(&params) {
-            return false;
-        }
-        match app_server.thread_settings_update(params).await {
-            Ok(settings_updated) => settings_updated,
-            Err(err) => {
-                tracing::warn!("failed to update app-server thread settings from TUI: {err}");
-                self.chat_widget
-                    .add_error_message(format!("Failed to update thread settings: {err}"));
-                false
             }
         }
     }

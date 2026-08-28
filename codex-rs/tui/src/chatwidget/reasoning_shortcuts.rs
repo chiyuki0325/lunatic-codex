@@ -78,14 +78,6 @@ impl ChatWidget {
             return true;
         }
 
-        if !self.is_session_configured() {
-            self.add_info_message(
-                "Reasoning shortcuts are disabled until startup completes.".to_string(),
-                /*hint*/ None,
-            );
-            return true;
-        }
-
         let current_model = self.current_model().to_string();
         let Some(preset) = self.current_model_preset() else {
             self.add_info_message(

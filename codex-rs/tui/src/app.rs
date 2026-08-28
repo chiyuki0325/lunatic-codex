@@ -607,6 +607,7 @@ pub(crate) struct App {
     pending_primary_events: VecDeque<ThreadBufferedEvent>,
     pending_app_server_requests: PendingAppServerRequests,
     pending_startup_thread_start: bool,
+    settings_updates: thread_settings::SettingsUpdateState,
     /// Keeps protected screens quarantined until initialized chat receives genuine user input.
     startup_protected_input_boundary: bool,
     /// Keeps that boundary armed while a startup approval waits for the typing-idle timer.

@@ -11,14 +11,6 @@ impl ChatWidget {
     /// Open a popup to choose a quick auto model. Selecting "All models"
     /// opens the full picker with every available preset.
     pub(crate) fn open_model_popup(&mut self) {
-        if !self.is_session_configured() {
-            self.add_info_message(
-                "Model selection is disabled until startup completes.".to_string(),
-                /*hint*/ None,
-            );
-            return;
-        }
-
         let presets: Vec<ModelPreset> = match self.model_catalog.try_list_models() {
             Ok(models) => models,
             Err(_) => {

@@ -1411,27 +1411,38 @@ impl App {
             }
             AppEvent::UpdateReasoningEffort(effort) => {
                 self.on_update_reasoning_effort(effort.clone());
-                self.sync_active_thread_reasoning_setting(app_server, effort)
-                    .await;
+                self.queue_active_thread_reasoning_setting(app_server, effort);
             }
             AppEvent::UpdateModel(model) => {
                 let model_changed = self.chat_widget.current_model() != model
                     || self.chat_widget.current_collaboration_mode().model() != model;
                 if model_changed {
                     self.chat_widget.set_model(&model);
-                    self.sync_active_thread_model_setting(app_server, model, /*effort*/ None)
-                        .await;
+                    self.queue_active_thread_model_setting(app_server, model, /*effort*/ None);
                     self.sync_active_thread_service_tier_to_cached_session()
                         .await;
                 }
             }
             AppEvent::UpdatePersonality(personality) => {
                 self.on_update_personality(personality);
-                self.sync_active_thread_personality_setting(app_server, personality)
-                    .await;
+                self.queue_active_thread_personality_setting(app_server, personality);
             }
             AppEvent::SettingsSelectionClosed => {
-                self.app_event_tx.send(AppEvent::SettingsSelectionSettled);
+                self.handle_settings_selection_closed();
+            }
+            AppEvent::SettingsUpdateCompleted {
+                success_message,
+                error_message,
+                cyber_model_auto_review_notice,
+                thread_settings_supported,
+            } => {
+                self.handle_settings_update_completed(
+                    app_server,
+                    success_message,
+                    error_message,
+                    cyber_model_auto_review_notice,
+                    thread_settings_supported,
+                );
             }
             AppEvent::SettingsSelectionSettled => {
                 if self.chat_widget.no_modal_or_popup_active() {
@@ -1464,41 +1475,40 @@ impl App {
                 let default_effort =
                     self.on_apply_advanced_reasoning(model.as_str(), effort.clone());
                 if model_changed {
-                    self.sync_active_thread_model_setting(
+                    self.queue_active_thread_model_setting(
                         app_server,
                         model.clone(),
                         Some(effort.clone()),
-                    )
-                    .await;
+                    );
                 } else if let Some(mut params) =
                     self.active_thread_reasoning_setting_update_params(Some(effort.clone()))
                 {
                     params.collaboration_mode =
                         Some(self.chat_widget.effective_collaboration_mode());
-                    self.send_thread_settings_update(app_server, params).await;
+                    self.queue_thread_settings_update(
+                        app_server,
+                        params,
+                        /*cyber_model_auto_review_notice*/ false,
+                    );
                 }
                 self.sync_active_thread_service_tier_to_cached_session()
                     .await;
 
-                if let Some(default_effort) = default_effort.as_ref()
-                    && let Err(err) = crate::config_update::write_config_batch(
-                        app_server.request_handle(),
+                let success_message =
+                    format!("Model changed to {model} {effort} for this conversation");
+                if let Some(default_effort) = default_effort.as_ref() {
+                    self.queue_config_settings_update(
+                        app_server,
                         crate::config_update::build_model_selection_edits(
                             model.as_str(),
                             Some(default_effort),
                         ),
-                    )
-                    .await
-                {
-                    let error = format_config_error(&err);
-                    tracing::error!(error = %error, "failed to persist conversation model");
-                    self.chat_widget
-                        .add_error_message(format!("Failed to save default model: {error}"));
-                } else {
-                    self.chat_widget.add_info_message(
-                        format!("Model changed to {model} {effort} for this conversation"),
-                        /*hint*/ None,
+                        Some(success_message),
+                        "Failed to save default model".to_string(),
                     );
+                } else {
+                    self.chat_widget
+                        .add_info_message(success_message, /*hint*/ None);
                 }
             }
             AppEvent::OpenPlanReasoningScopePrompt { model, effort } => {
@@ -2014,38 +2024,25 @@ impl App {
                 }
             }
             AppEvent::PersistModelSelection { model, effort } => {
-                match crate::config_update::write_config_batch(
-                    app_server.request_handle(),
+                let effort_label = effort
+                    .as_ref()
+                    .map(std::string::ToString::to_string)
+                    .unwrap_or_else(|| "default".to_string());
+                tracing::info!("Selected model: {model}, Selected effort: {effort_label}");
+                let mut message = format!("Model changed to {model}");
+                if let Some(label) = Self::reasoning_label_for(&model, effort.as_ref()) {
+                    message.push(' ');
+                    message.push_str(&label);
+                }
+                self.queue_config_settings_update(
+                    app_server,
                     crate::config_update::build_model_selection_edits(
                         model.as_str(),
                         effort.as_ref(),
                     ),
-                )
-                .await
-                {
-                    Ok(_) => {
-                        let effort_label = effort
-                            .as_ref()
-                            .map(std::string::ToString::to_string)
-                            .unwrap_or_else(|| "default".to_string());
-                        tracing::info!("Selected model: {model}, Selected effort: {effort_label}");
-                        let mut message = format!("Model changed to {model}");
-                        if let Some(label) = Self::reasoning_label_for(&model, effort.as_ref()) {
-                            message.push(' ');
-                            message.push_str(&label);
-                        }
-                        self.chat_widget.add_info_message(message, /*hint*/ None);
-                    }
-                    Err(err) => {
-                        let error = format_config_error(&err);
-                        tracing::error!(
-                            error = %error,
-                            "failed to persist model selection"
-                        );
-                        self.chat_widget
-                            .add_error_message(format!("Failed to save default model: {error}"));
-                    }
-                }
+                    Some(message),
+                    "Failed to save default model".to_string(),
+                );
             }
             AppEvent::CyberModelAutoReviewNotice => {
                 self.chat_widget.add_warning_message(
@@ -2083,30 +2080,16 @@ impl App {
                 self.chat_widget.on_plugin_mentions_loaded(plugins);
             }
             AppEvent::PersistPersonalitySelection { personality } => {
-                match crate::config_update::write_config_batch(
-                    app_server.request_handle(),
+                let label = Self::personality_label(personality);
+                self.queue_config_settings_update(
+                    app_server,
                     vec![crate::config_update::replace_config_value(
                         "personality",
                         serde_json::json!(personality.to_string()),
                     )],
-                )
-                .await
-                {
-                    Ok(_) => {
-                        let label = Self::personality_label(personality);
-                        let message = format!("Personality set to {label}");
-                        self.chat_widget.add_info_message(message, /*hint*/ None);
-                    }
-                    Err(err) => {
-                        tracing::error!(
-                            error = %err,
-                            "failed to persist personality selection"
-                        );
-                        self.chat_widget.add_error_message(format!(
-                            "Failed to save default personality: {err}"
-                        ));
-                    }
-                }
+                    Some(format!("Personality set to {label}")),
+                    "Failed to save default personality".to_string(),
+                );
             }
             AppEvent::PersistServiceTierSelection { service_tier } => {
                 self.refresh_status_line();
@@ -2116,24 +2099,17 @@ impl App {
                 let edits = crate::config_update::build_service_tier_selection_edits(
                     service_tier.as_deref(),
                 );
-                match crate::config_update::write_config_batch(app_server.request_handle(), edits)
-                    .await
-                {
-                    Ok(_) => {
-                        let message = if let Some(service_tier) = service_tier {
-                            format!("Service tier set to {service_tier}")
-                        } else {
-                            "Service tier cleared".to_string()
-                        };
-                        self.chat_widget.add_info_message(message, /*hint*/ None);
-                    }
-                    Err(err) => {
-                        tracing::error!(error = %err, "failed to persist service tier selection");
-                        self.chat_widget.add_error_message(format!(
-                            "Failed to save default service tier: {err}"
-                        ));
-                    }
-                }
+                let message = if let Some(service_tier) = service_tier {
+                    format!("Service tier set to {service_tier}")
+                } else {
+                    "Service tier cleared".to_string()
+                };
+                self.queue_config_settings_update(
+                    app_server,
+                    edits,
+                    Some(message),
+                    "Failed to save default service tier".to_string(),
+                );
             }
             AppEvent::UpdateAskForApprovalPolicy(policy) => {
                 let mut config = self.config.clone();
@@ -2235,22 +2211,15 @@ impl App {
                 self.chat_widget.set_approvals_reviewer(policy);
                 self.sync_active_thread_permission_settings_to_cached_session()
                     .await;
-                if let Err(err) = crate::config_update::write_config_batch(
-                    app_server.request_handle(),
+                self.queue_config_settings_update(
+                    app_server,
                     vec![crate::config_update::replace_config_value(
                         "approvals_reviewer",
                         serde_json::json!(policy.to_string()),
                     )],
-                )
-                .await
-                {
-                    tracing::error!(
-                        error = %err,
-                        "failed to persist approvals reviewer update"
-                    );
-                    self.chat_widget
-                        .add_error_message(format!("Failed to save approvals reviewer: {err}"));
-                }
+                    /*success_message*/ None,
+                    "Failed to save approvals reviewer".to_string(),
+                );
             }
             AppEvent::UpdateFeatureFlags { updates } => {
                 self.update_feature_flags(app_server, updates).await;
@@ -2281,8 +2250,7 @@ impl App {
             }
             AppEvent::UpdatePlanModeReasoningEffort(effort) => {
                 self.on_update_plan_mode_reasoning_effort(effort);
-                self.sync_active_thread_plan_mode_reasoning_setting(app_server)
-                    .await;
+                self.queue_active_thread_plan_mode_reasoning_setting(app_server);
             }
             AppEvent::PersistWorldWritableWarningAcknowledged => {
                 if let Err(err) = ConfigEditsBuilder::for_config(&self.config)
@@ -2324,20 +2292,12 @@ impl App {
                 } else {
                     crate::config_update::clear_config_value(key_path)
                 };
-                if let Err(err) = crate::config_update::write_config_batch(
-                    app_server.request_handle(),
+                self.queue_config_settings_update(
+                    app_server,
                     vec![edit],
-                )
-                .await
-                {
-                    tracing::error!(
-                        error = %err,
-                        "failed to persist plan mode reasoning effort"
-                    );
-                    self.chat_widget.add_error_message(format!(
-                        "Failed to save Plan mode reasoning effort: {err}"
-                    ));
-                }
+                    /*success_message*/ None,
+                    "Failed to save Plan mode reasoning effort".to_string(),
+                );
             }
             AppEvent::PersistModelMigrationPromptAcknowledged {
                 from_model,

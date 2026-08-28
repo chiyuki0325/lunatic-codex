@@ -133,12 +133,13 @@ impl ChatWidget {
 
     fn slash_command_blocked_by_active_task(&self, cmd: SlashCommand) -> bool {
         (!cmd.available_during_task()
-            && (self.turn_lifecycle.agent_turn_running
+            && (!self.is_session_configured()
+                || self.turn_lifecycle.agent_turn_running
                 || self.review.is_review_mode
                 || (self.bottom_pane.is_task_running()
                     && (self.mcp_startup_status.is_none()
                         || self.input_queue.user_turn_pending_start))))
-            || (matches!(cmd, SlashCommand::Resume | SlashCommand::Cd)
+            || (cmd == SlashCommand::Cd
                 && (self.input_queue.user_turn_pending_start
                     || self.turn_lifecycle.agent_turn_running))
             || (cmd == SlashCommand::Export && self.input_queue.suppress_queue_autosend)

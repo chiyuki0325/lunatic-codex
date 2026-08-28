@@ -1522,9 +1522,8 @@ async fn disabled_slash_command_while_task_running_snapshot() {
     let command = begin_exec(&mut chat, "call-before-error", "printf before");
     end_exec(&mut chat, command, "before\n", "", /*exit_code*/ 0);
 
-    // Resume remains available during MCP startup, but not while an agent turn is active.
     chat.bottom_pane
-        .set_composer_text("/resume".to_string(), Vec::new(), Vec::new());
+        .set_composer_text("/review".to_string(), Vec::new(), Vec::new());
     chat.handle_key_event(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
 
     // Drain history and snapshot the rendered error line(s)
