@@ -16,8 +16,8 @@
 - 输入框、底栏、快捷键提示、斜杠命令说明和命令补全面板。
 - 模型、推理强度、权限、主题、状态栏、插件、MCP、Skills、Apps、实验功能等选择器和设置界面。
 - 命令审批、网络审批、文件变更审批、用户提问及其结果反馈。
-- 会话历史中的 Codex 状态、工具执行状态、计划、补丁、搜索、Hook、MCP 和多智能体等由程序生成的标签与说明。
-- `/status`、用量和限额、会话恢复与管理、更新提示、通知、警告、错误及其他 TUI 弹窗或状态页。
+- 会话历史中的 Codex 状态、工具执行状态、计划、补丁、搜索、Hook、MCP 和多agent等由程序生成的标签与说明。
+- `/status`、用量和用量限制、会话恢复与管理、更新提示、通知、警告、错误及其他 TUI 弹窗或状态页。
 - 由 `codex-core` 或 app-server 生成并最终展示在 TUI 中的用户提示，应在其源头翻译。允许这些共享文本在 `exec` 或其他客户端中也显示为中文，但不得改变协议结构、事件类型或字段语义。
 
 以下内容不在本特性的主动翻译范围内：
@@ -44,8 +44,8 @@
 
 | 上游术语 | 统一译法 | 使用说明 |
 | --- | --- | --- |
-| agent | 智能体 | `sub-agent` 译为“子智能体”，`multi-agent` 译为“多智能体”。 |
-| conversation | 对话 | `side conversation` 译为“侧边对话”；强调可恢复、归档或删除的持久记录时使用“会话”。 |
+| agent | agent | `subagent` 保留为“subagent”；`multi-agent` 译为“多agent”。 |
+| conversation / side conversation | 对话 / 平行对话 | 强调可恢复、归档或删除的持久记录时使用“会话”。 |
 | session | 会话 | 用于会话恢复、重命名、归档、删除、配置和用量等界面。代码或协议中的 `thread`、`thread_id` 等标识符保持原样。 |
 | model | 模型 | `model migration` 译为“模型迁移”。模型 ID 和供应商给出的模型名称保持原样。 |
 | reasoning effort | 推理强度 | 不使用“推理努力程度”等机械直译。 |
@@ -53,13 +53,13 @@
 | permission | 权限 | 与“审批”区分，表示已配置或授予的能力范围。 |
 | sandbox | 沙箱 | 权限级别和运行环境名称中的固定标识符保持原样。 |
 | plugin | 插件 | 官方功能名或界面栏目 `Plugins` 保持原样时，不再翻译。 |
-| skill | 技能 | 官方功能名或界面栏目 `Skills` 保持原样时，不再翻译。 |
+| Skill | Skill | `Skill` 保留原样；官方功能名或界面栏目 `Skills` 也保持原样。 |
 | app / desktop app | 应用 / 桌面应用 | 官方功能名或界面栏目 `Apps` 保持原样时，不再翻译。 |
 | tool | 工具 | 工具活动的进行、完成、失败和汇总状态均使用这一译法。具体工具名保持原样。 |
 | web search | 网页搜索 | 搜索词、URL 和搜索服务返回的内容保持原样。 |
 | patch | 补丁 | 文件路径、diff 内容和 Git 输出保持原样。 |
 | context window | 上下文窗口 | 涉及计量时使用“上下文窗口大小”“已用 Token”等表达。 |
-| usage / rate limit | 用量 / 限额 | 账户用量、方案限额、重置时间和限制状态采用这一组表达。 |
+| usage / rate limit | 用量 / 用量限制 | 账户用量、用量限制、重置时间和限制状态采用这一组表达。 |
 
 #### 应保留原样的术语和文本
 
@@ -67,8 +67,10 @@
 | --- | --- |
 | Token 术语 | 始终写作 `Token`，不译为“令牌”，也不在中文文案中写作小写 `token`；使用“Token 用量”“输入 Token”“输出 Token”“Token 预算”和 `Bearer Token` 等形式。 |
 | 产品名与专名 | Codex、OpenAI、ChatGPT、MCP、IDE、Skills、Apps、AGENTS.md、Hook、Git、Markdown。可在其后添加中文说明，如“MCP 服务器”“Hook 审核”。 |
-| 用户输入项 | 斜杠命令及其参数、命令行参数、配置键、环境变量、协议字段、模型 ID、工具名、文件名和路径，例如 `/model`、`/mcp verbose`、`--full-auto`、`approval_policy`。 |
-| 按键 | `Esc`、`Enter`、`Tab`、方向键名称及 `Ctrl+C` 等组合键。 |
+| 命令与参数 | 斜杠命令、命令行命令及其参数保持原样，例如 `/model`、`/mcp verbose`、`--full-auto`。 |
+| 配置与环境标识 | 配置键、环境变量、模型 ID、工具名、文件名和路径保持原样，例如 `approval_policy`、`CODEX_HOME`、`gpt-5`、`AGENTS.md`。 |
+| 协议标识 | 协议名称、事件类型、字段名和字段值保持原样，例如 `thread_id`、`rawResponseItem`、`type`。 |
+| 按键绑定语法 | 按键名、组合键和绑定写法保持原样，例如 `Esc`、`Enter`、`Tab`、方向键、`Ctrl+C`、`Ctrl+Shift+P`。 |
 | 外部内容 | 用户输入、模型回复、代码、URL、Git 或 shell 输出，以及 MCP、Hook、插件和其他外部组件返回的正文与诊断详情。Codex 自己添加的上下文仍应翻译。 |
 
 保留原样只适用于术语、标识符和外部内容；其周围由 Codex 生成的标题、状态、说明、按钮和错误上下文仍使用简体中文。
