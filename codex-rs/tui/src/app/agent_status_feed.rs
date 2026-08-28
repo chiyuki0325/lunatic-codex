@@ -33,12 +33,12 @@ impl HistoryCell for AgentStatusHistoryCell {
     fn display_lines(&self, width: u16) -> Vec<Line<'static>> {
         let mut lines: Vec<Line<'static>> = vec![
             "/subagents".magenta().into(),
-            "Sub-agents running".bold().into(),
+            "运行中的 subagent".bold().into(),
             "".into(),
         ];
 
         if self.entries.is_empty() {
-            lines.push("  • No sub-agents running.".italic().into());
+            lines.push("  • 没有运行中的 subagent。".italic().into());
             return lines;
         }
 
@@ -158,11 +158,11 @@ fn activity_summary(item: &ThreadItem) -> Option<String> {
         }
         ThreadItem::CollabAgentToolCall { tool, .. } => {
             let action = match tool {
-                CollabAgentTool::SpawnAgent => "已启动智能体",
-                CollabAgentTool::SendInput => "已向智能体发送输入",
-                CollabAgentTool::ResumeAgent => "已恢复智能体",
-                CollabAgentTool::Wait => "正在等待智能体",
-                CollabAgentTool::CloseAgent => "已关闭智能体",
+                CollabAgentTool::SpawnAgent => "已启动 agent",
+                CollabAgentTool::SendInput => "已向 agent 发送输入",
+                CollabAgentTool::ResumeAgent => "已恢复 agent",
+                CollabAgentTool::Wait => "正在等待 agent",
+                CollabAgentTool::CloseAgent => "已关闭 agent",
             };
             return Some(action.to_string());
         }

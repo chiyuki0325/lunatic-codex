@@ -53,7 +53,7 @@ pub(super) fn emit_skill_load_warnings(app_event_tx: &AppEventSender, errors: &[
     let error_count = errors.len();
     app_event_tx.send(AppEvent::InsertHistoryCell(Box::new(
         crate::history_cell::new_warning_event(format!(
-            "Skipped loading {error_count} skill(s) due to invalid SKILL.md files."
+            "因 SKILL.md 文件无效，已跳过加载 {error_count} 个 Skill。"
         )),
     )));
 
@@ -87,8 +87,8 @@ pub(super) fn emit_project_config_warnings(app_event_tx: &AppEventSender, config
     }
 
     let mut message = concat!(
-        "Project-local config, hooks, and exec policies are disabled in the following folders ",
-        "until the project is trusted, but skills still load.\n",
+        "在项目受信任前，下列文件夹中的项目本地配置、Hook 和执行策略均已禁用，",
+        "但仍会加载 Skill。\n",
     )
     .to_string();
     for (index, (folder, reason)) in disabled_folders.iter().enumerate() {

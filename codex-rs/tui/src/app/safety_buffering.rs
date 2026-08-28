@@ -61,9 +61,8 @@ impl App {
             ..
         } = &mut turn
         else {
-            self.chat_widget.add_error_message(
-                "无法使用更快的模型重试：原轮次不可用。".to_string(),
-            );
+            self.chat_widget
+                .add_error_message("无法使用更快的模型重试：原轮次不可用。".to_string());
             return;
         };
         let permissions_override = Self::turn_permissions_override_from_config(

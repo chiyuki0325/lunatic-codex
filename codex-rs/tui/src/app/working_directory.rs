@@ -19,14 +19,14 @@ impl App {
         cwd: AbsolutePathBuf,
     ) {
         if self.config.ephemeral || !cwd.as_path().is_dir() {
-            return self.working_directory_error("This task cannot be safely replaced.");
+            return self.working_directory_error("无法安全地替换此任务。");
         }
         let Some(thread_id) = self.chat_widget.thread_id() else {
             return;
         };
         let cells = &self.transcript_cells;
         if cells.iter().any(|cell| cell.as_any().is::<LoadingCell>()) {
-            return self.working_directory_error("MCP inventory is still loading.");
+            return self.working_directory_error("MCP 清单仍在加载中。");
         }
         let agents = self.agent_navigation.ordered_threads();
         let active = self.thread_event_channels.iter().any(|(id, channel)| {
@@ -34,14 +34,14 @@ impl App {
             *id != thread_id && !store.is_ok_and(|store| store.active_turn_id().is_none())
         });
         if active || agents.iter().any(|(t, a)| *t != thread_id && a.is_running) {
-            return self.working_directory_error("Cannot change: another agent is running.");
+            return self.working_directory_error("无法切换：另一个 agent 正在运行。");
         }
         let mut config = match self.rebuild_config_for_cwd(cwd.to_path_buf()).await {
             Ok(config) => config,
-            Err(err) => return self.working_directory_error(format!("Cannot load {cwd:?}: {err}")),
+            Err(err) => return self.working_directory_error(format!("无法加载 {cwd:?}：{err}")),
         };
         if config.active_project.trust_level.is_none() {
-            return self.working_directory_error("This directory is not trusted; run Codex there.");
+            return self.working_directory_error("此目录不受信任；请在该目录中运行 Codex。");
         }
         if let Some(profile) = self.runtime_permission_profile_override.as_ref()
             && profile.active_permission_profile.is_some()
@@ -49,14 +49,14 @@ impl App {
                 || config.permissions.profile_workspace_roots()
                     != self.config.permissions.profile_workspace_roots())
         {
-            return self.working_directory_error("Permission profile has different settings.");
+            return self.working_directory_error("权限配置文件的设置不同。");
         }
         self.apply_runtime_policy_overrides(&mut config);
         if self.runtime_permission_profile_override.is_some() {
             let reviewer = self.config.approvals_reviewer;
             let reviewers = &config.config_layer_stack.requirements().approvals_reviewer;
             if let Err(error) = reviewers.can_set(&reviewer) {
-                return self.working_directory_error(format!("Approvals reviewer: {error}"));
+                return self.working_directory_error(format!("审批审查者：{error}"));
             }
             config.approvals_reviewer = reviewer;
         }
@@ -94,7 +94,7 @@ impl App {
                     })
                 }))
         {
-            return self.working_directory_error("Conversation history is not saved.");
+            return self.working_directory_error("对话记录尚未保存。");
         }
         let mut ids: HashSet<_> = channels.keys().copied().collect();
         for (id, agent) in self.agent_navigation.ordered_threads() {
@@ -113,7 +113,7 @@ impl App {
             let handle = app_server.request_handle();
             let result = handle.request_typed::<ListResponse>(request).await;
             if !matches!(result, Ok(response) if response.data.is_empty()) {
-                return self.working_directory_error("Active background terminals block /cd.");
+                return self.working_directory_error("活动的后台终端阻止执行 /cd。");
             }
         }
         let transitioned = if has_rollout {
@@ -135,7 +135,7 @@ impl App {
         };
         let transitioned = match transitioned {
             Ok(value) => value,
-            Err(e) => return self.working_directory_error(format!("Failed to change: {e}")),
+            Err(e) => return self.working_directory_error(format!("切换失败：{e}")),
         };
         let session = &transitioned.session;
         if session.thread_id == thread_id
@@ -151,7 +151,7 @@ impl App {
                     let _ = app_server.thread_archive(session.thread_id).await;
                 }
             }
-            return self.working_directory_error("Requested directory or permissions not applied.");
+            return self.working_directory_error("未应用请求的目录或权限。");
         }
         if let Err(error) = app_server.thread_unsubscribe(thread_id).await {
             let replacement_id = transitioned.session.thread_id;
@@ -159,7 +159,7 @@ impl App {
             if has_rollout {
                 let _ = app_server.thread_archive(replacement_id).await;
             }
-            return self.working_directory_error(format!("Cannot change directories: {error}"));
+            return self.working_directory_error(format!("无法切换目录：{error}"));
         }
         for tracked_id in ids.into_iter().filter(|id| *id != thread_id) {
             if let Err(error) = app_server.thread_unsubscribe(tracked_id).await {
@@ -177,14 +177,14 @@ impl App {
         let attach = App::replace_chat_widget_with_app_server_thread;
         let (lineage, message) = (ThreadAttachPresentation::SessionLineage, None);
         if let Err(error) = attach(self, tui, transitioned, lineage, message).await {
-            return self.working_directory_error(format!("Could not restore session: {error}"));
+            return self.working_directory_error(format!("无法恢复会话：{error}"));
         }
         self.cancel_pending_key_chord();
         self.keymap = keymap;
         self.restore_runtime_theme_from_config();
         self.runtime_working_directory_override = Some(cwd.to_path_buf());
         emit_project_config_warnings(&self.app_event_tx, &self.config);
-        let message = format!("Working directory changed to: {}", cwd.display());
+        let message = format!("工作目录已切换至：{}", cwd.display());
         self.chat_widget.add_info_message(message, /*hint*/ None);
         if !self.config.bypass_hook_trust {
             let load_review = crate::startup_hooks_review::load_startup_hooks_review_entry;

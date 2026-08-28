@@ -524,9 +524,8 @@ impl App {
                 message,
                 "feature flag config write was overridden by effective config"
             );
-            self.chat_widget.add_error_message(format!(
-                "实验功能更改已保存，但未生效：{message}"
-            ));
+            self.chat_widget
+                .add_error_message(format!("实验功能更改已保存，但未生效：{message}"));
             if let Some(effective_config) = self
                 .read_effective_config_after_overridden_write(
                     app_server,
@@ -635,10 +634,8 @@ impl App {
         }
 
         if let Some(label) = permissions_history_label {
-            self.chat_widget.add_info_message(
-                format!("权限已更新为 {label}"),
-                /*hint*/ None,
-            );
+            self.chat_widget
+                .add_info_message(format!("权限已更新为 {label}"), /*hint*/ None);
         }
     }
 
@@ -671,9 +668,8 @@ impl App {
                 message,
                 "memory settings config write was overridden by effective config"
             );
-            self.chat_widget.add_error_message(format!(
-                "记忆设置更改已保存，但未生效：{message}"
-            ));
+            self.chat_widget
+                .add_error_message(format!("记忆设置更改已保存，但未生效：{message}"));
             let Some(effective_config) = self
                 .read_effective_config_after_overridden_write(app_server, "Memory setting changes")
                 .await
@@ -721,9 +717,8 @@ impl App {
 
         if let Err(err) = app_server.thread_memory_mode_set(thread_id, mode).await {
             tracing::error!(error = %err, %thread_id, "failed to update thread memory mode");
-            self.chat_widget.add_error_message(format!(
-                "记忆设置已保存，但更新当前会话失败：{err}"
-            ));
+            self.chat_widget
+                .add_error_message(format!("记忆设置已保存，但更新当前会话失败：{err}"));
         }
     }
 

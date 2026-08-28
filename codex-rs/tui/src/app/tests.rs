@@ -2258,7 +2258,7 @@ fn attach_live_thread_for_selection_rejects_empty_non_ephemeral_fallback_threads
 
         assert_eq!(
             err.to_string(),
-            format!("Agent thread {thread_id} is not yet available for replay or live attach.")
+            format!("agent 对话 {thread_id} 暂无法回放或实时连接。")
         );
         assert!(!app.thread_event_channels.contains_key(&thread_id));
         Ok(())
@@ -2298,7 +2298,7 @@ fn attach_live_thread_for_selection_rejects_unmaterialized_fallback_threads() ->
 
         assert_eq!(
             err.to_string(),
-            format!("Agent thread {thread_id} is not yet available for replay or live attach.")
+            format!("agent 对话 {thread_id} 暂无法回放或实时连接。")
         );
         assert!(!app.thread_event_channels.contains_key(&thread_id));
         Ok(())

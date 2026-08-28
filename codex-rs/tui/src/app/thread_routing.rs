@@ -137,7 +137,7 @@ impl App {
         } else {
             let thread_id = thread_id.to_string();
             let short_id: String = thread_id.chars().take(8).collect();
-            format!("智能体（{short_id}）")
+            format!("agent（{short_id}）")
         };
         if let Some(entry) = self.agent_navigation.get(&thread_id) {
             let label = format_agent_picker_item_name(
@@ -1749,15 +1749,13 @@ impl App {
             }
             if self.active_thread_id == Some(primary_thread_id) {
                 self.chat_widget.add_info_message(
-                    format!(
-                        "Agent thread {closed_thread_id} closed. Switched back to main thread."
-                    ),
+                    format!("agent 对话 {closed_thread_id} 已关闭。已切回主对话。"),
                     /*hint*/ None,
                 );
             } else {
                 self.clear_active_thread().await;
                 self.chat_widget.add_error_message(format!(
-                    "智能体对话 {closed_thread_id} 已关闭。未能切回主对话 {primary_thread_id}。",
+                    "agent 对话 {closed_thread_id} 已关闭。未能切回主对话 {primary_thread_id}。",
                 ));
             }
             return Ok(());

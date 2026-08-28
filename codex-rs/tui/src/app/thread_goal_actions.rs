@@ -41,10 +41,8 @@ impl App {
         };
 
         let Some(goal) = response.goal else {
-            self.chat_widget.add_info_message(
-                GOAL_USAGE.to_string(),
-                Some("当前未设置目标。".to_string()),
-            );
+            self.chat_widget
+                .add_info_message(GOAL_USAGE.to_string(), Some("当前未设置目标。".to_string()));
             return;
         };
 

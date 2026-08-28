@@ -44,9 +44,7 @@ fn markdown_transcript_preserves_messages_and_formats_activity() {
             std::path::Path::new("."),
         )),
         Arc::new(PlainHistoryCell::new(vec!["$ cargo test".into()])),
-        Arc::new(PlainHistoryCell::new(vec![
-            "■ Export failed: missing parent".into(),
-        ])),
+        Arc::new(PlainHistoryCell::new(vec!["■ 导出失败：缺少父目录".into()])),
         user("", vec!["image.png".into()]),
         user("[Image #1] describe this", vec!["image.png".into()]),
     ];

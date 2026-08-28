@@ -778,13 +778,13 @@ impl App {
                 // Enter alternate screen using TUI helper and build pager lines
                 let _ = tui.enter_alt_screen();
                 let pager_lines: Vec<ratatui::text::Line<'static>> = if text.trim().is_empty() {
-                    vec!["No changes detected.".italic().into()]
+                    vec!["未检测到变更。".italic().into()]
                 } else {
                     text.lines().map(ansi_escape_line).collect()
                 };
                 self.overlay = Some(Overlay::new_static_with_lines(
                     pager_lines,
-                    "D I F F".to_string(),
+                    "差异".to_string(),
                     self.keymap.pager.clone(),
                 ));
                 tui.frame_requester().schedule_frame();
@@ -1601,7 +1601,7 @@ impl App {
                         "refusing to set up elevated Windows sandbox mode disallowed by requirements"
                     );
                     self.chat_widget.add_info_message(
-                        "That Windows sandbox option is disallowed by requirements.".to_string(),
+                        "要求不允许使用该 Windows 沙盒选项。".to_string(),
                         /*hint*/ None,
                     );
                     return Ok(AppRunControl::Continue);
@@ -1619,7 +1619,7 @@ impl App {
                                 "failed to resolve permission profile for elevated Windows sandbox setup"
                             );
                             self.chat_widget.add_error_message(format!(
-                                "Failed to prepare Windows sandbox for the selected permission profile: {err}"
+                                "无法为所选权限配置文件准备 Windows 沙盒：{err}"
                             ));
                             return Ok(AppRunControl::Continue);
                         }
@@ -1720,7 +1720,7 @@ impl App {
                         "refusing to set up unelevated Windows sandbox mode disallowed by requirements"
                     );
                     self.chat_widget.add_info_message(
-                        "That Windows sandbox option is disallowed by requirements.".to_string(),
+                        "要求不允许使用该 Windows 沙盒选项。".to_string(),
                         /*hint*/ None,
                     );
                     return Ok(AppRunControl::Continue);
@@ -1738,7 +1738,7 @@ impl App {
                                 "failed to resolve permission profile for legacy Windows sandbox setup"
                             );
                             self.chat_widget.add_error_message(format!(
-                                "Failed to prepare Windows sandbox for the selected permission profile: {err}"
+                                "无法为所选权限配置文件准备 Windows 沙盒：{err}"
                             ));
                             return Ok(AppRunControl::Continue);
                         }
@@ -1790,7 +1790,7 @@ impl App {
                 {
                     self.chat_widget
                         .add_to_history(history_cell::new_info_event(
-                            format!("Granting sandbox read access to {path} ..."),
+                            format!("正在授予沙盒对 {path} 的读取权限……"),
                             /*hint*/ None,
                         ));
 
@@ -1832,12 +1832,12 @@ impl App {
             AppEvent::WindowsSandboxGrantReadRootCompleted { path, error } => match error {
                 Some(err) => {
                     self.chat_widget
-                        .add_to_history(history_cell::new_error_event(format!("Error: {err}")));
+                        .add_to_history(history_cell::new_error_event(format!("错误：{err}")));
                 }
                 None => {
                     self.chat_widget
                         .add_to_history(history_cell::new_info_event(
-                            format!("Sandbox read access granted for {}", path.display()),
+                            format!("已授予沙盒对 {} 的读取权限", path.display()),
                             /*hint*/ None,
                         ));
                 }
@@ -1952,10 +1952,10 @@ impl App {
                                     self.chat_widget.submit_initial_user_message_if_pending();
                                 }
                                 self.chat_widget.add_plain_history_lines(vec![
-                                    Line::from(vec!["• ".dim(), "Sandbox ready".into()]),
+                                    Line::from(vec!["• ".dim(), "沙盒已就绪".into()]),
                                     Line::from(vec![
                                         "  ".into(),
-                                        "Codex can now safely edit files and execute commands in your computer"
+                                        "Codex 现在可以在您的计算机上安全地编辑文件和执行命令"
                                             .dark_gray(),
                                     ]),
                                 ]);
@@ -1985,10 +1985,10 @@ impl App {
                                         preset.active_permission_profile.clone(),
                                     ));
                                 self.chat_widget.add_plain_history_lines(vec![
-                                    Line::from(vec!["• ".dim(), "Sandbox ready".into()]),
+                                    Line::from(vec!["• ".dim(), "沙盒已就绪".into()]),
                                     Line::from(vec![
                                         "  ".into(),
-                                        "Codex can now safely edit files and execute commands in your computer"
+                                        "Codex 现在可以在您的计算机上安全地编辑文件和执行命令"
                                             .dark_gray(),
                                     ]),
                                 ]);
@@ -2000,7 +2000,7 @@ impl App {
                                 "failed to enable Windows sandbox feature"
                             );
                             self.chat_widget.add_error_message(format!(
-                                "Failed to enable the Windows sandbox feature: {err}"
+                                "无法启用 Windows 沙盒功能：{err}"
                             ));
                         }
                     }
@@ -2292,7 +2292,7 @@ impl App {
                         "failed to persist world-writable warning acknowledgement"
                     );
                     self.chat_widget.add_error_message(format!(
-                        "保存智能体模式警告偏好失败：{err}"
+                        "保存 agent 模式警告偏好失败：{err}"
                     ));
                 }
             }
@@ -2307,7 +2307,7 @@ impl App {
                         "failed to persist rate limit switch prompt preference"
                     );
                     self.chat_widget.add_error_message(format!(
-                        "保存速率限制提醒偏好失败：{err}"
+                        "保存用量限制提醒偏好失败：{err}"
                     ));
                 }
             }
@@ -2556,7 +2556,7 @@ impl App {
                     let diff_summary = DiffSummary::new(request.changes, request.cwd);
                     self.overlay = Some(Overlay::new_static_with_renderables(
                         vec![diff_summary.into()],
-                        "P A T C H".to_string(),
+                        "补丁".to_string(),
                         self.keymap.pager.clone(),
                     ));
                 }
@@ -2566,7 +2566,7 @@ impl App {
                     let full_cmd_lines = highlight_bash_to_lines(&full_cmd);
                     self.overlay = Some(Overlay::new_static_with_lines(
                         full_cmd_lines,
-                        "E X E C".to_string(),
+                        "执行".to_string(),
                         self.keymap.pager.clone(),
                     ));
                 }
@@ -2575,40 +2575,40 @@ impl App {
                     let mut lines = Vec::new();
                     if let Some(environment_id) = request.environment_id {
                         lines.push(Line::from(vec![
-                            "Environment: ".into(),
+                            "环境：".into(),
                             environment_id.bold(),
                         ]));
                         lines.push(Line::from(""));
                     }
                     if let Some(reason) = request.reason {
-                        lines.push(Line::from(vec!["Reason: ".into(), reason.italic()]));
+                        lines.push(Line::from(vec!["原因：".into(), reason.italic()]));
                         lines.push(Line::from(""));
                     }
                     if let Some(rule_line) =
                         crate::bottom_pane::format_requested_permissions_rule(&request.permissions)
                     {
                         lines.push(Line::from(vec![
-                            "Permission rule: ".into(),
+                            "权限规则：".into(),
                             rule_line.cyan(),
                         ]));
                     }
                     self.overlay = Some(Overlay::new_static_with_renderables(
                         vec![Box::new(Paragraph::new(lines).wrap(Wrap { trim: false }))],
-                        "P E R M I S S I O N S".to_string(),
+                        "权限".to_string(),
                         self.keymap.pager.clone(),
                     ));
                 }
                 ApprovalRequest::McpElicitation(request) => {
                     let _ = tui.enter_alt_screen();
                     let paragraph = Paragraph::new(vec![
-                        Line::from(vec!["Server: ".into(), request.server_name.bold()]),
+                        Line::from(vec!["服务器：".into(), request.server_name.bold()]),
                         Line::from(""),
                         Line::from(request.message),
                     ])
                     .wrap(Wrap { trim: false });
                     self.overlay = Some(Overlay::new_static_with_renderables(
                         vec![Box::new(paragraph)],
-                        "E L I C I T A T I O N".to_string(),
+                        "征询".to_string(),
                         self.keymap.pager.clone(),
                     ));
                 }
@@ -2877,7 +2877,7 @@ impl App {
                 self.chat_widget
                     .return_to_keymap_picker(&context, &action, &runtime_keymap);
                 self.chat_widget.add_info_message(
-                    format!("Removed custom shortcut for `{context}.{action}`."),
+                    format!("已移除 `{context}.{action}` 的自定义快捷键。"),
                     /*hint*/ None,
                 );
             }
@@ -2937,8 +2937,7 @@ impl App {
         };
         if self.side_threads.contains_key(&thread_id) {
             self.chat_widget.add_error_message(
-                "'/archive' is unavailable in side conversations. Press Ctrl+C to return to the main thread first."
-                    .to_string(),
+                "平行对话中无法使用 /archive。请先按下 Ctrl+C 返回主对话。".to_string(),
             );
             return AppRunControl::Continue;
         }
@@ -2964,8 +2963,7 @@ impl App {
         };
         if self.side_threads.contains_key(&thread_id) {
             self.chat_widget.add_error_message(
-                "'/delete' is unavailable in side conversations. Press Ctrl+C to return to the main thread first."
-                    .to_string(),
+                "平行对话中无法使用 /delete。请先按下 Ctrl+C 返回主对话。".to_string(),
             );
             return AppRunControl::Continue;
         }

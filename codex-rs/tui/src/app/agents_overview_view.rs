@@ -352,7 +352,7 @@ impl AgentsOverviewView {
                 .or_else(|| (!row.thread.preview.is_empty()).then_some(row.thread.preview.as_str()))
                 .unwrap_or("未命名任务");
             let (status, dot) = Self::status(row);
-            let current = if row.is_current { "  current" } else { "" };
+            let current = if row.is_current { "  当前" } else { "" };
             let mut spans = vec![
                 marker,
                 " ".into(),
@@ -563,11 +563,11 @@ impl Renderable for AgentsOverviewView {
     fn cursor_pos(&self, area: Rect) -> Option<(u16, u16)> {
         let state = self.state().clone();
         let (label, input) = if state.searching {
-            ("  Search › ", &state.search)
+            ("  搜索 › ", &state.search)
         } else if state.renaming {
-            ("  Rename › ", &state.input)
+            ("  重命名 › ", &state.input)
         } else {
-            ("  New task › ", &state.input)
+            ("  新建任务 › ", &state.input)
         };
         let x = area
             .x
@@ -592,7 +592,7 @@ impl Renderable for AgentsOverviewView {
         .areas(area);
         let inset =
             |rect: Rect| rect.inner(Margin::new(/*horizontal*/ 2, /*vertical*/ 0));
-        Line::from("智能体指挥中心".bold()).render(inset(header), buf);
+        Line::from("agent 指挥中心".bold()).render(inset(header), buf);
         let (needs_you, working, ready) = self.rows.iter().fold((0, 0, 0), |counts, row| {
             let (needs_you, working, ready) = counts;
             match row.group {
@@ -602,8 +602,8 @@ impl Renderable for AgentsOverviewView {
                 AgentsOverviewGroup::Finished => counts,
             }
         });
-        let attention = format!("{needs_you} need input");
-        Line::from(format!("{attention}   {working} working   {ready} ready").dim())
+        let attention = format!("{needs_you} 个等待输入");
+        Line::from(format!("{attention}   {working} 个进行中   {ready} 个就绪").dim())
             .render(inset(summary), buf);
         Line::from("─".repeat(usize::from(area.width.saturating_sub(4))).dim())
             .render(inset(divider), buf);
@@ -688,7 +688,7 @@ impl Renderable for AgentsOverviewView {
         );
         let mut footer_spans = Vec::new();
         if !navigation_hint.is_empty() {
-            footer_spans.extend([navigation_hint.bold(), " navigate  ".dim()]);
+            footer_spans.extend([navigation_hint.bold(), " 导航  ".dim()]);
         }
         let mut add_hint = |hint: Option<ShortcutHint>, label: &'static str, enabled: bool| {
             if let Some(hint) = hint {
@@ -697,33 +697,33 @@ impl Renderable for AgentsOverviewView {
                 footer_spans.push(format!(" {label}  ").dim());
             }
         };
-        add_hint(list_hint(ListAction::Accept), "open", true);
+        add_hint(list_hint(ListAction::Accept), "打开", true);
         add_hint(
             self.agents_keymap
                 .primary_hint("search", &self.agents_keymap.search),
-            "search",
+            "搜索",
             true,
         );
         add_hint(
             self.agents_keymap
                 .primary_hint("toggle_grouping", &self.agents_keymap.toggle_grouping),
-            "group",
+            "分组",
             true,
         );
         add_hint(
             self.agents_keymap
                 .primary_hint("rename", &self.agents_keymap.rename),
-            "rename",
+            "重命名",
             true,
         );
         add_hint(
             self.agents_keymap
                 .primary_hint("stop", &self.agents_keymap.stop),
-            "stop",
+            "停止",
             self.selected_row()
                 .is_some_and(|row| matches!(row.thread.status, ThreadStatus::Active { .. })),
         );
-        add_hint(list_hint(ListAction::Cancel), "back", true);
+        add_hint(list_hint(ListAction::Cancel), "返回", true);
         let footer_area = inset(footer);
         let mut footer_line: Line = footer_spans.into();
         if footer_line.width() > usize::from(footer_area.width) {

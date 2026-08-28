@@ -16,15 +16,14 @@ use codex_app_server_protocol::TurnInterruptResponse;
 use codex_protocol::models::ContentItem;
 use codex_protocol::models::ResponseItem;
 
-const SIDE_RENAME_BLOCK_MESSAGE: &str = "侧边对话是临时的，无法重命名。";
-const SIDE_MAIN_THREAD_UNAVAILABLE_MESSAGE: &str =
-    "主对话准备就绪前，`/side` 不可用。";
+const SIDE_RENAME_BLOCK_MESSAGE: &str = "平行对话是临时的，无法重命名。";
+const SIDE_MAIN_THREAD_UNAVAILABLE_MESSAGE: &str = "主对话准备就绪前，`/side` 不可用。";
 const SIDE_NO_STARTED_CONVERSATION_MESSAGE: &str = concat!(
     "当前对话启动前，`/side` 不可用。",
     "请先发送消息，再尝试 /side。"
 );
 const SIDE_ALREADY_OPEN_MESSAGE: &str =
-    "已有侧边对话打开。请先按下 Ctrl+C 返回，再启动另一个侧边对话。";
+    "已有平行对话打开。请先按下 Ctrl+C 返回，再启动另一个平行对话。";
 const SIDE_BOUNDARY_PROMPT: &str = r#"Side conversation boundary.
 
 Everything before this boundary is inherited history from the parent thread. It is reference context only. It is not your current task.
@@ -251,7 +250,7 @@ impl App {
             {
                 self.chat_widget
                     .set_side_conversation_context_label(Some(format!(
-                        "按下 {} 进入侧边对话",
+                        "按下 {} 进入平行对话",
                         binding.display_label()
                     )));
             }
@@ -283,7 +282,10 @@ impl App {
         }
         label_parts.push("按下 Ctrl+C 关闭".to_string());
         self.chat_widget
-            .set_side_conversation_context_label(Some(format!("侧边对话：{}", label_parts.join(" · "))));
+            .set_side_conversation_context_label(Some(format!(
+                "平行对话：{}",
+                label_parts.join(" · ")
+            )));
     }
 
     pub(super) fn active_side_parent_thread_id(&self) -> Option<ThreadId> {
@@ -422,8 +424,7 @@ impl App {
             return false;
         }
         if let Err(err) = app_server.thread_unsubscribe(thread_id).await {
-            let message =
-                format!("关闭侧边对话 {thread_id} 失败；它仍处于打开状态：{err}");
+            let message = format!("关闭平行对话 {thread_id} 失败；它仍处于打开状态：{err}");
             tracing::warn!("{message}");
             self.chat_widget.add_error_message(message);
             return false;
@@ -520,9 +521,8 @@ impl App {
             } else {
                 app_server.startup_interrupt(thread_id).await
             };
-        interrupt_result.map_err(|err| {
-            format!("关闭侧边对话 {thread_id} 失败；它仍处于打开状态：{err}")
-        })
+        interrupt_result
+            .map_err(|err| format!("关闭平行对话 {thread_id} 失败；它仍处于打开状态：{err}"))
     }
 
     async fn keep_side_thread_visible_after_cleanup_failure(
@@ -609,7 +609,7 @@ impl App {
         }) {
             SIDE_NO_STARTED_CONVERSATION_MESSAGE.to_string()
         } else {
-            format!("启动侧边对话失败：{err}")
+            format!("启动平行对话失败：{err}")
         }
     }
 
@@ -713,9 +713,8 @@ impl App {
                     self.discard_side_thread_or_keep_visible(tui, app_server, child_thread_id)
                         .await;
                     self.restore_side_user_message(user_message.take());
-                    self.chat_widget.add_error_message(format!(
-                        "准备侧边对话 {child_thread_id} 失败：{err}"
-                    ));
+                    self.chat_widget
+                        .add_error_message(format!("准备平行对话 {child_thread_id} 失败：{err}"));
                     return Ok(AppRunControl::Continue);
                 }
                 if let Err(err) = self
@@ -736,9 +735,8 @@ impl App {
                         );
                     }
                     self.restore_side_user_message(user_message.take());
-                    self.chat_widget.add_error_message(format!(
-                        "切换到侧边对话 {child_thread_id} 失败：{err}"
-                    ));
+                    self.chat_widget
+                        .add_error_message(format!("切换到平行对话 {child_thread_id} 失败：{err}"));
                     return Ok(AppRunControl::Continue);
                 }
                 if self.active_thread_id == Some(child_thread_id) {
@@ -751,9 +749,8 @@ impl App {
                     self.discard_side_thread_or_keep_visible(tui, app_server, child_thread_id)
                         .await;
                     self.restore_side_user_message(user_message.take());
-                    self.chat_widget.add_error_message(format!(
-                        "未能切换到侧边对话 {child_thread_id}。"
-                    ));
+                    self.chat_widget
+                        .add_error_message(format!("未能切换到平行对话 {child_thread_id}。"));
                 }
             }
             Err(err) => {

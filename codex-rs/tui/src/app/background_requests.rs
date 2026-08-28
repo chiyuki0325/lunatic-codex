@@ -513,12 +513,7 @@ impl App {
             let result = write_hook_enabled(request_handle, key, enabled)
                 .await
                 .map(|_| ())
-                .map_err(|err| {
-                    format!(
-                        "更新 Hook 配置失败：{}",
-                        format_config_error(&err)
-                    )
-                });
+                .map_err(|err| format!("更新 Hook 配置失败：{}", format_config_error(&err)));
             app_event_tx.send(AppEvent::HookEnabledSet {
                 key: key_for_event,
                 enabled,

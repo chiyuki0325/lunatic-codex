@@ -33,9 +33,9 @@ impl App {
                 self.chat_widget.set_footer_hint_override(Some(vec![
                     (
                         format!("{} …", prefix.display_label()),
-                        "waiting for next key".to_string(),
+                        "等待下一次按键".to_string(),
                     ),
-                    ("esc".to_string(), "cancel".to_string()),
+                    ("Esc".to_string(), "取消".to_string()),
                 ]));
                 tui.frame_requester()
                     .schedule_frame_in(crate::keymap::KEY_CHORD_TIMEOUT);
@@ -90,9 +90,9 @@ impl App {
             Err(external_editor::EditorError::MissingEditor) => {
                 self.chat_widget
                     .add_to_history(history_cell::new_error_event(
-                    "无法打开外部编辑器：请在启动 Codex 前设置 $VISUAL 或 $EDITOR。"
-                        .to_string(),
-                ));
+                        "无法打开外部编辑器：请在启动 Codex 前设置 $VISUAL 或 $EDITOR。"
+                            .to_string(),
+                    ));
                 self.reset_external_editor_state(tui);
                 return;
             }
@@ -317,7 +317,7 @@ impl App {
         {
             if let Err(err) = self.toggle_side_conversation(tui, app_server).await {
                 self.chat_widget
-                    .add_error_message(format!("切换侧边对话失败：{err}"));
+                    .add_error_message(format!("切换平行对话失败：{err}"));
             }
             return;
         }

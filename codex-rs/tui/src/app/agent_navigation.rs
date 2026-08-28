@@ -369,7 +369,7 @@ impl AgentNavigationState {
         let previous: Span<'static> = previous_agent_shortcut().into();
         let next: Span<'static> = next_agent_shortcut().into();
         format!(
-            "Select an agent to watch. {} previous, {} next.",
+            "选择要查看的 agent。{} 上一个，{} 下一个。",
             previous.content, next.content
         )
     }

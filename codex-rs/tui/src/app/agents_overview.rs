@@ -44,20 +44,19 @@ impl App {
         if matches!(self.app_server_target, AppServerTarget::Embedded) {
             let workload_identity_selected = codex_login::is_workload_identity_selected();
             self.chat_widget.show_selection_view(SelectionViewParams {
-                title: Some("共享智能体不可用".to_string()),
+                title: Some("共享 agent 不可用".to_string()),
                 subtitle: Some(
                     if workload_identity_selected {
-                        "启用工作负载身份时，智能体面板不可用。"
+                        "启用工作负载身份时，agent 面板不可用。"
                     } else if cfg!(unix) {
                         "此会话未连接到共享后台服务器。"
                     } else {
-                        "请连接到远程后台服务器以使用智能体面板。"
+                        "请连接到远程后台服务器以使用 agent 面板。"
                     }
                     .to_string(),
                 ),
-                footer_note: (cfg!(unix) && !workload_identity_selected).then(|| {
-                    Line::from("启动后台服务器不会中断或迁移此会话。".dim())
-                }),
+                footer_note: (cfg!(unix) && !workload_identity_selected)
+                    .then(|| Line::from("启动后台服务器不会中断或迁移此会话。".dim())),
                 footer_hint: Some(standard_popup_hint_line_for_keymap(&self.keymap.list)),
                 items: [
                     #[cfg(unix)]
@@ -227,7 +226,7 @@ impl App {
             Ok(threads) => threads,
             Err(error) => {
                 self.chat_widget
-                    .add_error_message(format!("加载共享智能体失败：{error}"));
+                    .add_error_message(format!("加载共享 agent 失败：{error}"));
                 if std::mem::take(&mut self.agents_overview.refresh_pending) {
                     self.refresh_agents_overview_threads(app_server);
                 }
@@ -370,9 +369,8 @@ impl App {
             {
                 Ok(thread) => thread,
                 Err(error) => {
-                    self.chat_widget.add_error_message(format!(
-                        "智能体会话 {root_thread_id} 不可用：{error}"
-                    ));
+                    self.chat_widget
+                        .add_error_message(format!("agent 会话 {root_thread_id} 不可用：{error}"));
                     return Ok(AppRunControl::Continue);
                 }
             };
