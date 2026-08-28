@@ -41,21 +41,15 @@ impl ChatWidget {
             .map(|profile| profile.id);
         let presets = builtin_approval_presets();
         let Some(read_only) = presets.iter().find(|preset| preset.id == "read-only") else {
-            self.add_error_message(
-                "内部错误：缺少 'read-only' 批准预设。".to_string(),
-            );
+            self.add_error_message("内部错误：缺少 'read-only' 批准预设。".to_string());
             return;
         };
         let Some(default) = presets.iter().find(|preset| preset.id == "auto") else {
-            self.add_error_message(
-                "内部错误：缺少 'auto' 批准预设。".to_string(),
-            );
+            self.add_error_message("内部错误：缺少 'auto' 批准预设。".to_string());
             return;
         };
         let Some(full_access) = presets.iter().find(|preset| preset.id == "full-access") else {
-            self.add_error_message(
-                "内部错误：缺少 'full-access' 批准预设。".to_string(),
-            );
+            self.add_error_message("内部错误：缺少 'full-access' 批准预设。".to_string());
             return;
         };
         let mut items = vec![

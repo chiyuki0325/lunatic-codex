@@ -91,7 +91,7 @@ impl ChatWidget {
                 .file_system_sandbox_policy()
                 .can_write_path_with_cwd(self.config.cwd.as_path(), self.config.cwd.as_path())
             {
-                "智能体模式"
+                "agent 模式"
             } else {
                 "只读模式"
             }
@@ -236,11 +236,11 @@ impl ChatWidget {
         header.push(*Box::new(
             Paragraph::new(if allow_unelevated {
                 vec![
-                    line!["设置 Codex 智能体沙箱以保护文件并控制网络访问。了解更多 <https://developers.openai.com/codex/windows>"],
+                    line!["设置 Codex agent 沙箱以保护文件并控制网络访问。了解更多 <https://developers.openai.com/codex/windows>"],
                 ]
             } else {
                 vec![
-                    line!["您的组织要求使用默认 Codex 智能体沙箱才能继续。请设置它以保护文件并控制网络访问。"],
+                    line!["您的组织要求使用默认 Codex agent 沙箱才能继续。请设置它以保护文件并控制网络访问。"],
                     line!["了解更多 <https://developers.openai.com/codex/windows>"],
                 ]
             })
@@ -352,7 +352,9 @@ impl ChatWidget {
         } else {
             lines.push(line!["您的组织要求使用默认沙箱才能继续使用 Codex。"]);
         }
-        lines.push(line!["了解更多 <https://developers.openai.com/codex/windows>"]);
+        lines.push(line![
+            "了解更多 <https://developers.openai.com/codex/windows>"
+        ]);
 
         let mut header = ColumnRenderable::new();
         header.push(*Box::new(Paragraph::new(lines).wrap(Wrap { trim: false })));

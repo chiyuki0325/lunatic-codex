@@ -102,9 +102,7 @@ impl ChatWidget {
                 if crate::ide_context::has_prompt_context(&context) {
                     self.add_info_message(
                         "IDE 上下文已开启。".to_string(),
-                        Some(
-                            "后续消息将包含当前 IDE 选区和已打开的标签页。".to_string(),
-                        ),
+                        Some("后续消息将包含当前 IDE 选区和已打开的标签页。".to_string()),
                     );
                 } else {
                     self.add_info_message(

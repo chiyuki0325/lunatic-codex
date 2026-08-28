@@ -31,9 +31,8 @@ struct PreparedSlashCommandArgs {
     source: SlashCommandDispatchSource,
 }
 
-const SIDE_STARTING_CONTEXT_LABEL: &str = "正在启动侧边对话…";
-const SIDE_SLASH_COMMAND_UNAVAILABLE_HINT: &str =
-    "请先按下 Ctrl+C 返回主线程。";
+const SIDE_STARTING_CONTEXT_LABEL: &str = "正在启动平行对话…";
+const SIDE_SLASH_COMMAND_UNAVAILABLE_HINT: &str = "请先按下 Ctrl+C 返回主线程。";
 const GOAL_USAGE_HINT: &str = "示例：/goal improve benchmark coverage";
 const RAW_USAGE: &str = "用法：/raw [on|off]";
 const USAGE_CHATGPT_LOGIN_REQUIRED: &str = "请登录 ChatGPT 后使用 /usage。";
@@ -55,7 +54,7 @@ impl ChatWidget {
     pub(super) fn handle_service_tier_command_dispatch(&mut self, command: ServiceTierCommand) {
         if self.active_side_conversation {
             self.add_error_message(format!(
-                "'/{}' is unavailable in side conversations. {SIDE_SLASH_COMMAND_UNAVAILABLE_HINT}",
+                "'/{}' 在平行对话中不可用。{SIDE_SLASH_COMMAND_UNAVAILABLE_HINT}",
                 command.name
             ));
             self.bottom_pane.drain_pending_submission_state();
@@ -93,10 +92,7 @@ impl ChatWidget {
             self.set_collaboration_mask_from_user_action(mask);
             true
         } else {
-            self.add_info_message(
-                "当前无法使用计划模式。".to_string(),
-                /*hint*/ None,
-            );
+            self.add_info_message("当前无法使用计划模式。".to_string(), /*hint*/ None);
             false
         }
     }
@@ -151,10 +147,7 @@ impl ChatWidget {
             return;
         }
         if self.slash_command_blocked_by_active_task(cmd) {
-            let message = format!(
-                "'/{}' is disabled while a task is in progress.",
-                cmd.command()
-            );
+            let message = format!("任务进行期间已禁用 '/{}'。", cmd.command());
             self.add_to_history(history_cell::new_error_event(message));
             self.bottom_pane.drain_pending_submission_state();
             self.request_redraw();
@@ -207,7 +200,7 @@ impl ChatWidget {
             SlashCommand::Delete => {
                 self.bottom_pane.show_selection_view(SelectionViewParams {
                     title: Some("删除此会话？".to_string()),
-                    subtitle: Some("此操作无法撤销。子智能体对话也将被删除。".to_string()),
+                    subtitle: Some("此操作无法撤销。subagent 对话也将被删除。".to_string()),
                     footer_hint: Some(standard_popup_hint_line()),
                     items: vec![
                         SelectionItem {
@@ -242,9 +235,7 @@ impl ChatWidget {
             }
             SlashCommand::App => {
                 let Some(thread_id) = self.thread_id else {
-                    self.add_error_message(
-                        "会话仍在启动；请稍后再次尝试 /app。".to_string(),
-                    );
+                    self.add_error_message("会话仍在启动；请稍后再次尝试 /app。".to_string());
                     return;
                 };
                 self.app_event_tx
@@ -341,9 +332,7 @@ impl ChatWidget {
                     else {
                         // Avoid panicking in interactive UI; treat this as a recoverable
                         // internal error.
-                        self.add_error_message(
-                            "Internal error: missing the 'auto' approval preset.".to_string(),
-                        );
+                        self.add_error_message("内部错误：缺少 'auto' 批准预设。".to_string());
                         return;
                     };
 
@@ -375,9 +364,7 @@ impl ChatWidget {
                 }
             }
             SlashCommand::SandboxReadRoot => {
-                self.add_error_message(
-                    "用法：/sandbox-add-read-dir <绝对目录路径>".to_string(),
-                );
+                self.add_error_message("用法：/sandbox-add-read-dir <绝对目录路径>".to_string());
             }
             SlashCommand::Experimental => {
                 self.open_experimental_popup();
@@ -419,7 +406,7 @@ impl ChatWidget {
                                 if is_git_repo {
                                     diff_text
                                 } else {
-                                    "`/diff` — _not inside a git repository_".to_string()
+                                    "`/diff` — _不在 git 仓库中_".to_string()
                                 }
                             }
                             Err(e) => format!("无法计算差异：{e}"),
@@ -517,10 +504,7 @@ impl ChatWidget {
                         /*hint*/ None,
                     );
                 } else {
-                    self.add_info_message(
-                        "会话记录路径暂不可用。".to_string(),
-                        /*hint*/ None,
-                    );
+                    self.add_info_message("会话记录路径暂不可用。".to_string(), /*hint*/ None);
                 }
             }
             SlashCommand::TestApproval => {
@@ -579,10 +563,7 @@ impl ChatWidget {
             return;
         }
         if self.slash_command_blocked_by_active_task(cmd) {
-            let message = format!(
-                "'/{}' is disabled while a task is in progress.",
-                cmd.command()
-            );
+            let message = format!("任务进行期间已禁用 '/{}'。", cmd.command());
             self.add_to_history(history_cell::new_error_event(message));
             self.request_redraw();
             return;
@@ -726,9 +707,7 @@ impl ChatWidget {
                     match crate::keymap::RuntimeKeymap::from_config(&self.config.tui_keymap) {
                         Ok(runtime_keymap) => self.open_keymap_debug(&runtime_keymap),
                         Err(err) => {
-                            self.add_error_message(format!(
-                                "`tui.keymap` 配置无效：{err}"
-                            ));
+                            self.add_error_message(format!("`tui.keymap` 配置无效：{err}"));
                         }
                     }
                 }
@@ -844,9 +823,7 @@ impl ChatWidget {
                     let Some(thread_id) = self.thread_id else {
                         self.add_info_message(
                             GOAL_USAGE.to_string(),
-                            Some(
-                                "会话开始后才能更改目标。".to_string(),
-                            ),
+                            Some("会话开始后才能更改目标。".to_string()),
                         );
                         if source == SlashCommandDispatchSource::Live {
                             self.clear_live_goal_submission();
@@ -923,9 +900,7 @@ impl ChatWidget {
             SlashCommand::Side | SlashCommand::Btw if !trimmed.is_empty() => {
                 let Some(parent_thread_id) = self.thread_id else {
                     let command = cmd.command();
-                    self.add_error_message(format!(
-                        "'/{command}' is unavailable before the session starts."
-                    ));
+                    self.add_error_message(format!("会话启动前不可使用 '/{command}'。"));
                     return;
                 };
                 let user_message = self.prepared_inline_user_message(
@@ -1204,7 +1179,7 @@ impl ChatWidget {
             return true;
         }
         self.add_error_message(format!(
-            "'/{}' is unavailable in side conversations. {SIDE_SLASH_COMMAND_UNAVAILABLE_HINT}",
+            "'/{}' 在平行对话中不可用。{SIDE_SLASH_COMMAND_UNAVAILABLE_HINT}",
             cmd.command()
         ));
         self.bottom_pane.drain_pending_submission_state();
@@ -1217,9 +1192,7 @@ impl ChatWidget {
         }
 
         let command = cmd.command();
-        self.add_error_message(format!(
-            "'/{command}' is unavailable while code review is running."
-        ));
+        self.add_error_message(format!("代码审查进行期间不可使用 '/{command}'。"));
         self.bottom_pane.drain_pending_submission_state();
         false
     }

@@ -164,8 +164,7 @@ impl ChatWidget {
             ServerNotification::StrictReviewRequired(_) => {
                 self.app_event_tx.send(AppEvent::InsertHistoryCell(Box::new(
                     history_cell::new_warning_event(
-                        "This request requires additional safety checks, some tool calls might take extra time"
-                            .to_string(),
+                        "此请求需要额外的安全检查，部分工具调用可能需要更多时间".to_string(),
                     ),
                 )));
                 self.request_redraw();

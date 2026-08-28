@@ -37,13 +37,10 @@ impl Notification {
         match self {
             Notification::AgentTurnComplete { response } => {
                 Notification::agent_turn_preview(response)
-                    .unwrap_or_else(|| "智能体轮次已完成".to_string())
+                    .unwrap_or_else(|| "agent 轮次已完成".to_string())
             }
             Notification::ExecApprovalRequested { command } => {
-                format!(
-                    "请求批准：{}",
-                    truncate_text(command, /*max_graphemes*/ 30)
-                )
+                format!("请求批准：{}", truncate_text(command, /*max_graphemes*/ 30))
             }
             Notification::EditApprovalRequested { cwd, changes } => {
                 format!(

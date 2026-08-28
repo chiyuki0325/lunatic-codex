@@ -21,9 +21,7 @@ impl ChatWidget {
 
     pub(super) fn request_working_directory_change(&mut self, path: &str) {
         if !self.is_session_configured() {
-            self.add_error_message(
-                "会话开始后才能更改其工作目录。".to_string(),
-            );
+            self.add_error_message("会话开始后才能更改其工作目录。".to_string());
             return;
         }
 

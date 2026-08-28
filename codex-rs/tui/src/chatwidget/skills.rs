@@ -36,10 +36,8 @@ impl ChatWidget {
         };
         let items = vec![
             SelectionItem {
-                name: "列出技能".to_string(),
-                description: Some(format!(
-                    "提示：按下 {list_shortcut} 可直接打开此列表。"
-                )),
+                name: "列出 Skill".to_string(),
+                description: Some(format!("提示：按下 {list_shortcut} 可直接打开此列表。")),
                 actions: vec![Box::new(|tx| {
                     tx.send(AppEvent::OpenSkillsList);
                 })],
@@ -47,8 +45,8 @@ impl ChatWidget {
                 ..Default::default()
             },
             SelectionItem {
-                name: "启用/禁用技能".to_string(),
-                description: Some("启用或禁用技能。".to_string()),
+                name: "启用/禁用 Skill".to_string(),
+                description: Some("启用或禁用 Skill。".to_string()),
                 actions: vec![Box::new(|tx| {
                     tx.send(AppEvent::OpenManageSkillsPopup);
                 })],
@@ -58,7 +56,7 @@ impl ChatWidget {
         ];
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
-            title: Some("技能".to_string()),
+            title: Some("Skill".to_string()),
             subtitle: Some("选择操作".to_string()),
             footer_hint: Some(standard_popup_hint_line()),
             items,
@@ -68,7 +66,7 @@ impl ChatWidget {
 
     pub(crate) fn open_manage_skills_popup(&mut self) {
         if self.skills_all.is_empty() {
-            self.add_info_message("没有可用技能。".to_string(), /*hint*/ None);
+            self.add_info_message("没有可用 Skill。".to_string(), /*hint*/ None);
             return;
         }
 
@@ -139,7 +137,7 @@ impl ChatWidget {
             return;
         }
         self.add_info_message(
-            format!("{enabled_count} skills enabled, {disabled_count} skills disabled"),
+            format!("已启用 {enabled_count} 个 Skill，已禁用 {disabled_count} 个 Skill"),
             /*hint*/ None,
         );
     }
@@ -172,7 +170,7 @@ impl ChatWidget {
                 .iter()
                 .find(|skill| skill.path.as_path() == path)
             {
-                *name = format!("{name} ({} skill)", skill.name);
+                *name = format!("{name}（{} 个 Skill）", skill.name);
             }
         }
 

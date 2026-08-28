@@ -12,10 +12,7 @@ impl ChatWidget {
     /// opens the full picker with every available preset.
     pub(crate) fn open_model_popup(&mut self) {
         if !self.is_session_configured() {
-            self.add_info_message(
-                "启动完成前无法选择模型。".to_string(),
-                /*hint*/ None,
-            );
+            self.add_info_message("启动完成前无法选择模型。".to_string(), /*hint*/ None);
             return;
         }
 
@@ -147,9 +144,7 @@ impl ChatWidget {
             })];
 
             let is_current = !items.iter().any(|item| item.is_current);
-            let description = Some(format!(
-                "选择特定模型和推理强度（当前：{current_label}）"
-            ));
+            let description = Some(format!("选择特定模型和推理强度（当前：{current_label}）"));
 
             items.push(SelectionItem {
                 name: "所有模型".to_string(),
@@ -161,10 +156,7 @@ impl ChatWidget {
             });
         }
 
-        let header = self.model_menu_header(
-            "选择模型",
-            "选择快速自动模式或浏览所有模型。",
-        );
+        let header = self.model_menu_header("选择模型", "选择快速自动模式或浏览所有模型。");
         self.bottom_pane.show_selection_view(SelectionViewParams {
             footer_hint: Some(standard_popup_hint_line()),
             items,
@@ -188,10 +180,7 @@ impl ChatWidget {
 
     pub(crate) fn open_all_models_popup(&mut self, presets: Vec<ModelPreset>) {
         if presets.is_empty() {
-            self.add_info_message(
-                "当前没有其他可用模型。".to_string(),
-                /*hint*/ None,
-            );
+            self.add_info_message("当前没有其他可用模型。".to_string(), /*hint*/ None);
             return;
         }
 
@@ -296,7 +285,10 @@ impl ChatWidget {
         let reasoning_phrase = match effort.as_ref() {
             Some(ReasoningEffortConfig::None) => "不进行推理".to_string(),
             Some(selected_effort) => {
-                format!("{} 推理", Self::reasoning_effort_sentence_label(selected_effort))
+                format!(
+                    "{} 推理",
+                    Self::reasoning_effort_sentence_label(selected_effort)
+                )
             }
             None => "所选推理强度".to_string(),
         };
@@ -415,7 +407,7 @@ impl ChatWidget {
         };
         let warning_text = warn_effort.as_ref().map(|effort| {
             let effort_label = Self::reasoning_effort_label(effort);
-            format!("⚠ {effort_label} 推理强度可能会迅速耗尽 Plus 方案的速率限制。")
+            format!("⚠ {effort_label} 推理强度可能会迅速耗尽 Plus 方案的用量限制。")
         });
         let warn_for_model = preset.model.starts_with("gpt-5.1-codex")
             || preset.model.starts_with("gpt-5.1-codex-max")
@@ -545,9 +537,7 @@ impl ChatWidget {
         }
 
         let mut header = ColumnRenderable::new();
-        header.push(Line::from(
-            format!("选择 {model_slug} 的推理强度").bold(),
-        ));
+        header.push(Line::from(format!("选择 {model_slug} 的推理强度").bold()));
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
             header: Box::new(header),
@@ -584,12 +574,8 @@ impl ChatWidget {
         let mut items = Vec::new();
         for effort in choices {
             let description = match &effort {
-                ReasoningEffortConfig::Max => {
-                    "适合质量比速度更重要的困难问题 · 用量较高"
-                }
-                ReasoningEffortConfig::Ultra => {
-                    "适合使用多个智能体的高要求任务 · 用量最高"
-                }
+                ReasoningEffortConfig::Max => "适合质量比速度更重要的困难问题 · 用量较高",
+                ReasoningEffortConfig::Ultra => "适合使用多个 agent 的高要求任务 · 用量最高",
                 _ => unreachable!("advanced choices are limited to Max and Ultra"),
             };
             let should_prompt_plan_mode_scope = self
@@ -636,8 +622,8 @@ impl ChatWidget {
             ReasoningEffortConfig::Medium => "中".to_string(),
             ReasoningEffortConfig::High => "高".to_string(),
             ReasoningEffortConfig::XHigh => "极高".to_string(),
-            ReasoningEffortConfig::Max => "Max".to_string(),
-            ReasoningEffortConfig::Ultra => "Ultra".to_string(),
+            ReasoningEffortConfig::Max => "最大".to_string(),
+            ReasoningEffortConfig::Ultra => "超高".to_string(),
             ReasoningEffortConfig::Custom(value) => value.clone(),
         }
     }
@@ -667,8 +653,8 @@ impl ChatWidget {
 
         let max_subagents = max_threads.saturating_sub(1);
         Some(format!(
-            "Ultra 推理可能会主动使用多个智能体。此会话配置了 {max_threads} 个并发线程，\
-             最多包含 {max_subagents} 个子智能体，可能会迅速增加用量。请考虑将 \
+            "超高推理可能会主动使用多个 agent。此会话配置了 {max_threads} 个并发线程，\
+             最多包含 {max_subagents} 个 subagent，可能会迅速增加用量。请考虑将 \
              features.multi_agent_v2.max_concurrent_threads_per_session 设为低于 8。"
         ))
     }

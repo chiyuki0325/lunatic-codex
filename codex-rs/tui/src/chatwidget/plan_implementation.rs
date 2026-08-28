@@ -12,7 +12,7 @@ const PLAN_IMPLEMENTATION_CLEAR_CONTEXT: &str = "是，清除上下文后执行"
 const PLAN_IMPLEMENTATION_NO: &str = "否，留在计划模式";
 pub(super) const PLAN_IMPLEMENTATION_CODING_MESSAGE: &str = "执行计划。";
 pub(super) const PLAN_IMPLEMENTATION_CLEAR_CONTEXT_PREFIX: &str = concat!(
-    "此前的智能体已生成下方计划以完成用户任务。",
+    "此前的 agent 已生成下方计划以完成用户任务。",
     "请在全新上下文中执行该计划，将其视为用户意图的来源，",
     "按需重新阅读文件，并完成实现与验证。"
 );

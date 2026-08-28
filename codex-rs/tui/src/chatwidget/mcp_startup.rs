@@ -273,9 +273,9 @@ impl ChatWidget {
             McpServerStartupState::Starting => McpStartupStatus::Starting,
             McpServerStartupState::Ready => McpStartupStatus::Ready,
             McpServerStartupState::Failed => McpStartupStatus::Failed {
-                error: notification.error.unwrap_or_else(|| {
-                    format!("`{}` 的 MCP 客户端启动失败", notification.name)
-                }),
+                error: notification
+                    .error
+                    .unwrap_or_else(|| format!("`{}` 的 MCP 客户端启动失败", notification.name)),
             },
             McpServerStartupState::Cancelled => McpStartupStatus::Cancelled,
         };

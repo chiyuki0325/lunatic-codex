@@ -33,14 +33,11 @@ impl ChatWidget {
         let reset_eligible = self.has_chatgpt_account;
         let (reset_action_enabled, reset_description) =
             match (reset_eligible, self.available_rate_limit_reset_credits) {
-                (true, Some(available_count)) if available_count > 0 => (
-                    true,
-                    format!("可用：{available_count} 次重置"),
-                ),
-                (true, None) => (true, "检查重置可用性。".to_string()),
-                (true, Some(_)) | (false, _) => {
-                    (false, "没有可用的用量限额重置次数。".to_string())
+                (true, Some(available_count)) if available_count > 0 => {
+                    (true, format!("可用：{available_count} 次重置"))
                 }
+                (true, None) => (true, "检查重置可用性。".to_string()),
+                (true, Some(_)) | (false, _) => (false, "没有可用的用量限额重置次数。".to_string()),
             };
         SelectionViewParams {
             view_id: Some(USAGE_MENU_VIEW_ID),
@@ -140,16 +137,12 @@ impl ChatWidget {
                     shows_picker = true;
                     self.rate_limit_reset_picker_params(request_id, &response)
                 } else {
-                    Self::rate_limit_reset_message_params(
-                        "没有可用的用量限额重置次数。",
-                    )
+                    Self::rate_limit_reset_message_params("没有可用的用量限额重置次数。")
                 };
                 self.available_rate_limit_reset_credits = Some(available_count);
                 params
             }
-            Err(_) => {
-                Self::reset_refresh_params("无法加载用量限额重置次数，请重试。")
-            }
+            Err(_) => Self::reset_refresh_params("无法加载用量限额重置次数，请重试。"),
         };
         let replaced = self
             .bottom_pane
@@ -306,7 +299,7 @@ impl ChatWidget {
             subtitle: Some(message.to_string()),
             items: vec![
                 SelectionItem {
-                    name: "Try again".to_string(),
+                    name: "重试".to_string(),
                     actions: vec![Box::new(|tx| {
                         tx.send(AppEvent::OpenRateLimitResetCredits);
                     })],
@@ -404,7 +397,7 @@ impl ChatWidget {
                     subtitle: Some("无法重置用量，请重试。".to_string()),
                     items: vec![
                         SelectionItem {
-                            name: "Try again".to_string(),
+                            name: "重试".to_string(),
                             actions: vec![Box::new(move |tx| {
                                 tx.send(AppEvent::ConsumeRateLimitResetCredit {
                                     idempotency_key: idempotency_key.clone(),

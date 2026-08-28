@@ -18,10 +18,7 @@ impl ChatWidget {
 
     pub(crate) fn open_personality_popup(&mut self) {
         if !self.is_session_configured() {
-            self.add_info_message(
-                "启动完成前无法选择人格。".to_string(),
-                /*hint*/ None,
-            );
+            self.add_info_message("启动完成前无法选择人格。".to_string(), /*hint*/ None);
             return;
         }
         if !self.current_model_supports_personality() {

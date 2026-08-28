@@ -236,9 +236,7 @@ impl ChatWidget {
             .count();
         let mut header = ColumnRenderable::new();
         header.push(Line::from("应用".bold()));
-        header.push(Line::from(
-            "使用 $ 将已安装应用插入提示词。".dim(),
-        ));
+        header.push(Line::from("使用 $ 将已安装应用插入提示词。".dim()));
         header.push(Line::from(
             format!("已安装 {installed}/{total} 个可用应用。").dim(),
         ));

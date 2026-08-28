@@ -423,7 +423,7 @@ impl ChatWidget {
             },
             SelectionItem {
                 name: "保留当前模型（不再显示）".to_string(),
-                description: Some("隐藏后续切换模型的额度提醒。".to_string()),
+                description: Some("隐藏后续切换模型的用量限制提醒。".to_string()),
                 selected_description: None,
                 is_current: false,
                 actions: never_actions,
@@ -434,7 +434,7 @@ impl ChatWidget {
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
             view_id: Some(RATE_LIMIT_SWITCH_PROMPT_VIEW_ID),
-            title: Some("即将达到额度限制".to_string()),
+            title: Some("即将达到用量限制".to_string()),
             subtitle: Some(format!("切换到 {switch_model} 以减少额度消耗？")),
             footer_hint: Some(standard_popup_hint_line()),
             items,
@@ -514,9 +514,7 @@ impl ChatWidget {
                 AddCreditsNudgeCreditType::Credits,
                 Ok(AddCreditsNudgeEmailStatus::CooldownActive),
             ) => "最近已通知过工作区所有者。",
-            (AddCreditsNudgeCreditType::Credits, Err(_)) => {
-                "无法通知工作区所有者。请重试。"
-            }
+            (AddCreditsNudgeCreditType::Credits, Err(_)) => "无法通知工作区所有者。请重试。",
             (AddCreditsNudgeCreditType::UsageLimit, Ok(AddCreditsNudgeEmailStatus::Sent)) => {
                 "已申请提高额度。"
             }
@@ -524,9 +522,7 @@ impl ChatWidget {
                 AddCreditsNudgeCreditType::UsageLimit,
                 Ok(AddCreditsNudgeEmailStatus::CooldownActive),
             ) => "最近已申请过提高额度。",
-            (AddCreditsNudgeCreditType::UsageLimit, Err(_)) => {
-                "无法申请提高额度。请重试。"
-            }
+            (AddCreditsNudgeCreditType::UsageLimit, Err(_)) => "无法申请提高额度。请重试。",
         };
         self.add_to_history(history_cell::new_info_event(
             message.to_string(),

@@ -8,10 +8,7 @@ impl ChatWidget {
         match crate::clipboard_copy::copy_to_clipboard(markdown) {
             Ok(lease) => {
                 self.clipboard_lease = lease;
-                self.add_info_message(
-                    "已将对话复制到剪贴板".to_string(),
-                    /*hint*/ None,
-                );
+                self.add_info_message("已将对话复制到剪贴板".to_string(), /*hint*/ None);
             }
             Err(error) => self.add_error_message(format!("复制失败：{error}")),
         }

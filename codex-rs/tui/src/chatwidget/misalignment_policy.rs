@@ -3,7 +3,8 @@
 use super::*;
 
 const MISALIGNMENT_POLICY_TITLE: &str = "对话已作为预防措施停止";
-const MISALIGNMENT_POLICY_DESCRIPTION: &str = "我们无法确认智能体正在安全地遵循你的指令。要继续工作，请新建或恢复其他对话。";
+const MISALIGNMENT_POLICY_DESCRIPTION: &str =
+    "我们无法确认 agent 正在安全地遵循你的指令。要继续工作，请新建或恢复其他对话。";
 
 impl ChatWidget {
     pub(crate) fn has_misalignment_policy_violation(&self) -> bool {
@@ -61,7 +62,7 @@ impl ChatWidget {
             items.insert(
                 1,
                 SelectionItem {
-                    name: "智能体指挥中心".to_string(),
+                    name: "agent 指挥中心".to_string(),
                     actions: vec![Box::new(|tx| tx.send(AppEvent::OpenAgentsOverview))],
                     ..Default::default()
                 },

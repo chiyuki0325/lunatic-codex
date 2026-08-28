@@ -2,4 +2,4 @@
 source: tui/src/chatwidget/tests/history_replay.rs
 expression: combined
 ---
-• Thread forked from app-server-parent-thread (e9f18a88-8081-4e51-9d4e-8af5cde2d8dd)
+• 对话从以下位置分叉：app-server-parent-thread (e9f18a88-8081-4e51-9d4e-8af5cde2d8dd)

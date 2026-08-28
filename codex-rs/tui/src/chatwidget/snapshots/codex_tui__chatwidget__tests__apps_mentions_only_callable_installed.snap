@@ -9,7 +9,7 @@ expression: snapshot
   Press enter to insert or esc to close
 
 --- plugin authentication ---
-  Plugins
+  插件
   Plugin plugin installed.
   App setup 1/1: % Arabica UAE
   Already installed in this session.
@@ -19,4 +19,4 @@ expression: snapshot
 › 1. Continue                       Advance to the next app.
   2. Skip remaining app setup       Stop this follow-up flow for this plugin.
 
-  Press esc to close.
+  按 Esc 关闭。

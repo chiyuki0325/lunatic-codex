@@ -2,11 +2,11 @@
 source: tui/src/chatwidget/tests/popups_and_settings.rs
 expression: loaded_popup
 ---
-  Plugins
+  插件
   Workspace.
   This section loaded successfully.
 
-  All Plugins  Installed (0)  OpenAI Curated  [Workspace]  Add Marketplace
+  All 插件  已安装 (0)  OpenAI Curated  [Workspace]  Add Marketplace
 
   Type to search plugins
 › No workspace plugins available  No workspace directory plugins are available.

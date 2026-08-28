@@ -269,9 +269,7 @@ impl ChatWidget {
         if self.turn_lifecycle.agent_turn_running
             && self.active_collaboration_mask.as_ref() != Some(&collaboration_mode)
         {
-            self.add_error_message(
-                "Cannot switch collaboration mode while a turn is running.".to_string(),
-            );
+            self.add_error_message("任务运行期间无法切换协作模式。".to_string());
             return;
         }
         self.set_collaboration_mask_from_user_action(collaboration_mode);

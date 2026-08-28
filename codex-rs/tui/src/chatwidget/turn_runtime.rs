@@ -283,13 +283,13 @@ impl ChatWidget {
             if used_percent <= 0 {
                 return None;
             }
-            return Some(format!("{used_percent}% used"));
+            return Some(format!("已使用 {used_percent}%"));
         }
 
         if let Some(tokens) = used_tokens
             && tokens > 0
         {
-            return Some(format!("{} used", format_tokens_compact(tokens)));
+            return Some(format!("已使用 {}", format_tokens_compact(tokens)));
         }
 
         None
@@ -350,7 +350,7 @@ impl ChatWidget {
         self.finalize_turn();
 
         let message = if message.trim().is_empty() {
-            "Codex is currently experiencing high load.".to_string()
+            "Codex 当前负载较高。".to_string()
         } else {
             message
         };
@@ -414,15 +414,12 @@ impl ChatWidget {
         match rate_limit_reached_type {
             Some(RateLimitReachedType::WorkspaceOwnerCreditsDepleted) => {
                 self.on_error(
-                    "You're out of credits. Your workspace is out of credits. Add credits to continue using Codex."
+                    "你的额度已用尽。你的工作区额度已用尽。添加额度后可继续使用 Codex。"
                         .to_string(),
                 );
             }
             Some(RateLimitReachedType::WorkspaceOwnerUsageLimitReached) => {
-                self.on_error(
-                    "Usage limit reached. You've reached your usage limit. Increase your limits to continue using codex."
-                        .to_string(),
-                );
+                self.on_error("已达到使用上限。提高上限后可继续使用 Codex。".to_string());
             }
             Some(RateLimitReachedType::WorkspaceMemberCreditsDepleted) => {
                 self.on_error(message);

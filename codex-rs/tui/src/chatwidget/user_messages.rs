@@ -299,7 +299,7 @@ pub(super) fn remap_colliding_paste_placeholders(
             continue;
         }
 
-        let base = format!("[Pasted Content {} chars]", text.chars().count());
+        let base = format!("[已粘贴内容，{} 个字符]", text.chars().count());
         let mut suffix = 2;
         let replacement = loop {
             let candidate = format!("{base} #{suffix}");

@@ -61,8 +61,7 @@ impl ChatWidget {
             } else {
                 preset.label.to_string()
             };
-            let base_description =
-                Some(preset.description.replace("（与 Agent 模式相同）", ""));
+            let base_description = Some(preset.description.replace("（与 Agent 模式相同）", ""));
             let approval_disabled_reason = match self
                 .config
                 .permissions
@@ -192,10 +191,7 @@ impl ChatWidget {
                 .map(|event| {
                     let id = event.id.clone();
                     let summary = auto_review_denials::action_summary(&event.action);
-                    let rationale = event
-                        .rationale
-                        .as_deref()
-                        .unwrap_or("自动审查未提供理由。");
+                    let rationale = event.rationale.as_deref().unwrap_or("自动审查未提供理由。");
                     SelectionItem {
                         name: summary.clone(),
                         description: Some(rationale.to_string()),
@@ -269,10 +265,7 @@ impl ChatWidget {
             ));
             tx.send(AppEvent::UpdateApprovalsReviewer(approvals_reviewer));
             tx.send(AppEvent::InsertHistoryCell(Box::new(
-                history_cell::new_info_event(
-                    format!("权限已更新为{label}"),
-                    /*hint*/ None,
-                ),
+                history_cell::new_info_event(format!("权限已更新为{label}"), /*hint*/ None),
             )));
         })]
     }
