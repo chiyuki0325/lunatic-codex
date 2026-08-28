@@ -94,7 +94,7 @@ impl WidgetRef for &WelcomeWidget {
         lines.push(Line::from(vec![
             "  欢迎使用 ".into(),
             "Codex".bold(),
-            "，OpenAI 的命令行编程智能体".into(),
+            "，OpenAI 的命令行编程 agent".into(),
         ]));
 
         Paragraph::new(lines)

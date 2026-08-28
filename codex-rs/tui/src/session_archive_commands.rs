@@ -147,9 +147,7 @@ async fn resolve_session_target(
             let thread = app_server
                 .thread_read(session_id, /*include_turns*/ false)
                 .await
-                .with_context(|| {
-                    format!("未找到与“{target}”匹配的活动或已归档会话。")
-                })?;
+                .with_context(|| format!("未找到与“{target}”匹配的活动或已归档会话。"))?;
             return Ok(ResolvedSessionTarget {
                 session_id,
                 session_name: thread.name,
@@ -297,7 +295,7 @@ fn confirm_session_delete(target: &ResolvedSessionTarget) -> Result<bool> {
         ),
         None => writeln!(stderr, "要永久删除会话 {} 吗？", target.session_id),
     }?;
-    writeln!(stderr, "此操作无法撤销，子智能体会话也会被删除。")?;
+    writeln!(stderr, "此操作无法撤销，subagent 会话也会被删除。")?;
     write!(stderr, "继续吗？[y/N]：")?;
     stderr.flush()?;
 

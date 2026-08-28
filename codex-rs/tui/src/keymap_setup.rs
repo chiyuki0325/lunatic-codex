@@ -168,7 +168,8 @@ pub(crate) fn build_keymap_action_menu_params(
     let description = descriptor
         .map(|descriptor| descriptor.description)
         .unwrap_or("配置此快捷键。");
-    let remove_disabled_reason = (!custom_binding).then(|| "没有可移除的自定义根级覆盖。".to_string());
+    let remove_disabled_reason =
+        (!custom_binding).then(|| "没有可移除的自定义根级覆盖。".to_string());
     let label = action_label(&action);
     let remove_context = context.clone();
     let remove_action = action.clone();
@@ -298,7 +299,8 @@ pub(crate) fn build_keymap_action_menu_params(
     items.push(SelectionItem {
         name: "移除自定义绑定".to_string(),
         description: custom_binding.then(|| "恢复默认快捷键映射绑定。".to_string()),
-        selected_description: custom_binding.then(|| "删除根级覆盖并恢复使用默认快捷键映射。".to_string()),
+        selected_description: custom_binding
+            .then(|| "删除根级覆盖并恢复使用默认快捷键映射。".to_string()),
         disabled_reason: remove_disabled_reason,
         disabled_gutter_marker: Some("–"),
         actions: vec![Box::new(move |tx| {
@@ -645,9 +647,7 @@ fn key_parts_to_config_key_spec(
 
     let supported_modifiers = KeyModifiers::CONTROL | KeyModifiers::ALT | KeyModifiers::SHIFT;
     if !modifiers.difference(supported_modifiers).is_empty() {
-        return Err(
-            "只有 ctrl、alt 和 shift 修饰键可存入 `tui.keymap`。".to_string(),
-        );
+        return Err("只有 ctrl、alt 和 shift 修饰键可存入 `tui.keymap`。".to_string());
     }
 
     let key = match code {
@@ -871,12 +871,7 @@ mod tests {
         let params = build_keymap_picker_params(&runtime, &TuiKeymap::default());
         let all_tab = selection_tab(&params, KEYMAP_ALL_TAB_ID);
 
-        assert!(
-            all_tab
-                .items
-                .iter()
-                .all(|item| item.name != "切换快速模式")
-        );
+        assert!(all_tab.items.iter().all(|item| item.name != "切换快速模式"));
     }
 
     #[test]

@@ -110,14 +110,11 @@ impl Renderable for PetPickerPreviewRenderable {
             match &inner.status {
                 PetPickerPreviewStatus::Hidden => return,
                 PetPickerPreviewStatus::Loading => ("正在加载预览……", None),
-                PetPickerPreviewStatus::Disabled => (
-                    "终端宠物已禁用",
-                    Some("不会显示宠物。".to_string()),
-                ),
-                PetPickerPreviewStatus::Ready => return,
-                PetPickerPreviewStatus::Error { message } => {
-                    ("预览不可用", Some(message.clone()))
+                PetPickerPreviewStatus::Disabled => {
+                    ("终端宠物已禁用", Some("不会显示宠物。".to_string()))
                 }
+                PetPickerPreviewStatus::Ready => return,
+                PetPickerPreviewStatus::Error { message } => ("预览不可用", Some(message.clone())),
             }
         };
 

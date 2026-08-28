@@ -546,7 +546,8 @@ impl AuthModeWidget {
             "Codex 文档".underlined(),
             Some("https://developers.openai.com/codex/security"),
         );
-        let mut preferences_line = HyperlinkLine::new(Line::from("  使用您的方案限额和 ").dim());
+        let mut preferences_line =
+            HyperlinkLine::new(Line::from("  使用您方案的用量限制和 ").dim());
         preferences_line.push_span(
             "训练数据偏好设置".underlined(),
             Some("https://chatgpt.com/#settings"),
@@ -1266,7 +1267,7 @@ mod tests {
           请检查它编写的代码和执行的命令
 
           由您的 ChatGPT 账户提供支持
-          使用您的方案限额和 训练数据偏好设置
+          使用您方案的用量限制和 训练数据偏好设置
 
           按下 Enter 继续
         "###);

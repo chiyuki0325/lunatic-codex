@@ -433,10 +433,7 @@ impl StatusHistoryCell {
         match &state.rate_limits {
             StatusRateLimitData::Available(rows_data) => {
                 if rows_data.is_empty() {
-                    return vec![formatter.line(
-                        "限额",
-                        vec![Span::from("此账户不可用").dim()],
-                    )];
+                    return vec![formatter.line("限额", vec![Span::from("此账户不可用").dim()])];
                 }
 
                 self.rate_limit_row_lines(rows_data, available_inner_width, formatter)
@@ -456,10 +453,7 @@ impl StatusHistoryCell {
                 lines
             }
             StatusRateLimitData::Unavailable => {
-                vec![formatter.line(
-                    "限额",
-                    vec![Span::from("此账户不可用").dim()],
-                )]
+                vec![formatter.line("限额", vec![Span::from("此账户不可用").dim()])]
             }
             StatusRateLimitData::Missing => {
                 vec![formatter.line(
@@ -651,7 +645,10 @@ fn status_permissions_label(
         }
         Some(BUILT_IN_PERMISSION_PROFILE_WORKSPACE) => match sandbox {
             "工作区写入" => {
-                return format!("工作区写入{}（{approval}）", workspace_root_suffix.unwrap_or(""));
+                return format!(
+                    "工作区写入{}（{approval}）",
+                    workspace_root_suffix.unwrap_or("")
+                );
             }
             "工作区写入，允许网络访问" => {
                 return format!(
@@ -681,7 +678,10 @@ fn status_permissions_label(
         return format!("只读（{approval}）");
     }
     if approval_policy == AskForApproval::OnRequest && sandbox == "工作区写入" {
-        return format!("工作区写入{}（{approval}）", workspace_root_suffix.unwrap_or(""));
+        return format!(
+            "工作区写入{}（{approval}）",
+            workspace_root_suffix.unwrap_or("")
+        );
     }
     if approval_policy == AskForApproval::Never
         && permission_profile == &PermissionProfile::Disabled
@@ -792,7 +792,7 @@ impl HistoryCell for StatusHistoryCell {
             CHATGPT_USAGE_URL.cyan().underlined(),
             Span::from("，获取最新的").cyan(),
         ]);
-        let note_second_line = Line::from(vec![Span::from("限额和额度信息").cyan()]);
+        let note_second_line = Line::from(vec![Span::from("用量限制和额度信息").cyan()]);
         let note_lines = adaptive_wrap_lines(
             [note_first_line, note_second_line],
             RtOptions::new(available_inner_width),

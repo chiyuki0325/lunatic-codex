@@ -191,10 +191,7 @@ async fn archives_by_sqlite_name() -> color_eyre::Result<()> {
                 .map_err(std::io::Error::other)?
                 .is_some_and(|metadata| metadata.archived_at.is_some()),
         ),
-        (
-            format!("已归档会话 saved-session（{thread_id}）。"),
-            true,
-        ),
+        (format!("已归档会话 saved-session（{thread_id}）。"), true,),
     );
     Ok(())
 }
@@ -361,10 +358,7 @@ async fn trusts_sqlite_name_over_legacy_index_for_delete() -> color_eyre::Result
     )
     .await
     .expect_err("stale legacy names must not select renamed threads");
-    assert_eq!(
-        error.to_string(),
-        "未找到与“old-session”匹配的活动会话。"
-    );
+    assert_eq!(error.to_string(), "未找到与“old-session”匹配的活动会话。");
     let message = run_session_archive_action_with_app_server(
         &mut app_server,
         config.codex_home.as_path(),

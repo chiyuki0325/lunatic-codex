@@ -81,10 +81,7 @@ pub(crate) fn migration_copy_for_models(
         };
     }
 
-    let heading_text = Span::from(format!(
-        "Codex 已升级。现推出 {target_display_name}。"
-    ))
-    .bold();
+    let heading_text = Span::from(format!("Codex 已升级。现推出 {target_display_name}。")).bold();
     let description_line: Line<'static>;
     if let Some(migration_copy) = &migration_copy {
         description_line = Line::from(migration_copy.clone());

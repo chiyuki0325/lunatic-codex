@@ -114,8 +114,8 @@ const KEYMAP_CONTEXT_TABS: &[KeymapContextTab] = &[
     },
     KeymapContextTab {
         id: "agents-shortcuts",
-        label: "智能体",
-        description: "共享智能体面板快捷键。",
+        label: "agent",
+        description: "共享 agent 面板快捷键。",
         contexts: &["agents"],
     },
     KeymapContextTab {
@@ -209,11 +209,7 @@ fn build_keymap_picker_params_for_action(
             "所有可配置的快捷键。".to_string(),
             format!("共 {total} 个操作，{custom_count} 个已自定义，{unbound_count} 个未绑定。"),
         ),
-        items: keymap_selection_items(
-            rows.iter(),
-            "没有可用快捷键",
-            "没有可配置的快捷键。",
-        ),
+        items: keymap_selection_items(rows.iter(), "没有可用快捷键", "没有可配置的快捷键。"),
     });
 
     let common_rows = keymap_common_rows(&rows);
@@ -225,11 +221,7 @@ fn build_keymap_picker_params_for_action(
             "常被自定义的快捷键。".to_string(),
             action_count_line(common_count),
         ),
-        items: keymap_selection_items(
-            common_rows,
-            "没有常用快捷键",
-            "没有可用的常用快捷键操作。",
-        ),
+        items: keymap_selection_items(common_rows, "没有常用快捷键", "没有可用的常用快捷键操作。"),
     });
 
     let custom_rows = rows
@@ -278,11 +270,7 @@ fn build_keymap_picker_params_for_action(
             id: tab.id.to_string(),
             label: tab.label.to_string(),
             header: keymap_header(tab.description.to_string(), action_count_line(count)),
-            items: keymap_selection_items(
-                tab_rows,
-                "此分组没有快捷键",
-                "此分组没有可配置操作。",
-            ),
+            items: keymap_selection_items(tab_rows, "此分组没有快捷键", "此分组没有可配置操作。"),
         });
     }
     tabs.push(keymap_debug_tab());
@@ -425,8 +413,8 @@ fn keymap_row_prefix(row: &KeymapActionRow) -> Vec<Span<'static>> {
         " ".into()
     };
 
-    let padding = KEYMAP_CONTEXT_LABEL_WIDTH
-        .saturating_sub(UnicodeWidthStr::width(row.context_label));
+    let padding =
+        KEYMAP_CONTEXT_LABEL_WIDTH.saturating_sub(UnicodeWidthStr::width(row.context_label));
     vec![
         format!("{}{} ", row.context_label, " ".repeat(padding)).dim(),
         indicator,

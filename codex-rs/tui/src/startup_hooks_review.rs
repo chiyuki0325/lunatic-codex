@@ -161,9 +161,7 @@ async fn run_startup_hooks_review_app(
                         )
                         .await
                         .map(|_| ())
-                        .map_err(|err| {
-                            format!("信任 Hook 失败：{}", format_config_error(&err))
-                        });
+                        .map_err(|err| format!("信任 Hook 失败：{}", format_config_error(&err)));
                         match result {
                             Ok(()) => return Ok(StartupHooksReviewOutcome::Continue),
                             Err(err) => {

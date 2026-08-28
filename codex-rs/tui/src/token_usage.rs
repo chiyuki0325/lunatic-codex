@@ -68,10 +68,7 @@ impl fmt::Display for TokenUsage {
             format_with_separators(self.blended_total()),
             format_with_separators(self.non_cached_input()),
             if self.cached_input() > 0 {
-                format!(
-                    "（+{} 缓存）",
-                    format_with_separators(self.cached_input())
-                )
+                format!("（+{} 缓存）", format_with_separators(self.cached_input()))
             } else {
                 String::new()
             },

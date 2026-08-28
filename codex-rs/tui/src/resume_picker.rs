@@ -148,8 +148,8 @@ impl SessionPickerAction {
 
     fn action_label(self) -> &'static str {
         match self {
-            SessionPickerAction::Resume => "resume",
-            SessionPickerAction::Fork => "fork",
+            SessionPickerAction::Resume => "恢复",
+            SessionPickerAction::Fork => "派生",
         }
     }
 
@@ -2344,15 +2344,15 @@ fn footer_hint_lines(state: &PickerState, width: u16) -> Vec<Line<'static>> {
     if state.is_transcript_loading() {
         let hints = [
             PickerFooterHint {
-                key: "loading".to_string(),
-                wide_label: String::from("transcript"),
-                compact_label: String::from("transcript"),
+                key: "正在加载".to_string(),
+                wide_label: String::from("转录记录"),
+                compact_label: String::from("转录记录"),
                 priority: 0,
             },
             PickerFooterHint {
-                key: "ctrl+c".to_string(),
-                wide_label: String::from("quit"),
-                compact_label: String::from("quit"),
+                key: crate::key_hint::ctrl(KeyCode::Char('c')).display_label(),
+                wide_label: String::from("退出"),
+                compact_label: String::from("退出"),
                 priority: 1,
             },
         ];
@@ -2364,14 +2364,14 @@ fn footer_hint_lines(state: &PickerState, width: u16) -> Vec<Line<'static>> {
     }
 
     let action_label = if state.status == SessionStatus::Archived {
-        "restore"
+        "恢复"
     } else {
         state.action.action_label()
     };
     let (esc_label, esc_compact_label) = if state.query.is_empty() {
         match state.launch_context {
-            SessionPickerLaunchContext::Startup => ("start new", "new"),
-            SessionPickerLaunchContext::ExistingSession { .. } => ("exit", "exit"),
+            SessionPickerLaunchContext::Startup => ("新建会话", "新建"),
+            SessionPickerLaunchContext::ExistingSession { .. } => ("退出", "退出"),
         }
     } else {
         ("清除搜索", "清除")
@@ -2385,8 +2385,8 @@ fn footer_hint_lines(state: &PickerState, width: u16) -> Vec<Line<'static>> {
         SessionListDensity::Dense => "舒适视图",
     };
     let density_compact_label = match state.density {
-        SessionListDensity::Comfortable => "dense",
-        SessionListDensity::Dense => "comfy",
+        SessionListDensity::Comfortable => "紧凑",
+        SessionListDensity::Dense => "舒适",
     };
     let mut first_row_hints = Vec::new();
     if let Some(accept) = state.list_keymap.primary_hint(ListAction::Accept) {
@@ -2399,9 +2399,9 @@ fn footer_hint_lines(state: &PickerState, width: u16) -> Vec<Line<'static>> {
     }
     if !state.filtered_rows.is_empty() && state.archive_shortcut_available() {
         first_row_hints.push(PickerFooterHint {
-            key: "ctrl+a".to_string(),
-            wide_label: String::from("archive"),
-            compact_label: String::from("archive"),
+            key: crate::key_hint::ctrl(KeyCode::Char('a')).display_label(),
+            wide_label: String::from("归档"),
+            compact_label: String::from("归档"),
             priority: 2,
         });
     }
@@ -2415,15 +2415,15 @@ fn footer_hint_lines(state: &PickerState, width: u16) -> Vec<Line<'static>> {
     }
     first_row_hints.extend([
         PickerFooterHint {
-            key: "ctrl+c".to_string(),
+            key: crate::key_hint::ctrl(KeyCode::Char('c')).display_label(),
             wide_label: ctrl_c_label.to_string(),
             compact_label: ctrl_c_label.to_string(),
             priority: 2,
         },
         PickerFooterHint {
-            key: "tab".to_string(),
-            wide_label: String::from("focus sort/filter"),
-            compact_label: String::from("focus"),
+            key: crate::key_hint::plain(KeyCode::Tab).display_label(),
+            wide_label: String::from("聚焦排序/筛选"),
+            compact_label: String::from("聚焦"),
             priority: 7,
         },
     ]);
@@ -2436,28 +2436,28 @@ fn footer_hint_lines(state: &PickerState, width: u16) -> Vec<Line<'static>> {
     if !option_keys.is_empty() {
         first_row_hints.push(PickerFooterHint {
             key: option_keys,
-            wide_label: String::from("change option"),
-            compact_label: String::from("option"),
+            wide_label: String::from("更改选项"),
+            compact_label: String::from("选项"),
             priority: 8,
         });
     }
     let mut second_row_hints = vec![
         PickerFooterHint {
-            key: "ctrl+o".to_string(),
+            key: crate::key_hint::ctrl(KeyCode::Char('o')).display_label(),
             wide_label: density_label.to_string(),
             compact_label: density_compact_label.to_string(),
             priority: 3,
         },
         PickerFooterHint {
-            key: "ctrl+t".to_string(),
-            wide_label: String::from("transcript"),
-            compact_label: String::from("preview"),
+            key: crate::key_hint::ctrl(KeyCode::Char('t')).display_label(),
+            wide_label: String::from("转录记录"),
+            compact_label: String::from("预览"),
             priority: 4,
         },
         PickerFooterHint {
-            key: "ctrl+e".to_string(),
-            wide_label: String::from("expand"),
-            compact_label: String::from("exp"),
+            key: crate::key_hint::ctrl(KeyCode::Char('e')).display_label(),
+            wide_label: String::from("展开"),
+            compact_label: String::from("展开"),
             priority: 6,
         },
     ];
@@ -2470,8 +2470,8 @@ fn footer_hint_lines(state: &PickerState, width: u16) -> Vec<Line<'static>> {
     if !browse_keys.is_empty() {
         second_row_hints.push(PickerFooterHint {
             key: browse_keys,
-            wide_label: String::from("browse"),
-            compact_label: String::from("browse"),
+            wide_label: String::from("浏览"),
+            compact_label: String::from("浏览"),
             priority: 5,
         });
     }
@@ -2717,9 +2717,9 @@ fn render_list(frame: &mut crate::custom_terminal::Frame, area: Rect, state: &Pi
     }
     if show_more_below {
         let label = if state.pagination.is_loading() {
-            "↓ loading more"
+            "↓ 正在加载更多"
         } else {
-            "↓ more"
+            "↓ 更多"
         };
         frame.render_widget_ref(
             &more_line(label),
@@ -3162,13 +3162,9 @@ fn render_transcript_preview_lines(
         Some(TranscriptPreviewState::Loading) => {
             vec![vec!["  │ ".dim(), "正在加载最近的对话记录……".italic().dim()].into()]
         }
-        Some(TranscriptPreviewState::Failed) => vec![
-            vec![
-                "  │ ".dim(),
-                "无法加载对话记录预览".italic().red(),
-            ]
-            .into(),
-        ],
+        Some(TranscriptPreviewState::Failed) => {
+            vec![vec!["  │ ".dim(), "无法加载对话记录预览".italic().red()].into()]
+        }
         Some(TranscriptPreviewState::Loaded(lines)) => {
             render_conversation_preview_lines(lines, width)
         }
@@ -3222,13 +3218,7 @@ fn render_conversation_preview_lines(
     width: u16,
 ) -> Vec<Line<'static>> {
     if lines.is_empty() {
-        return vec![
-            vec![
-                "  └ ".dim(),
-                "没有可用的对话记录预览".italic().dim(),
-            ]
-            .into(),
-        ];
+        return vec![vec!["  └ ".dim(), "没有可用的对话记录预览".italic().dim()].into()];
     }
 
     let mut rendered = Vec::new();

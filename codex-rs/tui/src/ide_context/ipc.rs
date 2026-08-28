@@ -22,8 +22,7 @@ const MAX_IPC_FRAME_BYTES: usize = 256 * 1024 * 1024;
 #[cfg(any(unix, windows))]
 const TUI_SOURCE_CLIENT_ID: &str = "codex-tui";
 #[cfg(any(unix, windows))]
-const OPEN_IDE_HINT: &str =
-    "请在 VS Code 或 Cursor 中打开此项目，并启用 Codex 扩展。";
+const OPEN_IDE_HINT: &str = "请在 VS Code 或 Cursor 中打开此项目，并启用 Codex 扩展。";
 #[cfg(any(unix, windows))]
 const IDE_DID_NOT_PROVIDE_CONTEXT_HINT: &str = "IDE 扩展未提供上下文。";
 #[cfg(any(unix, windows))]
@@ -68,9 +67,7 @@ impl IdeContextError {
             IdeContextError::ResponseTooLarge => {
                 "所选 IDE 上下文过大。请清除 IDE 中较大的选区后再次运行 /ide。".to_string()
             }
-            IdeContextError::Send(_) => {
-                "Codex 无法请求 IDE 上下文。请再次运行 /ide。".to_string()
-            }
+            IdeContextError::Send(_) => "Codex 无法请求 IDE 上下文。请再次运行 /ide。".to_string(),
             IdeContextError::Read(_) | IdeContextError::InvalidResponse(_) => {
                 "Codex 无法读取 IDE 上下文。请再次运行 /ide。".to_string()
             }
@@ -102,9 +99,7 @@ impl IdeContextError {
             IdeContextError::RequestFailed(error) if error == "no-handler-for-request" => {
                 "已连接的 IDE 客户端不支持 IDE 上下文请求。".to_string()
             }
-            IdeContextError::Send(_) => {
-                hint_with_retry("Codex 请求上下文时失去了 IDE 连接。")
-            }
+            IdeContextError::Send(_) => hint_with_retry("Codex 请求上下文时失去了 IDE 连接。"),
             IdeContextError::InvalidResponse(_) => {
                 hint_with_retry("Codex 收到了意外的 IDE 上下文响应。")
             }

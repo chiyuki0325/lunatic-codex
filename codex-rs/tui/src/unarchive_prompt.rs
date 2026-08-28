@@ -154,9 +154,7 @@ impl UnarchivePrompt {
     fn content(&self) -> ColumnRenderable<'static> {
         let mut column = ColumnRenderable::new();
         column.push("");
-        column.push(
-            Paragraph::new("此对话已归档".bold()).wrap(Wrap { trim: false }),
-        );
+        column.push(Paragraph::new("此对话已归档".bold()).wrap(Wrap { trim: false }));
         column.push(
             Paragraph::new(Line::from(self.thread_id.to_string()).dim()).wrap(Wrap { trim: false }),
         );

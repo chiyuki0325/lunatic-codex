@@ -4,11 +4,11 @@
 使用 /model 快速切换模型或推理强度。
 使用 /permissions 控制 Codex 何时请求确认。
 运行 /review 获取当前更改的代码审查。
-使用 /skills 列出可用技能，或让 Codex 使用某个技能。
+使用 /skills 列出可用 Skill，或让 Codex 使用某个 Skill。
 使用 /status 查看当前模型、批准状态和Token 用量。
 使用 /statusline 配置状态栏中显示的项目。
 使用 /fork 将当前对话分支为新线程。
-使用 /side 在临时分支中开始侧边对话，避免影响主线程。
+使用 /side 在临时分支中开始平行对话，避免影响主线程。
 使用 /init 创建包含项目专属指引的 AGENTS.md。
 使用 /mcp 列出已配置的 MCP 工具。
 使用 /personality 自定义 Codex 的沟通方式。
@@ -24,4 +24,4 @@
 请参阅 Codex 键位映射文档，了解支持的操作和示例。
 按下 Ctrl+V 粘贴图像，以附加到下一条消息。
 运行 `codex resume` 可恢复之前的对话。
-使用 /copy 或按下 Ctrl+O，将最新的智能体回复复制为 Markdown。
+使用 /copy 或按下 Ctrl+O，将最新的 agent 回复复制为 Markdown。

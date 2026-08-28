@@ -287,13 +287,11 @@ impl WidgetRef for &CwdPromptScreen {
         ]));
         column.push("");
         column.push(
-            Line::from(format!(
-                "会话目录 = {action_past}会话中记录的最新工作目录"
-            ))
-            .dim()
-            .inset(Insets::tlbr(
-                /*top*/ 0, /*left*/ 2, /*bottom*/ 0, /*right*/ 0,
-            )),
+            Line::from(format!("会话目录 = {action_past}会话中记录的最新工作目录"))
+                .dim()
+                .inset(Insets::tlbr(
+                    /*top*/ 0, /*left*/ 2, /*bottom*/ 0, /*right*/ 0,
+                )),
         );
         column.push(
             Line::from("当前目录 = 你当前的工作目录".dim()).inset(Insets::tlbr(
@@ -320,10 +318,7 @@ impl WidgetRef for &CwdPromptScreen {
             let label = if self.remembered_current_cwd == self.current_cwd {
                 "始终使用当前目录".to_string()
             } else {
-                format!(
-                    "始终使用当前目录（{}）",
-                    self.remembered_current_cwd
-                )
+                format!("始终使用当前目录（{}）", self.remembered_current_cwd)
             };
             column.push(selection_option_row(
                 /*index*/ 3,

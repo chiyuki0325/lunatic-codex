@@ -84,15 +84,15 @@ impl KeymapActionDescriptor {
 
 #[rustfmt::skip]
 pub(super) const KEYMAP_ACTIONS: &[KeymapActionDescriptor] = &[
-    action("global", "全局", "open_agents", "打开共享的智能体会话概览。"),
+    action("global", "全局", "open_agents", "打开共享的 agent 会话概览。"),
     action("global", "全局", "open_transcript", "打开对话记录浮层。"),
     action("global", "全局", "open_external_editor", "在外部编辑器中打开当前草稿。"),
-    action("global", "全局", "copy", "将上一条智能体回复复制到剪贴板。"),
+    action("global", "全局", "copy", "将上一条 agent 回复复制到剪贴板。"),
     action("global", "全局", "clear_terminal", "清除终端界面。"),
     action("global", "全局", "toggle_vim_mode", "打开或关闭 Vim 编辑模式。"),
     gated_action("global", "全局", "toggle_fast_mode", "打开或关闭快速模式。", KeymapActionFeature::FastMode),
     action("global", "全局", "toggle_raw_output", "切换原始滚动缓冲区模式。"),
-    action("global", "全局", "toggle_side_conversation", "在侧边对话与其父对话间切换。"),
+    action("global", "全局", "toggle_side_conversation", "在平行对话与其父对话间切换。"),
     action("chat", "对话", "interrupt_turn", "中断当前轮次。"),
     action("chat", "对话", "decrease_reasoning_effort", "降低推理强度。"),
     action("chat", "对话", "increase_reasoning_effort", "提高推理强度。"),
@@ -188,11 +188,11 @@ pub(super) const KEYMAP_ACTIONS: &[KeymapActionDescriptor] = &[
     action("list", "列表", "jump_bottom", "跳至最后一个列表项。"),
     action("list", "列表", "accept", "接受当前列表选择。"),
     action("list", "列表", "cancel", "取消并关闭选择视图。"),
-    action("agents", "智能体", "search", "搜索可用的智能体任务。"),
-    action("agents", "智能体", "new_task", "开始编写新的智能体任务。"),
-    action("agents", "智能体", "rename", "重命名选定任务。"),
-    action("agents", "智能体", "stop", "停止选定的运行中任务。"),
-    action("agents", "智能体", "toggle_grouping", "按状态或项目对任务分组。"),
+    action("agents", "agent", "search", "搜索可用的 agent 任务。"),
+    action("agents", "agent", "new_task", "开始编写新的 agent 任务。"),
+    action("agents", "agent", "rename", "重命名选定任务。"),
+    action("agents", "agent", "stop", "停止选定的运行中任务。"),
+    action("agents", "agent", "toggle_grouping", "按状态或项目对任务分组。"),
     action("approval", "审批", "open_fullscreen", "全屏打开审批详情。"),
     action("approval", "审批", "open_thread", "可用时打开审批来源对话。"),
     action("approval", "审批", "approve", "批准主要选项。"),
@@ -210,7 +210,7 @@ pub(super) const KEYMAP_ACTIONS: &[KeymapActionDescriptor] = &[
 /// the stable config contract.
 pub(super) fn action_label(action: &str) -> String {
     let label = match action {
-        "open_agents" => "打开智能体",
+        "open_agents" => "打开 agent",
         "open_transcript" => "打开对话记录",
         "open_external_editor" => "打开外部编辑器",
         "copy" => "复制",
@@ -218,7 +218,7 @@ pub(super) fn action_label(action: &str) -> String {
         "toggle_vim_mode" => "切换 Vim 模式",
         "toggle_fast_mode" => "切换快速模式",
         "toggle_raw_output" => "切换原始输出",
-        "toggle_side_conversation" => "切换侧边对话",
+        "toggle_side_conversation" => "切换平行对话",
         "interrupt_turn" => "中断轮次",
         "decrease_reasoning_effort" => "降低推理强度",
         "increase_reasoning_effort" => "提高推理强度",

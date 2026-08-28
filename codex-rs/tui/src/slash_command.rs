@@ -107,7 +107,7 @@ impl SlashCommand {
             SlashCommand::Skills => "使用 Skills 改进 Codex 完成特定任务的方式",
             SlashCommand::Import => "从 Claude Code 导入设置、当前项目和最近聊天",
             SlashCommand::Hooks => "查看和管理生命周期 Hook",
-            SlashCommand::Status => "显示当前会话配置和 token 用量",
+            SlashCommand::Status => "显示当前会话配置和 Token 用量",
             SlashCommand::Cd => "切换当前工作目录",
             SlashCommand::Pwd => "显示当前工作目录",
             SlashCommand::Usage => "查看账户用量或重置用量限制",
@@ -125,13 +125,13 @@ impl SlashCommand {
             SlashCommand::Personality => "选择 Codex 的沟通风格",
             SlashCommand::Plan => "切换到 Plan 模式",
             SlashCommand::Goal => "设置或查看长时间任务的目标",
-            SlashCommand::Agents => "查看并切换所有活跃智能体会话",
-            SlashCommand::MultiAgents => "切换此会话的子智能体",
-            SlashCommand::Side | SlashCommand::Btw => "在临时分叉中开始侧边对话",
+            SlashCommand::Agents => "查看并切换所有活跃 agent 会话",
+            SlashCommand::MultiAgents => "切换此会话的 subagent",
+            SlashCommand::Side | SlashCommand::Btw => "在临时分叉中开始平行对话",
             SlashCommand::Permissions => "选择 Codex 允许执行的操作",
             SlashCommand::Keymap => "重新映射 TUI 快捷键",
             SlashCommand::Vim => "切换输入框的 Vim 模式",
-            SlashCommand::ElevateSandbox => "设置高权限智能体沙箱",
+            SlashCommand::ElevateSandbox => "设置高权限 agent 沙箱",
             SlashCommand::SandboxReadRoot => {
                 "允许沙箱读取目录：/sandbox-add-read-dir <absolute_path>"
             }

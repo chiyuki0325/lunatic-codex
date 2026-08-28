@@ -63,9 +63,7 @@ impl PickerState {
                 current_thread_id: Some(current_thread_id)
             } if current_thread_id == thread_id
         ) {
-            self.inline_error = Some(String::from(
-                "请使用 /archive 归档当前会话并退出。",
-            ));
+            self.inline_error = Some(String::from("请使用 /archive 归档当前会话并退出。"));
             self.request_frame();
             return;
         }
