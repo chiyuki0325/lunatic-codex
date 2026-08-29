@@ -3,13 +3,13 @@ source: tui/src/chatwidget/tests/popups_and_settings.rs
 assertion_line: 1684
 expression: popup
 ---
-  Plugins
+  插件
   Browse plugins from available marketplaces.
-  Installed 0 of 3 available plugins.
+  已安装 0 of 3 available plugins.
 
-  [All Plugins]  Installed (0)  OpenAI Curated  Workspace  Add Marketplace
+  [All 插件]  已安装 (0)  OpenAI Curated  Workspace  Add Marketplace
 
   sla
-› [-] Slack      Available   Press Enter to install or view plugin details.
+› [-] Slack      可用   Press Enter to install or view plugin details.
 
   space enable/disable · ←/→ select marketplace · enter view details · esc close

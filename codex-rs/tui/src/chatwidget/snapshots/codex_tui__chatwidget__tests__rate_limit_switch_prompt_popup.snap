@@ -2,13 +2,13 @@
 source: tui/src/chatwidget/tests/status_and_layout.rs
 expression: popup
 ---
-  Approaching rate limits
+  即将达到用量限制
   Switch to gpt-5.6-luna for lower credit usage?
 
 › 1. Switch to gpt-5.6-luna                 Fast and affordable agentic coding
                                             model.
   2. Keep current model
-  3. Keep current model (never show again)  Hide future rate limit reminders
+  3. Keep current model (never show again)  隐藏后续切换模型的用量限制提醒
                                             about switching models.
 
   Press enter to confirm or esc to go back

@@ -12,14 +12,14 @@ pub(super) struct StatusIndicatorState {
 impl StatusIndicatorState {
     pub(super) fn working() -> Self {
         Self {
-            header: String::from("Working"),
+            header: String::from("工作中"),
             details: None,
             details_max_lines: STATUS_DETAILS_DEFAULT_MAX_LINES,
         }
     }
 
     pub(super) fn is_guardian_review(&self) -> bool {
-        self.header == "Reviewing approval request" || self.header.starts_with("Reviewing ")
+        self.header == "正在审核批准请求" || self.header.starts_with("正在审核 ")
     }
 }
 
@@ -89,15 +89,15 @@ impl PendingGuardianReviewStatus {
                 .collect::<Vec<_>>();
             let remaining = self.entries.len().saturating_sub(3);
             if remaining > 0 {
-                lines.push(format!("+{remaining} more"));
+                lines.push(format!("另有 {remaining} 项"));
             }
             Some(lines.join("\n"))
         };
         let details = details?;
         let header = if self.entries.len() == 1 {
-            String::from("Reviewing approval request")
+            String::from("正在审核批准请求")
         } else {
-            format!("Reviewing {} approval requests", self.entries.len())
+            format!("正在审核 {} 个批准请求", self.entries.len())
         };
         let details_max_lines = if self.entries.len() == 1 { 1 } else { 4 };
         Some(StatusIndicatorState {
@@ -160,7 +160,7 @@ mod tests {
         assert_eq!(
             state.status_indicator_state(),
             Some(StatusIndicatorState {
-                header: "Reviewing 2 approval requests".to_string(),
+                header: "正在审核 2 个批准请求".to_string(),
                 details: Some("• first\n• second".to_string()),
                 details_max_lines: 4,
             })

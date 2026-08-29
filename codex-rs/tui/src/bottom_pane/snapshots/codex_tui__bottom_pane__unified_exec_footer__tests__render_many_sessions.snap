@@ -5,7 +5,7 @@ expression: "format!(\"{buf:?}\")"
 Buffer {
     area: Rect { x: 0, y: 0, width: 50, height: 1 },
     content: [
-        "  123 background terminals running · /ps to view ·",
+        "  123 个后台终端正在运行 · /ps 查看 · /stop 关闭",
     ],
     styles: [
         x: 0, y: 0, fg: Reset, bg: Reset, underline: Reset, modifier: DIM,

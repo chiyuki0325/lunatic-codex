@@ -21,7 +21,7 @@ impl ChatWidget {
         if self.status_state.current_status.is_guardian_review() {
             let header = self
                 .mcp_startup_status_header()
-                .unwrap_or_else(|| String::from("Working"));
+                .unwrap_or_else(|| String::from("工作中"));
             self.set_status_header(header);
         }
     }
@@ -90,7 +90,7 @@ impl ChatWidget {
             .set_interrupt_hint_visible(/*visible*/ true);
         self.status_state.terminal_title_status_kind = TerminalTitleStatusKind::Working;
         if self.mcp_startup_status.is_none() || !self.status_header_is_mcp_startup_owned() {
-            self.set_status_header(String::from("Working"));
+            self.set_status_header(String::from("工作中"));
         }
         self.reasoning_summary_parts.clear();
         self.reasoning_buffer.clear();
@@ -283,13 +283,13 @@ impl ChatWidget {
             if used_percent <= 0 {
                 return None;
             }
-            return Some(format!("{used_percent}% used"));
+            return Some(format!("已使用 {used_percent}%"));
         }
 
         if let Some(tokens) = used_tokens
             && tokens > 0
         {
-            return Some(format!("{} used", format_tokens_compact(tokens)));
+            return Some(format!("已使用 {}", format_tokens_compact(tokens)));
         }
 
         None
@@ -350,7 +350,7 @@ impl ChatWidget {
         self.finalize_turn();
 
         let message = if message.trim().is_empty() {
-            "Codex is currently experiencing high load.".to_string()
+            "Codex 当前负载较高。".to_string()
         } else {
             message
         };
@@ -414,15 +414,12 @@ impl ChatWidget {
         match rate_limit_reached_type {
             Some(RateLimitReachedType::WorkspaceOwnerCreditsDepleted) => {
                 self.on_error(
-                    "You're out of credits. Your workspace is out of credits. Add credits to continue using Codex."
+                    "你的额度已用尽。你的工作区额度已用尽。添加额度后可继续使用 Codex。"
                         .to_string(),
                 );
             }
             Some(RateLimitReachedType::WorkspaceOwnerUsageLimitReached) => {
-                self.on_error(
-                    "Usage limit reached. You've reached your usage limit. Increase your limits to continue using codex."
-                        .to_string(),
-                );
+                self.on_error("已达到使用上限。提高上限后可继续使用 Codex。".to_string());
             }
             Some(RateLimitReachedType::WorkspaceMemberCreditsDepleted) => {
                 self.on_error(message);
@@ -518,9 +515,9 @@ impl ChatWidget {
 
     pub(super) fn interrupted_turn_message(&self, reason: TurnAbortReason) -> String {
         if reason == TurnAbortReason::BudgetLimited {
-            return "Goal budget reached - the turn was stopped.".to_string();
+            return "已达到目标预算，轮次已停止。".to_string();
         }
 
-        "Conversation interrupted - tell the model what to do differently. Something went wrong? Hit `/feedback` to report the issue.".to_string()
+        "对话已中断，请告诉模型需要如何调整。若出现问题，请使用 `/feedback` 报告。".to_string()
     }
 }

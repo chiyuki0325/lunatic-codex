@@ -51,21 +51,19 @@ use codex_app_server_protocol::ToolRequestUserInputResponse;
 use codex_protocol::user_input::TextElement;
 use unicode_width::UnicodeWidthStr;
 
-const NOTES_PLACEHOLDER: &str = "Add notes";
-const ANSWER_PLACEHOLDER: &str = "Type your answer (optional)";
+const NOTES_PLACEHOLDER: &str = "添加备注";
+const ANSWER_PLACEHOLDER: &str = "输入答案（可选）";
 // Keep in sync with ChatComposer's minimum composer height.
 const MIN_COMPOSER_HEIGHT: u16 = 3;
-const SELECT_OPTION_PLACEHOLDER: &str = "Select an option to add notes";
+const SELECT_OPTION_PLACEHOLDER: &str = "选择一个选项以添加备注";
 pub(super) const TIP_SEPARATOR: &str = " | ";
 pub(super) const DESIRED_SPACERS_BETWEEN_SECTIONS: u16 = 2;
-const OTHER_OPTION_LABEL: &str = "None of the above";
-const OTHER_OPTION_DESCRIPTION: &str = "Optionally, add details in notes (tab).";
-const UNANSWERED_CONFIRM_TITLE: &str = "Submit with unanswered questions?";
-const UNANSWERED_CONFIRM_GO_BACK: &str = "Go back";
-const UNANSWERED_CONFIRM_GO_BACK_DESC: &str = "Return to the first unanswered question.";
-const UNANSWERED_CONFIRM_SUBMIT: &str = "Proceed";
-const UNANSWERED_CONFIRM_SUBMIT_DESC_SINGULAR: &str = "question";
-const UNANSWERED_CONFIRM_SUBMIT_DESC_PLURAL: &str = "questions";
+const OTHER_OPTION_LABEL: &str = "以上皆非";
+const OTHER_OPTION_DESCRIPTION: &str = "可在备注中补充详情（Tab）。";
+const UNANSWERED_CONFIRM_TITLE: &str = "有未回答的问题，仍要提交？";
+const UNANSWERED_CONFIRM_GO_BACK: &str = "返回";
+const UNANSWERED_CONFIRM_GO_BACK_DESC: &str = "返回第一个未回答的问题。";
+const UNANSWERED_CONFIRM_SUBMIT: &str = "继续";
 const AUTO_RESOLUTION_HIDDEN_GRACE: Duration = Duration::from_secs(/*secs*/ 60);
 const AUTO_RESOLUTION_VISIBLE_COUNTDOWN: Duration = Duration::from_secs(/*secs*/ 60);
 
@@ -89,11 +87,11 @@ fn format_auto_resolution_remaining(remaining: Duration) -> String {
         seconds = seconds.saturating_add(1);
     }
     if seconds < 60 {
-        return format!("{seconds}s");
+        return format!("{seconds} 秒");
     }
     let minutes = seconds / 60;
     let seconds = seconds % 60;
-    format!("{minutes}m {seconds:02}s")
+    format!("{minutes} 分 {seconds:02} 秒")
 }
 
 #[derive(Default, Clone, PartialEq)]
@@ -332,7 +330,7 @@ impl RequestUserInputOverlay {
     fn auto_resolution_countdown_text_at(&self, now: Instant) -> Option<String> {
         match self.auto_resolution_timing_at(now) {
             AutoResolutionTiming::VisibleCountdown { remaining } => Some(format!(
-                "auto-resolves in {}",
+                "将在 {} 后自动解析",
                 format_auto_resolution_remaining(remaining)
             )),
             AutoResolutionTiming::Disabled
@@ -345,15 +343,15 @@ impl RequestUserInputOverlay {
         if self.question_count() > 0 {
             let idx = self.current_index() + 1;
             let total = self.question_count();
-            let base = format!("Question {idx}/{total}");
+            let base = format!("问题 {idx}/{total}");
             let unanswered = self.unanswered_count();
             if unanswered > 0 {
-                format!("{base} ({unanswered} unanswered)")
+                format!("{base}（{unanswered} 个未回答）")
             } else {
                 base
             }
         } else {
-            "No questions".to_string()
+            "没有问题".to_string()
         }
     }
 
@@ -591,10 +589,10 @@ impl RequestUserInputOverlay {
         let notes_visible = self.notes_ui_visible();
         if self.has_options() {
             if self.selected_option_index().is_some() && !notes_visible {
-                tips.push(FooterTip::highlighted("tab to add notes"));
+                tips.push(FooterTip::highlighted("Tab 添加备注"));
             }
             if self.selected_option_index().is_some() && notes_visible {
-                tips.push(FooterTip::new("tab or esc to clear notes"));
+                tips.push(FooterTip::new("Tab 或 Esc 清除备注"));
             }
         }
 
@@ -609,19 +607,19 @@ impl RequestUserInputOverlay {
         };
         if let Some(submit_key) = submit_key {
             let submit_tip = if question_count == 1 {
-                FooterTip::highlighted(format!("{submit_key} to submit answer"))
+                FooterTip::highlighted(format!("{submit_key} 提交回答"))
             } else if is_last_question {
-                FooterTip::highlighted(format!("{submit_key} to submit all"))
+                FooterTip::highlighted(format!("{submit_key} 全部提交"))
             } else {
-                FooterTip::new(format!("{submit_key} to submit answer"))
+                FooterTip::new(format!("{submit_key} 提交回答"))
             };
             tips.push(submit_tip);
         }
         if question_count > 1 {
             if self.has_options() && !self.focus_is_notes() {
-                tips.push(FooterTip::new("←/→ to navigate questions"));
+                tips.push(FooterTip::new("←/→ 切换问题"));
             } else if !self.has_options() {
-                tips.push(FooterTip::new("ctrl + p / ctrl + n change question"));
+                tips.push(FooterTip::new("Ctrl + p / Ctrl + n 切换问题"));
             }
         }
         if let Some(interrupt_key) = self.interrupt_turn_hint
@@ -630,7 +628,7 @@ impl RequestUserInputOverlay {
                 && interrupt_key == ShortcutHint::Single(crate::key_hint::plain(KeyCode::Esc)))
         {
             tips.push(FooterTip::new(format!(
-                "{} to interrupt",
+                "{} 以中断",
                 interrupt_key.display_label()
             )));
         }
@@ -984,12 +982,7 @@ impl RequestUserInputOverlay {
 
     fn unanswered_submit_description(&self) -> String {
         let count = self.unanswered_question_count();
-        let suffix = if count == 1 {
-            UNANSWERED_CONFIRM_SUBMIT_DESC_SINGULAR
-        } else {
-            UNANSWERED_CONFIRM_SUBMIT_DESC_PLURAL
-        };
-        format!("Submit with {count} unanswered {suffix}.")
+        format!("提交，仍有 {count} 个问题未回答。")
     }
 
     fn first_unanswered_index(&self) -> Option<usize> {
@@ -1951,24 +1944,17 @@ mod tests {
 
         overlay.render_ui_at(area, &mut buf, now);
 
-        let rendered = snapshot_buffer(&buf);
-        let progress_line = rendered.lines().nth(1).expect("expected progress line");
-        let countdown = "auto-resolves in 1m 00s";
-        let countdown_byte_idx = progress_line
-            .find(countdown)
-            .expect("expected countdown in progress line");
-        let countdown_x = progress_line[..countdown_byte_idx].width();
+        let countdown = overlay
+            .auto_resolution_countdown_text_at(now)
+            .expect("expected visible countdown");
+        let countdown_x = 2 + overlay.progress_prefix_text().width() + " · ".width();
         for offset in 0..countdown.width() {
             assert_eq!(
                 buf[((countdown_x + offset) as u16, 1)].style().fg,
                 Some(Color::Red)
             );
         }
-        let prefix_byte_idx = progress_line
-            .find("Question")
-            .expect("expected question prefix in progress line");
-        let prefix_x = progress_line[..prefix_byte_idx].width();
-        assert_ne!(buf[(prefix_x as u16, 1)].style().fg, Some(Color::Red));
+        assert_ne!(buf[(2, 1)].style().fg, Some(Color::Red));
     }
 
     #[test]
@@ -2477,20 +2463,17 @@ mod tests {
         assert_eq!(
             tip_texts,
             vec![
-                "tab to add notes",
-                "enter to submit answer",
-                "←/→ to navigate questions",
-                "esc to interrupt",
+                "Tab 添加备注",
+                "Enter 提交回答",
+                "←/→ 切换问题",
+                "Esc 以中断",
             ]
         );
 
         overlay.handle_key_event(KeyEvent::from(KeyCode::Tab));
         let tips = overlay.footer_tips();
         let tip_texts = tips.iter().map(|tip| tip.text.as_str()).collect::<Vec<_>>();
-        assert_eq!(
-            tip_texts,
-            vec!["tab or esc to clear notes", "enter to submit answer",]
-        );
+        assert_eq!(tip_texts, vec!["Tab 或 Esc 清除备注", "Enter 提交回答",]);
     }
 
     #[test]
@@ -2516,9 +2499,9 @@ mod tests {
         assert_eq!(
             tip_texts,
             vec![
-                "enter to submit all",
-                "ctrl + p / ctrl + n change question",
-                "esc to interrupt",
+                "Enter 全部提交",
+                "Ctrl + p / Ctrl + n 切换问题",
+                "Esc 以中断",
             ]
         );
     }
@@ -2539,10 +2522,7 @@ mod tests {
 
         let tips = overlay.footer_tips();
         let tip_texts = tips.iter().map(|tip| tip.text.as_str()).collect::<Vec<_>>();
-        assert_eq!(
-            tip_texts,
-            vec!["ctrl + j to submit answer", "esc to interrupt"]
-        );
+        assert_eq!(tip_texts, vec!["Ctrl + j 提交回答", "Esc 以中断"]);
     }
 
     #[test]
@@ -2550,21 +2530,21 @@ mod tests {
         for (specs, expected_tips) in [
             (
                 KeybindingsSpec::One(KeybindingSpec("ctrl-x enter".to_string())),
-                vec!["ctrl + x enter to submit answer", "esc to interrupt"],
+                vec!["Ctrl + x Enter 提交回答", "Esc 以中断"],
             ),
             (
                 KeybindingsSpec::Many(vec![
                     KeybindingSpec("ctrl-enter".to_string()),
                     KeybindingSpec("ctrl-x enter".to_string()),
                 ]),
-                vec!["ctrl + enter to submit answer", "esc to interrupt"],
+                vec!["Ctrl + Enter 提交回答", "Esc 以中断"],
             ),
             (
                 KeybindingsSpec::Many(vec![
                     KeybindingSpec("ctrl-x enter".to_string()),
                     KeybindingSpec("ctrl-enter".to_string()),
                 ]),
-                vec!["ctrl + x enter to submit answer", "esc to interrupt"],
+                vec!["Ctrl + x Enter 提交回答", "Esc 以中断"],
             ),
         ] {
             let (tx, _rx) = test_sender();
@@ -2609,11 +2589,7 @@ mod tests {
         let tip_texts = tips.iter().map(|tip| tip.text.as_str()).collect::<Vec<_>>();
         assert_eq!(
             tip_texts,
-            vec![
-                "tab or esc to clear notes",
-                "enter to submit answer",
-                "f12 to interrupt",
-            ]
+            vec!["Tab 或 Esc 清除备注", "Enter 提交回答", "F12 以中断",]
         );
 
         overlay.handle_key_event(KeyEvent::from(KeyCode::F(12)));
@@ -3786,14 +3762,14 @@ mod tests {
 
         insta::assert_snapshot!(snapshot, @r"
 
-          Question 1/1 (1 unanswered)
+          问 题  1/1（ 1 个 未 回 答 ）
           Share details.
 
-          › Type your answer (optional)
+          › 输 入 答 案 （ 可 选 ）
 
 
 
-          ctrl + x enter to submit answer | esc to interrupt
+          Ctrl + x Enter 提 交 回 答  | Esc 以 中 断
         ");
     }
 

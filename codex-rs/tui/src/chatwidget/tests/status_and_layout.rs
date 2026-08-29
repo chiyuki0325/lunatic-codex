@@ -102,8 +102,8 @@ async fn app_server_cyber_policy_error_renders_dedicated_notice() {
     let cells = drain_insert_history(&mut rx);
     assert_eq!(cells.len(), 1);
     let rendered = lines_to_single_string(&cells[0]);
-    assert!(rendered.contains("This content can't be shown"));
-    assert!(rendered.contains("extra caution with cybersecurity requests"));
+    assert!(rendered.contains("无法显示此内容"));
+    assert!(rendered.contains("对于网络安全请求，我们会格外谨慎"));
     assert!(!rendered.contains("server fallback message"));
 }
 
@@ -2752,7 +2752,7 @@ async fn unsupported_code_mode_warning_renders_as_warning_history_cell() {
 #[tokio::test]
 async fn repeated_model_metadata_warning_is_hidden_for_same_slug() {
     let (mut chat, mut rx, _op_rx) = make_chatwidget_manual(/*model_override*/ None).await;
-    let warning = "Model metadata for `unknown-model` not found. Defaulting to fallback metadata; this can degrade performance and cause issues.";
+    let warning = "未找到模型 `unknown-model` 的元数据。将使用备用元数据，可能降低性能并导致问题。";
 
     handle_warning(&mut chat, warning);
     handle_warning(&mut chat, warning);

@@ -79,20 +79,20 @@ impl MemoriesSettingsView {
             items: vec![
                 MemoriesMenuItem::Setting {
                     setting: MemoriesSetting::Use,
-                    name: "Use memories",
-                    description: "Use memories in the following threads. Applied at next thread.",
+                    name: "使用记忆",
+                    description: "在后续会话中使用记忆。将在下一个会话生效。",
                     enabled: use_memories,
                 },
                 MemoriesMenuItem::Setting {
                     setting: MemoriesSetting::Generate,
-                    name: "Generate memories",
-                    description: "Generate memories from the following threads. Current thread included.",
+                    name: "生成记忆",
+                    description: "从后续会话中生成记忆，包含当前会话。",
                     enabled: generate_memories,
                 },
                 MemoriesMenuItem::Action {
                     action: MemoriesAction::Reset,
-                    name: "Reset all memories",
-                    description: "Clear local memory files and summaries. Existing threads stay intact.",
+                    name: "重置所有记忆",
+                    description: "清除本地记忆文件和摘要，保留现有会话。",
                 },
             ],
             state: ScrollState::new(),
@@ -100,7 +100,7 @@ impl MemoriesSettingsView {
             complete: false,
             app_event_tx,
             docs_link: Line::from(vec![
-                "Learn more: ".dim(),
+                "了解更多：".dim(),
                 MEMORIES_DOC_URL.cyan().underlined(),
             ]),
             keymap,
@@ -115,19 +115,18 @@ impl MemoriesSettingsView {
 
     fn settings_header(&self) -> ColumnRenderable<'_> {
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Memories".bold()));
+        header.push(Line::from("记忆".bold()));
         header.push(Line::from(
-            "Choose how Codex uses and creates memories. Changes are saved to config.toml".dim(),
+            "选择 Codex 使用和创建记忆的方式。更改将保存到 config.toml".dim(),
         ));
         header
     }
 
     fn reset_confirmation_header(&self) -> ColumnRenderable<'_> {
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Reset all memories?".bold()));
+        header.push(Line::from("重置所有记忆？".bold()));
         header.push(Line::from(
-            "This clears local memory files and rollout summaries for the current Codex home."
-                .dim(),
+            "这会清除当前 Codex 主目录中的本地记忆文件和 rollout 摘要。".dim(),
         ));
         header
     }
@@ -150,7 +149,7 @@ impl MemoriesSettingsView {
 
     fn build_rows(&self) -> Vec<GenericDisplayRow> {
         if let Some(state) = self.reset_confirmation.as_ref() {
-            return ["Reset all memories", "Go back"]
+            return ["重置所有记忆", "返回"]
                 .into_iter()
                 .enumerate()
                 .map(|(idx, name)| GenericDisplayRow {
@@ -160,8 +159,8 @@ impl MemoriesSettingsView {
                         format!("  {name}")
                     },
                     description: Some(match idx {
-                        0 => "Delete local memory files and rollout summaries.".to_string(),
-                        1 => "Return to memory settings.".to_string(),
+                        0 => "删除本地记忆文件和 rollout 摘要。".to_string(),
+                        1 => "返回记忆设置。".to_string(),
                         _ => unreachable!("reset confirmation only renders two rows"),
                     }),
                     ..Default::default()
@@ -421,7 +420,7 @@ impl Renderable for MemoriesSettingsView {
                 &rows,
                 self.active_state(),
                 MAX_POPUP_ROWS,
-                "  No memory settings available",
+                "  没有可用的记忆设置",
             );
         }
         if self.reset_confirmation.is_none() {
@@ -466,12 +465,12 @@ impl Renderable for MemoriesSettingsView {
 
 fn memories_settings_hint_line(keymap: &ListKeymap) -> Line<'static> {
     let mut spans = vec![
-        "Press ".into(),
+        "按下 ".into(),
         key_hint::plain(KeyCode::Char(' ')).into(),
-        " to toggle".into(),
+        " 切换".into(),
     ];
     if let Some(accept) = keymap.primary_hint(ListAction::Accept) {
-        spans.extend(["; ".into(), accept.into(), " to save or select".into()]);
+        spans.extend(["；按下 ".into(), accept.into(), " 保存或选择".into()]);
     }
     Line::from(spans)
 }

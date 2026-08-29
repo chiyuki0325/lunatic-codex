@@ -4,7 +4,7 @@ expression: "format!(\"{running_snapshot}\\n\\n{completed_snapshot}\")"
 ---
 running
 live hooks:
-• Running PreToolUse hook: checking command
+• 正在运行 PreToolUse hook: checking command
 history:
 <empty>
 

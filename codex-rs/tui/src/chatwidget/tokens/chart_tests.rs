@@ -77,15 +77,15 @@ fn daily_graph_snapshot_uses_distinct_empty_and_active_cells() {
 
     assert_snapshot!(rendered, @r"
          Apr     May
-    Su □ □ □ □ □ □ □ □ □
-    Mo □ □ □ □ □ □ □ □ ■
-    Tu □ □ □ □ □ □ □ □ □
-    We □ □ □ □ □ □ □ □ □
-    Th □ □ □ □ □ □ □ □ □
-    Fr □ □ □ □ □ □ □ □ ■
-    Sa □ □ □ □ □ □ □ □
+    日 □ □ □ □ □ □ □ □ □
+    一 □ □ □ □ □ □ □ □ ■
+    二 □ □ □ □ □ □ □ □ □
+    三 □ □ □ □ □ □ □ □ □
+    四 □ □ □ □ □ □ □ □ □
+    五 □ □ □ □ □ □ □ □ ■
+    六 □ □ □ □ □ □ □ □
 
-      Less □ ■ ■ ■ ■ More
+      较少 □ ■ ■ ■ ■ 较多
       daily · weekly · cumulative
     ");
 }
@@ -106,7 +106,7 @@ fn daily_graph_snapshot_stays_left_aligned_in_wide_terminal() {
 
     assert_snapshot!(rendered, @"
         Jun       Jul     Aug       Sep     Oct     Nov       Dec     Jan     Feb     Mar       Apr     May
-     Su □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □
+     日 □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □ □
        daily · weekly · cumulative
     ");
 }
@@ -143,7 +143,7 @@ fn weekly_graph_snapshot_renders_bar_chart_and_caption() {
 
     assert_snapshot!(rendered, @"
           Apr     May
-    max                 █
+    最大                █
                         █
                       █ █
                       █ █
@@ -151,7 +151,7 @@ fn weekly_graph_snapshot_renders_bar_chart_and_caption() {
                     █ █ █
       0             █ █ █
 
-       Each column = 1 week · tallest 9
+       每列 = 1 周 · 最高 9
        daily · weekly · cumulative
     ");
 }
@@ -188,7 +188,7 @@ fn cumulative_graph_snapshot_renders_running_total_bar_chart_and_caption() {
 
     assert_snapshot!(rendered, @"
           Apr     May
-    max                 █
+    最大                █
                         █
                         █
                       █ █
@@ -196,7 +196,7 @@ fn cumulative_graph_snapshot_renders_running_total_bar_chart_and_caption() {
                     █ █ █
       0             █ █ █
 
-       Running total · top 18
+       累计 · 最高 18
        daily · weekly · cumulative
     ");
 }
@@ -231,14 +231,13 @@ fn summary_snapshot_left_aligns_and_splits_when_needed() {
         ),
         @"
     wide:
-     Lifetime 21.4B · Peak 835M · Streak 54d · Longest task 3h 52m
+     累计 21.4B · 峰值 835M · 连续 54 天 · 最长任务 3h 52m
 
     narrow:
-     Lifetime 21.4B · Peak 835M · Streak 54d · Longest task 3h 52m
+     累计 21.4B · 峰值 835M · 连续 54 天 · 最长任务 3h 52m
 
     tight:
-     Lifetime 21.4B · Peak 835M · Streak 54d
-     Longest task 3h 52m
+     累计 21.4B · 峰值 835M · 连续 54 天 · 最长任务 3h 52m
     "
     );
 }

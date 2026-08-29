@@ -27,7 +27,7 @@ impl ChatWidget {
             Ok(response) => {
                 self.open_hooks_browser(hooks_list_entry_for_cwd(response, &cwd));
             }
-            Err(err) => self.add_error_message(format!("Failed to load hooks: {err}")),
+            Err(err) => self.add_error_message(format!("加载 Hook 失败：{err}")),
         }
     }
 

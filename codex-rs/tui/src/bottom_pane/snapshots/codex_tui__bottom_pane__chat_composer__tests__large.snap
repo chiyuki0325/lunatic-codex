@@ -3,7 +3,7 @@ source: tui/src/bottom_pane/chat_composer.rs
 expression: terminal.backend()
 ---
 "                                                                                                    "
-"› [Pasted Content 1005 chars]                                                                       "
+"› [粘贴内容 1005 个字符]                                                                            "
 "                                                                                                    "
 "                                                                                                    "
 "                                                                                                    "

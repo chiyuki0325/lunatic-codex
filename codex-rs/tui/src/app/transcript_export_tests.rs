@@ -44,9 +44,7 @@ fn markdown_transcript_preserves_messages_and_formats_activity() {
             std::path::Path::new("."),
         )),
         Arc::new(PlainHistoryCell::new(vec!["$ cargo test".into()])),
-        Arc::new(PlainHistoryCell::new(vec![
-            "■ Export failed: missing parent".into(),
-        ])),
+        Arc::new(PlainHistoryCell::new(vec!["■ 导出失败：缺少父目录".into()])),
         user("", vec!["image.png".into()]),
         user("[Image #1] describe this", vec!["image.png".into()]),
     ];
@@ -157,11 +155,11 @@ fn persisted_transcript_includes_file_and_mcp_details() {
         r#"{"query":"export"}"#,
         "matching docs",
         "next line",
-        "<image content>",
-        "<audio content>",
-        "embedded resource: file:///report.md",
-        "link: file:///linked.md",
-        r#"structured result: {"count":1}"#,
+        "<图像内容>",
+        "<音频内容>",
+        "嵌入资源：file:///report.md",
+        "链接：file:///linked.md",
+        r#"结构化结果：{"count":1}"#,
         "document unavailable",
         "    # injected heading",
     ] {

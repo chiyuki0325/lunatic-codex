@@ -387,13 +387,13 @@ async fn assert_cancelled_queued_menu_drains_next_input(
 async fn queued_slash_menu_cancel_drains_next_input() {
     assert_cancelled_queued_menu_drains_next_input(
         "/model",
-        "Select Model",
+        "选择模型",
         KeyEvent::new(KeyCode::Esc, KeyModifiers::NONE),
     )
     .await;
     assert_cancelled_queued_menu_drains_next_input(
         "/permissions",
-        "Update Model Permissions",
+        "更新模型权限",
         KeyEvent::new(KeyCode::Char('c'), KeyModifiers::CONTROL),
     )
     .await;
@@ -416,7 +416,7 @@ async fn queued_settings_selection_applies_before_next_input() {
 
     let popup = render_bottom_popup(&chat, /*width*/ 80);
     assert!(
-        popup.contains("Select Model and Effort"),
+        popup.contains("选择模型和推理强度"),
         "expected model menu to open; popup:\n{popup}"
     );
 
@@ -2107,7 +2107,7 @@ async fn queued_menu_slash_keeps_agent_turn_complete_notification() {
         chat.pending_notification,
         Some(Notification::AgentTurnComplete { ref response }) if response == "Done"
     );
-    assert!(render_bottom_popup(&chat, /*width*/ 80).contains("Select Model"));
+    assert!(render_bottom_popup(&chat, /*width*/ 80).contains("选择模型"));
     assert_matches!(op_rx.try_recv(), Err(TryRecvError::Empty));
 }
 
@@ -2335,7 +2335,7 @@ async fn slash_memories_opens_memory_menu() {
 
     chat.dispatch_command(SlashCommand::Memories);
 
-    assert!(render_bottom_popup(&chat, /*width*/ 80).contains("Use memories"));
+    assert!(render_bottom_popup(&chat, /*width*/ 80).contains("使用记忆"));
     assert_matches!(rx.try_recv(), Err(TryRecvError::Empty));
     assert!(op_rx.try_recv().is_err(), "expected no core op to be sent");
 }

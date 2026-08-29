@@ -448,7 +448,7 @@ fn structured_tool_cell_renders_raw_plain_text_without_prefix_or_style() {
 
     let lines = cell.raw_lines();
     let rendered = render_lines(&lines);
-    assert!(rendered[0].starts_with("Called search.find_docs("));
+    assert!(rendered[0].starts_with("已调用 search.find_docs("));
     assert_eq!(rendered[1..], ["alpha".to_string(), "beta".to_string()]);
     assert_unstyled_lines(&lines);
 }
@@ -569,11 +569,7 @@ fn unified_exec_interaction_cell_renders_input() {
     let lines = render_transcript(&cell);
     assert_eq!(
         lines,
-        vec![
-            "↳ Interacted with background terminal · echo hello",
-            "  └ ls",
-            "    pwd",
-        ],
+        vec!["↳ 已与后台终端交互 · echo hello", "  └ ls", "    pwd",],
     );
 }
 
@@ -581,7 +577,7 @@ fn unified_exec_interaction_cell_renders_input() {
 fn unified_exec_interaction_cell_renders_wait() {
     let cell = new_unified_exec_interaction(/*command_display*/ None, String::new());
     let lines = render_transcript(&cell);
-    assert_eq!(lines, vec!["• Waited for background terminal"]);
+    assert_eq!(lines, vec!["• 已等待后台终端"]);
 }
 
 #[test]
@@ -620,14 +616,14 @@ fn final_message_separator_hides_short_worked_label_and_includes_runtime_metrics
     let rendered = render_lines(&cell.display_lines(/*width*/ 600));
 
     assert_eq!(rendered.len(), 1);
-    assert!(!rendered[0].contains("Worked for"));
-    assert!(rendered[0].contains("Local tools: 3 calls (2.5s)"));
-    assert!(rendered[0].contains("Inference: 2 calls (1.2s)"));
-    assert!(rendered[0].contains("WebSocket: 1 events send (700ms)"));
-    assert!(rendered[0].contains("Streams: 6 events (900ms)"));
-    assert!(rendered[0].contains("4 events received (1.2s)"));
-    assert!(rendered[0].contains("Responses API overhead: 650ms"));
-    assert!(rendered[0].contains("Responses API inference: 1.9s"));
+    assert!(!rendered[0].contains("工作耗时"));
+    assert!(rendered[0].contains("本地工具：3 次调用（2.5s）"));
+    assert!(rendered[0].contains("推理：2 次调用（1.2s）"));
+    assert!(rendered[0].contains("WebSocket：已发送 1 个事件（700ms）"));
+    assert!(rendered[0].contains("流式：6 个事件（900ms）"));
+    assert!(rendered[0].contains("已接收 4 个事件（1.2s）"));
+    assert!(rendered[0].contains("Responses API 开销：650ms"));
+    assert!(rendered[0].contains("Responses API 推理：1.9s"));
     assert!(rendered[0].contains("TTFT: 410ms (iapi) 460ms (service)"));
     assert!(rendered[0].contains("TBT: 1.2s (iapi) 1.2s (service)"));
 }
@@ -649,7 +645,7 @@ fn final_message_separator_includes_worked_label_after_one_minute() {
     let rendered = render_lines(&cell.display_lines(/*width*/ 200));
 
     assert_eq!(rendered.len(), 1);
-    assert!(rendered[0].contains("Worked for"));
+    assert!(rendered[0].contains("工作耗时"));
 }
 
 #[test]
@@ -1168,7 +1164,7 @@ fn unified_exec_interaction_cell_height_matches_wrapped_rendering() {
         })
         .collect::<String>();
     assert!(
-        first_row.contains("Interacted with"),
+        first_row.contains("已与"),
         "expected first rendered row to keep the header visible, got: {first_row:?}"
     );
 }
@@ -1240,7 +1236,7 @@ fn web_search_history_cell_wraps_with_indented_continuation() {
     assert_eq!(
         rendered,
         vec![
-            "• Searched the web for example search query with several generic".to_string(),
+            "• 已搜索网页：example search query with several generic".to_string(),
             "  words to exercise wrapping".to_string(),
         ]
     );
@@ -1259,10 +1255,7 @@ fn web_search_history_cell_short_query_does_not_wrap() {
     );
     let rendered = render_lines(&cell.display_lines(/*width*/ 64));
 
-    assert_eq!(
-        rendered,
-        vec!["• Searched the web for short query".to_string()]
-    );
+    assert_eq!(rendered, vec!["• 已搜索网页：short query".to_string()]);
 }
 
 #[test]
@@ -1336,7 +1329,7 @@ fn code_mode_tool_call_uses_title_and_preserves_full_transcript() {
     let transcript = render_lines(&cell.transcript_lines(/*width*/ 180)).join("\n");
     insta::assert_snapshot!(format!("history:\n{history}\n\ntranscript:\n{transcript}"), @r#"
     history:
-    • Called Inspect Spotify workspace
+    • 已调用 Inspect Spotify workspace
       └ 012345678901234567890123456789012345
             67890123456789012345678901234567
             89012345678901234567890123456789
@@ -1345,7 +1338,7 @@ fn code_mode_tool_call_uses_title_and_preserves_full_transcript() {
             45678901...
 
     transcript:
-    • Called node_repl.js({"title":"Inspect Spotify workspace","code":"await tools.exec_command({ cmd: 'git status' })"})
+    • 已调用 node_repl.js({"title":"Inspect Spotify workspace","code":"await tools.exec_command({ cmd: 'git status' })"})
       └ Script completed
         Wall time 0.1 seconds
         Output:
@@ -1380,13 +1373,13 @@ fn code_mode_tool_call_preserves_failure_details() {
     let transcript = render_lines(&cell.transcript_lines(/*width*/ 120)).join("\n");
     insta::assert_snapshot!(format!("history:\n{history}\n\ntranscript:\n{transcript}"), @r#"
     history:
-    • Called Inspect workspace
+    • 已调用 Inspect workspace
       └ Script failed
         Output:
         permission denied
 
     transcript:
-    • Called node_repl.js({"title":"Inspect workspace","code":"throw Error('denied')"})
+    • 已调用 node_repl.js({"title":"Inspect workspace","code":"throw Error('denied')"})
       └ Script failed
         Output:
         permission denied

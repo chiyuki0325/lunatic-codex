@@ -133,11 +133,11 @@ impl App {
     pub(super) fn thread_label(&self, thread_id: ThreadId) -> String {
         let is_primary = self.primary_thread_id == Some(thread_id);
         let fallback_label = if is_primary {
-            "Main [default]".to_string()
+            "主对话 [默认]".to_string()
         } else {
             let thread_id = thread_id.to_string();
             let short_id: String = thread_id.chars().take(8).collect();
-            format!("Agent ({short_id})")
+            format!("agent（{short_id}）")
         };
         if let Some(entry) = self.agent_navigation.get(&thread_id) {
             let label = format_agent_picker_item_name(
@@ -176,7 +176,7 @@ impl App {
         };
 
         self.chat_widget.add_info_message(
-            format!("Already viewing {}.", target_session.display_label()),
+            format!("正在查看 {}。", target_session.display_label()),
             /*hint*/ None,
         );
         true
@@ -424,7 +424,7 @@ impl App {
     ) -> Result<()> {
         let Some(thread_id) = self.active_thread_id else {
             self.chat_widget
-                .add_error_message("No active thread is available.".to_string());
+                .add_error_message("没有可用的活动对话。".to_string());
             return Ok(());
         };
 
@@ -463,7 +463,7 @@ impl App {
         }
 
         self.chat_widget
-            .add_error_message(format!("Not available in TUI yet for thread {thread_id}."));
+            .add_error_message(format!("会话 {thread_id} 暂不支持在 TUI 中使用此功能。"));
         Ok(())
     }
 
@@ -623,7 +623,7 @@ impl App {
                                 let notification =
                                     ServerNotification::Warning(WarningNotification {
                                         thread_id: Some(thread_id.to_string()),
-                                        message: format!("Failed to interrupt turn: {error}"),
+                                        message: format!("中断轮次失败：{error}"),
                                     });
                                 let should_send = {
                                     let mut store = thread_event_store.lock().await;
@@ -896,7 +896,7 @@ impl App {
             }
             Err(err) => {
                 self.chat_widget.add_error_message(format!(
-                    "Failed to resolve app-server request for thread {thread_id}: {err}"
+                    "解析对话 {thread_id} 的 app-server 请求失败：{err}"
                 ));
                 Ok(false)
             }
@@ -1749,15 +1749,13 @@ impl App {
             }
             if self.active_thread_id == Some(primary_thread_id) {
                 self.chat_widget.add_info_message(
-                    format!(
-                        "Agent thread {closed_thread_id} closed. Switched back to main thread."
-                    ),
+                    format!("agent 对话 {closed_thread_id} 已关闭。已切回主对话。"),
                     /*hint*/ None,
                 );
             } else {
                 self.clear_active_thread().await;
                 self.chat_widget.add_error_message(format!(
-                    "Agent thread {closed_thread_id} closed. Failed to switch back to main thread {primary_thread_id}.",
+                    "agent 对话 {closed_thread_id} 已关闭。未能切回主对话 {primary_thread_id}。",
                 ));
             }
             return Ok(());

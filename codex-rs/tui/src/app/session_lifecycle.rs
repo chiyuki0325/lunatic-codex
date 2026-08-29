@@ -146,7 +146,7 @@ impl App {
 
         if self.agent_navigation.is_empty() {
             self.chat_widget
-                .add_info_message("No agents available yet.".to_string(), /*hint*/ None);
+                .add_info_message("暂时没有可用 agent。".to_string(), /*hint*/ None);
             return;
         }
 
@@ -213,7 +213,7 @@ impl App {
 
         SelectionViewParams {
             view_id: Some(AGENT_PICKER_VIEW_ID),
-            title: Some("Subagents".to_string()),
+            title: Some("subagent".to_string()),
             subtitle: Some(AgentNavigationState::picker_subtitle()),
             footer_hint: Some(standard_popup_hint_line()),
             items,
@@ -413,7 +413,7 @@ impl App {
                     // A `thread/read` fallback without turns would create a blank local replay
                     // channel with no live listener attached, which blocks later real re-attach.
                     return Err(color_eyre::eyre::eyre!(
-                        "Agent thread {thread_id} is not yet available for replay or live attach."
+                        "agent 对话 {thread_id} 暂无法回放或实时连接。"
                     ));
                 }
                 let mut session = self.session_state_for_thread_read(thread_id, &thread).await;
@@ -478,7 +478,7 @@ impl App {
                 .await)
         {
             self.chat_widget
-                .add_error_message(format!("Agent thread {thread_id} is no longer available."));
+                .add_error_message(format!("agent 会话 {thread_id} 已不可用。"));
             return Ok(());
         }
         let mut is_replay_only = self
@@ -498,15 +498,14 @@ impl App {
                     }
                 }
                 Err(err) => {
-                    self.chat_widget.add_error_message(format!(
-                        "Failed to attach to agent thread {thread_id}: {err}"
-                    ));
+                    self.chat_widget
+                        .add_error_message(format!("连接到 agent 会话 {thread_id} 失败：{err}"));
                     return Ok(());
                 }
             }
         } else if !self.thread_event_channels.contains_key(&thread_id) && is_replay_only {
             self.chat_widget
-                .add_error_message(format!("Agent thread {thread_id} is no longer available."));
+                .add_error_message(format!("agent 会话 {thread_id} 已不可用。"));
             return Ok(());
         }
         let previous_thread_id = self.active_thread_id;
@@ -515,7 +514,7 @@ impl App {
         let Some((receiver, mut snapshot)) = self.activate_thread_for_replay(thread_id).await
         else {
             self.chat_widget
-                .add_error_message(format!("Agent thread {thread_id} is already active."));
+                .add_error_message(format!("agent 会话 {thread_id} 已处于活动状态。"));
             if let Some(previous_thread_id) = previous_thread_id {
                 self.activate_thread_channel(previous_thread_id).await;
             }
@@ -553,11 +552,9 @@ impl App {
         self.replay_thread_snapshot(snapshot, !is_replay_only);
         if is_replay_only {
             let message = if attached_replay_only {
-                format!(
-                    "Agent thread {thread_id} could not be resumed live. Replaying saved transcript."
-                )
+                format!("无法实时恢复 agent 对话 {thread_id}。正在回放已保存的对话记录。")
             } else {
-                format!("Agent thread {thread_id} is closed. Replaying saved transcript.")
+                format!("agent 对话 {thread_id} 已关闭。正在回放已保存的对话记录。")
             };
             self.chat_widget.add_info_message(message, /*hint*/ None);
         }
@@ -775,8 +772,7 @@ impl App {
                             lines.push(usage_line.into());
                         }
                         if let Some(command) = summary.resume_hint {
-                            let spans =
-                                vec!["To continue this session, run ".into(), command.cyan()];
+                            let spans = vec!["要继续此会话，请运行 ".into(), command.cyan()];
                             lines.push(spans.into());
                         }
                         self.chat_widget.add_plain_history_lines(lines);
@@ -1106,8 +1102,7 @@ impl App {
                                 lines.push(usage_line.into());
                             }
                             if let Some(command) = summary.resume_hint {
-                                let spans =
-                                    vec!["To continue this session, run ".into(), command.cyan()];
+                                let spans = vec!["要继续此会话，请运行 ".into(), command.cyan()];
                                 lines.push(spans.into());
                             }
                             self.chat_widget.add_plain_history_lines(lines);

@@ -3,12 +3,12 @@ source: tui/src/bottom_pane/mcp_server_elicitation.rs
 expression: "render_snapshot(&overlay, Rect::new(0, 0, 120, 16))"
 ---
                                                                                                                         
-  Field 1/1                                                                                                             
+  字段 1/1                                                                                                              
   Allow this request?                                                                                                   
-  › 1. Allow                   Run the tool and continue.                                                               
-    2. Allow for this session  Run the tool and remember this choice for this session.                                  
-    3. Always allow            Run the tool and remember this choice for future tool calls.                             
-    4. Cancel                  Cancel this tool call                                                                    
+  › 1. 允许                   运行工具并继续。                                                                          
+    2. 在本次会话中允许          运行工具，并在本次会话中记住此选择。                                                   
+    3. 始终允许                运行工具，并为后续工具调用记住此选择。                                                   
+    4. 取消                    取消此次工具调用                                                                         
                                                                                                                         
                                                                                                                         
                                                                                                                         
@@ -16,4 +16,4 @@ expression: "render_snapshot(&overlay, Rect::new(0, 0, 120, 16))"
                                                                                                                         
                                                                                                                         
                                                                                                                         
-  enter to submit | esc to cancel
+  Enter 以提交 | Esc 以取消      

@@ -2,10 +2,10 @@
 source: tui/src/chatwidget/tests/popups_and_settings.rs
 expression: popup
 ---
-  Plugins
-  Loading available plugins...
-  This updates when the marketplace list is ready.
+  插件
+  正在加载可用插件...
+  市场列表准备就绪后会更新此处。
 
-›    Loading plugins...  This updates when the marketplace list is ready.
+›    正在加载插件...  市场列表准备就绪后会更新此处。
 
   Press enter to confirm or esc to go back

@@ -10,13 +10,13 @@ async fn compact_command_activity_groups_successes_and_preserves_full_transcript
     end_exec(&mut chat, first, "first\n", "", /*exit_code*/ 0);
 
     let second = begin_exec(&mut chat, "call-second", "printf second");
-    insta::assert_snapshot!(active_blob(&chat), @r"• Ran 1 command · ctrl + t to view transcript
-• Running printf second
+    insta::assert_snapshot!(active_blob(&chat), @r"• 已运行 1 个命令 · ctrl + t 查看转录记录
+• 正在运行 printf second
 ");
     end_exec(&mut chat, second, "second\n", "", /*exit_code*/ 0);
 
     assert!(drain_insert_history(&mut rx).is_empty());
-    insta::assert_snapshot!(active_blob(&chat), @r"• Ran 2 commands · ctrl + t to view transcript
+    insta::assert_snapshot!(active_blob(&chat), @r"• 已运行 2 个命令 · ctrl + t 查看转录记录
 ");
 
     let transcript = chat
@@ -31,7 +31,7 @@ async fn compact_command_activity_groups_successes_and_preserves_full_transcript
     assert_eq!(cells.len(), 2);
     assert_eq!(
         lines_to_single_string(&cells[0]),
-        "• Ran 2 commands · ctrl + t to view transcript\n"
+        "• 已运行 2 个命令 · ctrl + t 查看转录记录\n"
     );
 }
 
@@ -70,7 +70,7 @@ async fn compact_command_activity_groups_unified_exec_startup_commands() {
     end_exec(&mut chat, second, "second\n", "", /*exit_code*/ 0);
 
     assert!(drain_insert_history(&mut rx).is_empty());
-    insta::assert_snapshot!(active_blob(&chat), @r"• Ran 2 commands · ctrl + t to view transcript
+    insta::assert_snapshot!(active_blob(&chat), @r"• 已运行 2 个命令 · ctrl + t 查看转录记录
 ");
 }
 
@@ -139,7 +139,7 @@ async fn replayed_completion_preserves_unrelated_running_command() {
         assert!(active_blob(&chat).contains(if active_mcp {
             "Calling"
         } else {
-            "Running sleep 5"
+            "正在运行 sleep 5"
         }));
     }
 }
@@ -166,7 +166,7 @@ async fn compact_command_activity_preserves_overlapping_reads_after_success() {
     end_exec(&mut chat, first, "first\n", "", /*exit_code*/ 0);
     end_exec(&mut chat, second, "second\n", "", /*exit_code*/ 0);
     assert!(drain_insert_history(&mut rx).is_empty());
-    assert!(active_blob(&chat).contains("Ran 3 commands"));
+    assert!(active_blob(&chat).contains("已运行 3 个命令"));
 }
 
 #[tokio::test]
@@ -191,8 +191,8 @@ async fn compact_command_activity_keeps_failures_and_manual_shell_commands_visib
     let cells = drain_insert_history(&mut rx);
     assert_eq!(cells.len(), 1);
     let failed_history = lines_to_single_string(&cells[0]);
-    insta::assert_snapshot!(failed_history, @r"• Ran 1 command · ctrl + t to view transcript
-• Ran printf broken
+    insta::assert_snapshot!(failed_history, @r"• 已运行 1 个命令 · ctrl + t 查看转录记录
+• 已运行 printf broken
   └ broken
 ");
 
@@ -206,7 +206,7 @@ async fn compact_command_activity_keeps_failures_and_manual_shell_commands_visib
     let cells = drain_insert_history(&mut rx);
     assert_eq!(cells.len(), 1);
     let manual_history = lines_to_single_string(&cells[0]);
-    assert!(manual_history.contains("You ran printf manual"));
+    assert!(manual_history.contains("你运行了 printf manual"));
 
     for sources in [
         [
@@ -266,9 +266,9 @@ async fn compact_command_activity_keeps_overlapping_commands_active_after_failur
     let cells = drain_insert_history(&mut rx);
     assert_eq!(cells.len(), 1);
     let history = lines_to_single_string(&cells[0]);
-    assert!(history.contains("Ran ls missing"));
-    assert!(history.contains("Ran cat foo.txt"));
-    assert!(history.contains("Ran cat bar.txt"));
+    assert!(history.contains("已运行 ls missing"));
+    assert!(history.contains("已运行 cat foo.txt"));
+    assert!(history.contains("已运行 cat bar.txt"));
 }
 
 #[tokio::test]
@@ -340,7 +340,7 @@ async fn compact_command_activity_groups_replayed_successes_without_hiding_decli
     assert_eq!(cells.len(), 3);
     assert_eq!(
         lines_to_single_string(&cells[0].display_lines(/*width*/ 80)),
-        "• Ran 2 commands · ctrl + t to view transcript\n"
+        "• 已运行 2 个命令 · ctrl + t 查看转录记录\n"
     );
     let transcript = lines_to_single_string(&cells[0].transcript_lines(/*width*/ 80));
     insta::assert_snapshot!(transcript, @r"$ printf first
@@ -353,11 +353,11 @@ second
 ");
     assert!(
         lines_to_single_string(&cells[1].display_lines(/*width*/ 80))
-            .contains("Ran printf failure")
+            .contains("已运行 printf failure")
     );
     assert!(
         lines_to_single_string(&cells[2].display_lines(/*width*/ 80))
-            .contains("Ran printf declined")
+            .contains("已运行 printf declined")
     );
 }
 
@@ -375,7 +375,7 @@ async fn compact_command_activity_bounds_completed_groups_without_flushing_activ
     assert_eq!(cells.len(), 1);
     assert_eq!(
         lines_to_single_string(&cells[0]),
-        "• Ran 32 commands · ctrl + t to view transcript\n"
+        "• 已运行 32 个命令 · ctrl + t 查看转录记录\n"
     );
     assert!(chat.transcript.active_cell.is_none());
 
@@ -390,7 +390,7 @@ async fn compact_command_activity_bounds_completed_groups_without_flushing_activ
 
     let cells = drain_insert_history(&mut rx);
     assert_eq!(cells.len(), 1);
-    assert!(lines_to_single_string(&cells[0]).contains("Ran 33 commands"));
+    assert!(lines_to_single_string(&cells[0]).contains("已运行 33 个命令"));
 }
 
 #[tokio::test]
@@ -413,7 +413,7 @@ async fn compact_command_activity_flushes_before_user_attention() {
     });
     let cells = drain_insert_history(&mut rx);
     assert_eq!(cells.len(), 1);
-    assert!(lines_to_single_string(&cells[0]).contains("Ran 2 commands"));
+    assert!(lines_to_single_string(&cells[0]).contains("已运行 2 个命令"));
 
     let later = begin_exec(&mut chat, "call-after-request", "printf later");
     end_exec(&mut chat, later, "later\n", "", /*exit_code*/ 0);
@@ -421,7 +421,7 @@ async fn compact_command_activity_flushes_before_user_attention() {
     chat.pre_draw_tick();
     let cells = drain_insert_history(&mut rx);
     assert_eq!(cells.len(), 1);
-    assert!(lines_to_single_string(&cells[0]).contains("Ran printf later"));
+    assert!(lines_to_single_string(&cells[0]).contains("已运行 printf later"));
 }
 
 #[tokio::test]
@@ -467,7 +467,7 @@ async fn exec_approval_emits_proposed_command_and_decision_history() {
     let mut cells = drain_insert_history(&mut rx).into_iter();
     assert!(
         lines_to_single_string(&cells.next().expect("completed command"))
-            .contains("Ran printf waiting")
+            .contains("已运行 printf waiting")
     );
     let decision = cells.next().expect("expected decision cell in history");
     assert_chatwidget_snapshot!(
@@ -766,7 +766,7 @@ async fn exec_history_cell_shows_working_then_failed() {
     let lines = &cells[0];
     let blob = lines_to_single_string(lines);
     assert!(
-        blob.contains("• Ran false"),
+        blob.contains("• 已运行 false"),
         "expected command and header text present: {blob:?}"
     );
     assert!(blob.to_lowercase().contains("bloop"), "expected error text");
@@ -807,7 +807,7 @@ async fn exec_end_without_begin_uses_event_command() {
     assert_eq!(cells.len(), 1, "expected finalized exec cell to flush");
     let blob = lines_to_single_string(&cells[0]);
     assert!(
-        blob.contains("• Ran echo orphaned"),
+        blob.contains("• 已运行 echo orphaned"),
         "expected command text to come from event: {blob:?}"
     );
     assert!(
@@ -823,7 +823,7 @@ async fn exec_end_without_begin_does_not_flush_unrelated_running_exploring_cell(
 
     begin_exec(&mut chat, "call-exploring", "cat /dev/null");
     assert!(drain_insert_history(&mut rx).is_empty());
-    assert!(active_blob(&chat).contains("Read null"));
+    assert!(active_blob(&chat).contains("读取 null"));
 
     let orphan =
         begin_unified_exec_startup(&mut chat, "call-orphan", "proc-1", "echo repro-marker");
@@ -841,7 +841,7 @@ async fn exec_end_without_begin_does_not_flush_unrelated_running_exploring_cell(
     assert_eq!(cells.len(), 1, "only the orphan end should be inserted");
     let orphan_blob = lines_to_single_string(&cells[0]);
     assert!(
-        orphan_blob.contains("• Ran echo repro-marker"),
+        orphan_blob.contains("• 已运行 echo repro-marker"),
         "expected orphan end to render a standalone entry: {orphan_blob:?}"
     );
     let active = active_blob(&chat);
@@ -850,7 +850,7 @@ async fn exec_end_without_begin_does_not_flush_unrelated_running_exploring_cell(
         "expected unrelated exploring call to remain active: {active:?}"
     );
     assert!(
-        active.contains("Read null"),
+        active.contains("读取 null"),
         "expected active exploring command to remain visible: {active:?}"
     );
     assert!(
@@ -873,7 +873,7 @@ async fn exec_end_without_begin_groups_completed_agent_and_unified_commands() {
     end_exec(&mut chat, orphan, "after\n", "", /*exit_code*/ 0);
 
     assert!(drain_insert_history(&mut rx).is_empty());
-    insta::assert_snapshot!(active_blob(&chat), @r"• Ran 2 commands · ctrl + t to view transcript
+    insta::assert_snapshot!(active_blob(&chat), @r"• 已运行 2 个命令 · ctrl + t 查看转录记录
 ");
 }
 
@@ -894,11 +894,11 @@ async fn overlapping_exploring_exec_end_is_not_misclassified_as_orphan() {
     );
     let active = active_blob(&chat);
     assert!(
-        active.contains("List ls -la"),
+        active.contains("列出 ls -la"),
         "expected first command still grouped: {active:?}"
     );
     assert!(
-        active.contains("Read foo.txt"),
+        active.contains("读取 foo.txt"),
         "expected second running command to stay in the same active cell: {active:?}"
     );
     assert!(
@@ -939,7 +939,7 @@ async fn exec_history_shows_unified_exec_startup_commands() {
     );
     let blob = active_blob(&chat);
     assert!(
-        blob.contains("• Ran echo unified exec startup"),
+        blob.contains("• 已运行 echo unified exec startup"),
         "expected startup command to render: {blob:?}"
     );
 }
@@ -958,7 +958,7 @@ async fn exec_history_shows_unified_exec_tool_calls() {
     end_exec(&mut chat, begin, "", "", /*exit_code*/ 0);
 
     let blob = active_blob(&chat);
-    assert_eq!(blob, "• Explored\n  └ List ls\n");
+    assert_eq!(blob, "• Explored\n  └ 列出 ls\n");
 }
 
 #[tokio::test]
@@ -1102,7 +1102,7 @@ async fn final_worked_for_uses_cumulative_turn_duration_snapshot() {
         .map(|lines| lines_to_single_string(lines))
         .collect::<String>();
     assert!(
-        combined.contains("Worked for 2m 05s"),
+        combined.contains("工作耗时 2m 05s"),
         "expected final separator to use cumulative turn duration, got:\n{combined}"
     );
     assert_chatwidget_snapshot!("final_worked_for_uses_cumulative_turn_duration", combined);
@@ -1374,7 +1374,7 @@ async fn exec_history_extends_previous_when_consecutive() {
     );
     assert_chatwidget_snapshot!("exploring_step4_finish_cat_foo", active_blob(&chat));
 
-    // 5) Start & complete "sed -n 100,200p foo.txt" (treated as Read of foo.txt)
+    // 5) Start & complete "sed -n 100,200p foo.txt" (treated as 读取 of foo.txt)
     let begin_sed_range = begin_exec(&mut chat, "call-sed-range", "sed -n 100,200p foo.txt");
     end_exec(
         &mut chat,
@@ -1530,7 +1530,7 @@ async fn disabled_slash_command_while_task_running_snapshot() {
     // Drain history and snapshot the rendered error line(s)
     let cells = drain_insert_history(&mut rx);
     assert_eq!(cells.len(), 2);
-    assert!(lines_to_single_string(&cells[0]).contains("Ran printf before"));
+    assert!(lines_to_single_string(&cells[0]).contains("已运行 printf before"));
     let blob = lines_to_single_string(cells.last().unwrap());
     assert_chatwidget_snapshot!("disabled_slash_command_while_task_running_snapshot", blob);
 }

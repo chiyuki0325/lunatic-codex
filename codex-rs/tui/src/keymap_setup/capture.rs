@@ -64,23 +64,23 @@ impl KeymapCaptureView {
     fn lines(&self, width: u16) -> Vec<Line<'static>> {
         let wrap_width = usize::from(width.max(1));
         let mut lines = vec![
-            Line::from("Remap Shortcut".bold()),
+            Line::from("重新映射快捷键".bold()),
             Line::from(vec![
-                "Action: ".dim(),
+                "操作：".dim(),
                 self.label.clone().into(),
                 "  ".into(),
                 format!("{}.{}", self.context, self.action).dim(),
             ]),
-            Line::from(vec!["Current: ".dim(), self.current_binding.clone().cyan()]),
+            Line::from(vec!["当前：".dim(), self.current_binding.clone().cyan()]),
         ];
 
         let instructions = match (self.capture_mode, self.first_stroke.as_deref()) {
-            (KeymapCaptureMode::SingleKey, _) => "Press the new key now. Esc cancels.".to_string(),
+            (KeymapCaptureMode::SingleKey, _) => "现在按下新按键。Esc 取消。".to_string(),
             (KeymapCaptureMode::Chord, None) => {
-                "Press the first key, then the second. Esc cancels.".to_string()
+                "先按下第一个按键，再按下第二个按键。Esc 取消。".to_string()
             }
             (KeymapCaptureMode::Chord, Some(first)) => {
-                format!("First key: {first}. Press the second key. Esc cancels.")
+                format!("第一个按键：{first}。按下第二个按键。Esc 取消。")
             }
         };
         lines.extend(
@@ -92,8 +92,8 @@ impl KeymapCaptureView {
         if let Some(error) = &self.error_message {
             lines.push(Line::from(""));
             let options = textwrap::Options::new(wrap_width)
-                .initial_indent("Error: ")
-                .subsequent_indent("       ");
+                .initial_indent("错误：")
+                .subsequent_indent("      ");
             lines.extend(
                 textwrap::wrap(error, options)
                     .into_iter()

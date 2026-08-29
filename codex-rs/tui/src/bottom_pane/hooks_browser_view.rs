@@ -296,10 +296,8 @@ impl HooksBrowserView {
 
     fn event_header_lines() -> Vec<Line<'static>> {
         vec![
-            "Hooks".bold().into(),
-            "Lifecycle hooks from config and enabled plugins."
-                .dim()
-                .into(),
+            "Hook".bold().into(),
+            "来自配置和已启用插件的生命周期 Hook。".dim().into(),
         ]
     }
 
@@ -316,13 +314,9 @@ impl HooksBrowserView {
         event_name: HookEventName,
         review_needed_count: usize,
     ) -> Vec<Line<'static>> {
-        let mut lines = vec![format!("{} hooks", event_label(event_name)).bold().into()];
+        let mut lines = vec![format!("{} 个 Hook", event_label(event_name)).bold().into()];
         match review_needed_message(review_needed_count) {
-            None => lines.push(
-                "Turn hooks on or off. Your changes are saved automatically."
-                    .dim()
-                    .into(),
-            ),
+            None => lines.push("启用或禁用 Hook。更改会自动保存。".dim().into()),
             Some(message) => lines.push(message.yellow().into()),
         }
         lines
@@ -339,15 +333,19 @@ impl HooksBrowserView {
         let rows = self.event_rows();
         let show_review = rows.iter().any(|row| row.needs_review > 0);
         let mut lines = Vec::new();
+        let header_label = |label: &str, width: usize| {
+            let padding = width.saturating_sub(UnicodeWidthStr::width(label));
+            format!("{label}{}", " ".repeat(padding))
+        };
         let mut header = vec![
-            format!("{:<EVENT_COLUMN_WIDTH$}", "Event").into(),
-            format!("{:<COUNT_COLUMN_WIDTH$}", "Installed").into(),
-            format!("{:<COUNT_COLUMN_WIDTH$}", "Active").into(),
+            header_label("事件", EVENT_COLUMN_WIDTH).into(),
+            header_label("已安装", COUNT_COLUMN_WIDTH).into(),
+            header_label("已启用", COUNT_COLUMN_WIDTH).into(),
         ];
         if show_review {
-            header.push(format!("{:<COUNT_COLUMN_WIDTH$}", "Review").into());
+            header.push(header_label("待审核", COUNT_COLUMN_WIDTH).into());
         }
-        header.push("Description".into());
+        header.push("说明".into());
         lines.push(Line::from(header));
         for (idx, row) in rows.into_iter().enumerate() {
             let selected = self.state.selected_idx == Some(idx);
@@ -395,7 +393,7 @@ impl HooksBrowserView {
             return lines;
         }
 
-        lines.push("Issues".bold().into());
+        lines.push("问题".bold().into());
         lines.extend(
             self.entry
                 .warnings
@@ -444,9 +442,9 @@ impl HooksBrowserView {
                 };
                 let row = match hook.trust_status {
                     HookTrustStatus::Modified => {
-                        format!("[{marker}] {} · modified", hook_title(idx))
+                        format!("[{marker}] {} · 已修改", hook_title(idx))
                     }
-                    HookTrustStatus::Untrusted => format!("[{marker}] {} · new", hook_title(idx)),
+                    HookTrustStatus::Untrusted => format!("[{marker}] {} · 新增", hook_title(idx)),
                     HookTrustStatus::Managed | HookTrustStatus::Trusted => {
                         format!("[{marker}] {}", hook_title(idx))
                     }
@@ -472,17 +470,20 @@ impl HooksBrowserView {
 
     fn detail_lines(&self, event_name: HookEventName, width: usize) -> Vec<Line<'static>> {
         let Some(hook) = self.selected_hook(event_name) else {
-            return vec!["No hooks installed for this event.".dim().into()];
+            return vec!["此事件未安装 Hook。".dim().into()];
         };
 
-        let mut lines = vec![detail_line("Event", event_label(event_name))];
+        let mut lines = vec![detail_line("事件", event_label(event_name))];
         if let Some(matcher) = hook.matcher.as_deref() {
             lines.extend(detail_wrapped_lines(
-                "Matcher", matcher, width, /*max_lines*/ None,
+                "匹配器",
+                matcher,
+                width,
+                /*max_lines*/ None,
             ));
         }
         lines.extend(detail_wrapped_lines(
-            "Source",
+            "来源",
             &detail_source_value(hook),
             width,
             /*max_lines*/ None,
@@ -490,41 +491,44 @@ impl HooksBrowserView {
         match &hook.handler {
             HookHandlerMetadata::Command { command, r#async } => {
                 lines.extend(detail_wrapped_lines(
-                    "Command",
+                    "命令",
                     command,
                     width,
                     Some(MAX_COMMAND_DETAIL_LINES),
                 ));
-                lines.push(detail_line("Mode", if *r#async { "Async" } else { "Sync" }));
+                lines.push(detail_line("模式", if *r#async { "异步" } else { "同步" }));
             }
             HookHandlerMetadata::McpTool { server, tool } => {
                 lines.extend(detail_wrapped_lines(
-                    "MCP Server",
+                    "MCP 服务器",
                     server,
                     width,
                     /*max_lines*/ None,
                 ));
                 lines.extend(detail_wrapped_lines(
-                    "MCP Tool", tool, width, /*max_lines*/ None,
+                    "MCP 工具",
+                    tool,
+                    width,
+                    /*max_lines*/ None,
                 ));
             }
             HookHandlerMetadata::Prompt {} => {
-                lines.push(detail_line("Handler", "Prompt"));
+                lines.push(detail_line("处理器", "提示"));
             }
             HookHandlerMetadata::Agent {} => {
-                lines.push(detail_line("Handler", "Agent"));
+                lines.push(detail_line("处理器", "agent"));
             }
         }
-        lines.push(detail_line("Timeout", &format!("{}s", hook.timeout_sec)));
+        lines.push(detail_line("超时", &format!("{} 秒", hook.timeout_sec)));
         if let Some(limit) = hook.additional_context_limit {
             let value = if limit == 0 {
-                "unlimited".to_string()
+                "不限".to_string()
             } else {
-                format!("limit: {limit} approximate tokens")
+                format!("上限：约 {limit} Token")
             };
-            lines.push(detail_line("Context", &value));
+            lines.push(detail_line("上下文", &value));
         }
-        lines.push(detail_line("Trust", hook_trust_label(hook.trust_status)));
+        lines.push(detail_line("信任", hook_trust_label(hook.trust_status)));
         lines
     }
 
@@ -543,49 +547,49 @@ impl HooksBrowserView {
         let footer = match self.page {
             HooksBrowserPage::Events if self.review_needed_total_count() > 0 => {
                 let mut spans = vec![
-                    "Press ".into(),
-                    key_hint::plain(KeyCode::Char('t')).into(),
-                    " to trust all; ".into(),
+                    "按下 ".into(),
+                    key_hint::plain(KeyCode::Char('T')).into(),
+                    " 以全部信任；".into(),
                 ];
                 if let Some(accept) = accept {
-                    spans.extend([accept.into(), " to review hooks; ".into()]);
+                    spans.extend([accept.into(), " 以查看 Hook；".into()]);
                 }
-                spans.extend([cancel.into(), " to close".into()]);
+                spans.extend([cancel.into(), " 以关闭".into()]);
                 Line::from(spans)
             }
             HooksBrowserPage::Events => {
-                let mut spans = vec!["Press ".into()];
+                let mut spans = vec!["按下 ".into()];
                 if let Some(accept) = accept {
-                    spans.extend([accept.into(), " to view hooks; ".into()]);
+                    spans.extend([accept.into(), " 以查看 Hook；".into()]);
                 }
-                spans.extend([cancel.into(), " to close".into()]);
+                spans.extend([cancel.into(), " 以关闭".into()]);
                 Line::from(spans)
             }
             HooksBrowserPage::Handlers(event_name) => {
                 let selected_hook = self.selected_hook(event_name);
                 if selected_hook.is_none() {
-                    Line::from(vec!["Press ".into(), cancel.into(), " to go back".into()])
+                    Line::from(vec!["按下 ".into(), cancel.into(), " 以返回".into()])
                 } else if selected_hook.is_some_and(|hook| hook.is_managed) {
                     Line::from(vec![
-                        "Managed hooks are always on; press ".into(),
+                        "受管 Hook 始终启用；按下 ".into(),
                         cancel.into(),
-                        " to go back".into(),
+                        " 以返回".into(),
                     ])
                 } else if selected_hook.is_some_and(hook_needs_review) {
                     Line::from(vec![
-                        "Press ".into(),
-                        key_hint::plain(KeyCode::Char('t')).into(),
-                        " to trust; ".into(),
+                        "按下 ".into(),
+                        key_hint::plain(KeyCode::Char('T')).into(),
+                        " 以信任；".into(),
                         cancel.into(),
-                        " to go back".into(),
+                        " 以返回".into(),
                     ])
                 } else {
                     let mut spans =
-                        vec!["Press ".into(), key_hint::plain(KeyCode::Char(' ')).into()];
+                        vec!["按下 ".into(), key_hint::plain(KeyCode::Char(' ')).into()];
                     if let Some(accept) = accept {
-                        spans.extend([" or ".into(), accept.into()]);
+                        spans.extend([" 或 ".into(), accept.into()]);
                     }
-                    spans.extend([" to toggle; ".into(), cancel.into(), " to go back".into()]);
+                    spans.extend([" 以切换；".into(), cancel.into(), " 以返回".into()]);
                     Line::from(spans)
                 }
             }
@@ -698,9 +702,7 @@ impl Renderable for HooksBrowserView {
                 let rows = self.handler_row_lines(event_name, width);
                 if rows.is_empty() {
                     lines.push(Line::default());
-                    lines.push(Line::from(
-                        "No hooks installed for this event.".dim().italic(),
-                    ));
+                    lines.push(Line::from("此事件未安装 Hook。".dim().italic()));
                     lines.push(Line::default());
                     Paragraph::new(lines).render(content_area, buf);
                     self.render_footer(footer_area, buf);
@@ -745,8 +747,8 @@ fn hook_is_active(hook: &HookMetadata) -> bool {
 fn review_needed_message(count: usize) -> Option<String> {
     match count {
         0 => None,
-        1 => Some("1 hook needs review before it can run.".to_string()),
-        count => Some(format!("{count} hooks need review before they can run.")),
+        1 => Some("1 个 Hook 需要审核后才能运行。".to_string()),
+        count => Some(format!("{count} 个 Hook 需要审核后才能运行。")),
     }
 }
 
@@ -759,10 +761,10 @@ struct EventRow {
 
 fn hook_trust_label(status: HookTrustStatus) -> &'static str {
     match status {
-        HookTrustStatus::Managed => "Managed",
-        HookTrustStatus::Trusted => "Trusted",
-        HookTrustStatus::Untrusted => "New hook - review required",
-        HookTrustStatus::Modified => "Modified since last trusted - review required",
+        HookTrustStatus::Managed => "受管理",
+        HookTrustStatus::Trusted => "已信任",
+        HookTrustStatus::Untrusted => "新 Hook - 需要审核",
+        HookTrustStatus::Modified => "自上次信任后已修改 - 需要审核",
     }
 }
 
@@ -784,22 +786,22 @@ fn event_label(event_name: HookEventName) -> &'static str {
 
 fn event_description(event_name: HookEventName) -> &'static str {
     match event_name {
-        HookEventName::PreToolUse => "Before a tool executes",
-        HookEventName::PermissionRequest => "When permission is requested",
-        HookEventName::PostToolUse => "After a tool executes",
-        HookEventName::PreCompact => "Before context compaction",
-        HookEventName::PostCompact => "After context compaction",
-        HookEventName::SessionStart => "When a new session starts",
-        HookEventName::SessionEnd => "Right before a session ends",
-        HookEventName::UserPromptSubmit => "When the user submits a prompt",
-        HookEventName::SubagentStart => "When a subagent is created",
-        HookEventName::SubagentStop => "Right before a subagent ends its turn",
-        HookEventName::Stop => "Right before Codex ends its turn",
+        HookEventName::PreToolUse => "工具执行前",
+        HookEventName::PermissionRequest => "请求权限时",
+        HookEventName::PostToolUse => "工具执行后",
+        HookEventName::PreCompact => "压缩上下文前",
+        HookEventName::PostCompact => "压缩上下文后",
+        HookEventName::SessionStart => "新会话开始时",
+        HookEventName::SessionEnd => "会话结束前",
+        HookEventName::UserPromptSubmit => "用户提交提示时",
+        HookEventName::SubagentStart => "创建 subagent 时",
+        HookEventName::SubagentStop => "subagent 结束轮次前",
+        HookEventName::Stop => "Codex 结束轮次前",
     }
 }
 
 fn hook_title(idx: usize) -> String {
-    format!("Hook {}", idx + 1)
+    format!("第 {} 个 Hook", idx + 1)
 }
 
 fn hook_source_summary(hook: &HookMetadata) -> String {
@@ -807,8 +809,8 @@ fn hook_source_summary(hook: &HookMetadata) -> String {
         HookSource::Plugin => hook
             .plugin_id
             .as_deref()
-            .map(|plugin_id| format!("Plugin - {plugin_id}"))
-            .unwrap_or_else(|| "Plugin".to_string()),
+            .map(|plugin_id| format!("插件 - {plugin_id}"))
+            .unwrap_or_else(|| "插件".to_string()),
         _ => config_source_label(hook.source).to_string(),
     }
 }
@@ -832,22 +834,26 @@ fn detail_source_value(hook: &HookMetadata) -> String {
 
 fn config_source_label(source: HookSource) -> &'static str {
     match source {
-        HookSource::System => "Admin config",
-        HookSource::User => "User config",
-        HookSource::Project => "Project config",
-        HookSource::Mdm => "Admin config",
-        HookSource::SessionFlags => "Session flags",
+        HookSource::System => "管理员配置",
+        HookSource::User => "用户配置",
+        HookSource::Project => "项目配置",
+        HookSource::Mdm => "管理员配置",
+        HookSource::SessionFlags => "会话标记",
         HookSource::Plugin => unreachable!("plugin hooks are handled by summary_source"),
-        HookSource::CloudRequirements => "Admin config",
-        HookSource::CloudManagedConfig => "Cloud-managed config",
-        HookSource::LegacyManagedConfigFile => "Admin config",
-        HookSource::LegacyManagedConfigMdm => "Admin config",
-        HookSource::Unknown => "Unknown source",
+        HookSource::CloudRequirements => "管理员配置",
+        HookSource::CloudManagedConfig => "云端管理配置",
+        HookSource::LegacyManagedConfigFile => "管理员配置",
+        HookSource::LegacyManagedConfigMdm => "管理员配置",
+        HookSource::Unknown => "未知来源",
     }
 }
 
 fn detail_line(label: &str, value: &str) -> Line<'static> {
-    Line::from(vec![format!("{label:<10}").into(), value.to_string().dim()])
+    let padding = 10usize.saturating_sub(UnicodeWidthStr::width(label));
+    Line::from(vec![
+        format!("{label}{}", " ".repeat(padding)).into(),
+        value.to_string().dim(),
+    ])
 }
 
 fn detail_wrapped_lines(
@@ -1043,7 +1049,7 @@ mod tests {
         let mut view = view();
         assert_snapshot!("hooks_browser_events", render_lines(&view, /*width*/ 112));
         view.keymap.accept.clear();
-        assert!(!render_lines(&view, /*width*/ 112).contains("enter to view hooks"));
+        assert!(!render_lines(&view, /*width*/ 112).contains("Enter 以查看 Hook"));
     }
 
     #[test]

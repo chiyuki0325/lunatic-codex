@@ -46,10 +46,10 @@ enum ActionMenuOption {
 impl ActionMenuOption {
     fn label(self) -> &'static str {
         match self {
-            Self::Proceed => "Import selected",
-            Self::Customize => "Customize selection",
-            Self::Skip => "Cancel",
-            Self::Back => "Review selection",
+            Self::Proceed => "导入所选项",
+            Self::Customize => "自定义选择",
+            Self::Skip => "取消",
+            Self::Back => "查看选择",
         }
     }
 }
@@ -202,7 +202,7 @@ impl ExternalAgentConfigMigrationScreen {
         let description = item
             .description
             .strip_prefix("Migrate ")
-            .map_or_else(|| item.description.clone(), |rest| format!("Import {rest}"));
+            .map_or_else(|| item.description.clone(), |rest| format!("导入 {rest}"));
         let Some(cwd) = item.cwd.as_deref() else {
             return description;
         };
@@ -211,35 +211,42 @@ impl ExternalAgentConfigMigrationScreen {
             description: &str,
             prefix: &str,
             separator: &str,
+            displayed_separator: &str,
             cwd: &std::path::Path,
         ) -> Option<String> {
             let remainder = description.strip_prefix(prefix)?;
             let (left, right) = remainder.split_once(separator)?;
             Some(format!(
-                "{prefix}{}{}{}",
+                "{prefix}{}{displayed_separator}{}",
                 display_path_for(std::path::Path::new(left), cwd),
-                separator,
                 display_path_for(std::path::Path::new(right), cwd)
             ))
         }
 
-        if let Some(reformatted) = reformat_description(&description, "Import ", " into ", cwd) {
-            return reformatted;
-        }
-
         if let Some(reformatted) =
-            reformat_description(&description, "Import skills from ", " to ", cwd)
+            reformat_description(&description, "导入 ", " into ", " 至 ", cwd)
         {
             return reformatted;
         }
 
-        if let Some(reformatted) = reformat_description(&description, "Import ", " to ", cwd) {
+        if let Some(reformatted) = reformat_description(
+            &description,
+            "导入 skills from ",
+            " to ",
+            " 导入 Skill 至 ",
+            cwd,
+        ) {
             return reformatted;
         }
 
-        if let Some(source) = description.strip_prefix("Import enabled plugins from ") {
+        if let Some(reformatted) = reformat_description(&description, "导入 ", " to ", " 至 ", cwd)
+        {
+            return reformatted;
+        }
+
+        if let Some(source) = description.strip_prefix("导入 enabled plugins from ") {
             let description = format!(
-                "Import enabled plugins from {}",
+                "从 {} 导入已启用插件",
                 display_path_for(std::path::Path::new(source), cwd)
             );
             if let Some(details) = &item.details {
@@ -250,17 +257,7 @@ impl ExternalAgentConfigMigrationScreen {
                     .map(|plugin_group| plugin_group.plugin_names.len())
                     .sum::<usize>();
                 return format!(
-                    "{description} ({marketplace_count} {}, {plugin_count} {})",
-                    if marketplace_count == 1 {
-                        "marketplace"
-                    } else {
-                        "marketplaces"
-                    },
-                    if plugin_count == 1 {
-                        "plugin"
-                    } else {
-                        "plugins"
-                    }
+                    "{description}（{marketplace_count} 个市场，{plugin_count} 个插件）"
                 );
             }
             return description;
@@ -318,7 +315,7 @@ impl ExternalAgentConfigMigrationScreen {
                     .len()
                     .saturating_sub(plugin_names.len());
                 if hidden_plugin_count > 0 {
-                    plugin_names.push(format!("+{hidden_plugin_count} more"));
+                    plugin_names.push(format!("另有 {hidden_plugin_count} 项"));
                 }
                 Line::from(format!(
                     "      • {}: {}",
@@ -330,7 +327,7 @@ impl ExternalAgentConfigMigrationScreen {
         let hidden_marketplace_count = plugin_groups.len().saturating_sub(lines.len());
         if hidden_marketplace_count > 0 {
             lines.push(Line::from(format!(
-                "      • +{hidden_marketplace_count} more marketplaces"
+                "      • 另有 {hidden_marketplace_count} 个市场"
             )));
         }
         lines
@@ -589,11 +586,8 @@ impl ExternalAgentConfigMigrationScreen {
 
     fn section_title(cwd: Option<&std::path::Path>) -> Line<'static> {
         match cwd {
-            Some(cwd) => Line::from(vec![
-                "Current project: ".bold(),
-                cwd.display().to_string().dim(),
-            ]),
-            None => Line::from("Home".bold()),
+            Some(cwd) => Line::from(vec!["当前项目：".bold(), cwd.display().to_string().dim()]),
+            None => Line::from("主目录".bold()),
         }
     }
 

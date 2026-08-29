@@ -2,30 +2,30 @@
 source: tui/src/app/transcript_export_tests.rs
 expression: "render_markdown_transcript(&cells).expect(\"exported transcript\")"
 ---
-# Codex conversation
+# Codex 对话
 
-## User
+## 用户
 
 Explain **the change**
 
-## Assistant
+## 助手
 
 ```rust
 let answer = 42;
 ```
 
-## Plan
+## 计划
 
 completed plan
 
-## Activity
+## 活动
 
     $ cargo test
 
-## User
+## 用户
 
 [Image #1]
 
-## User
+## 用户
 
 [Image #1] describe this

@@ -10,7 +10,7 @@ expression: sanitized
 │ Visit                                      │
 │ https://chatgpt.com/codex/settings/usage   │
 │ for up-to-date                             │
-│ information on rate limits and credits     │
+│ 用量限制和额度信息                         │
 │                                            │
 │  Model:                  gpt-5.1-codex-max │
 │  Directory: [[workspace]]                  │

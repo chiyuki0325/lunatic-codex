@@ -6,19 +6,18 @@ use crate::bottom_pane::SelectionItem;
 use crate::bottom_pane::SelectionViewParams;
 use crate::bottom_pane::popup_consts::standard_popup_hint_line;
 
-pub(super) const PLAN_IMPLEMENTATION_TITLE: &str = "Implement this plan?";
-const PLAN_IMPLEMENTATION_YES: &str = "Yes, implement this plan";
-const PLAN_IMPLEMENTATION_CLEAR_CONTEXT: &str = "Yes, clear context and implement";
-const PLAN_IMPLEMENTATION_NO: &str = "No, stay in Plan mode";
-pub(super) const PLAN_IMPLEMENTATION_CODING_MESSAGE: &str = "Implement the plan.";
+pub(super) const PLAN_IMPLEMENTATION_TITLE: &str = "执行此计划吗？";
+const PLAN_IMPLEMENTATION_YES: &str = "是，执行此计划";
+const PLAN_IMPLEMENTATION_CLEAR_CONTEXT: &str = "是，清除上下文后执行";
+const PLAN_IMPLEMENTATION_NO: &str = "否，留在计划模式";
+pub(super) const PLAN_IMPLEMENTATION_CODING_MESSAGE: &str = "执行计划。";
 pub(super) const PLAN_IMPLEMENTATION_CLEAR_CONTEXT_PREFIX: &str = concat!(
-    "A previous agent produced the plan below to accomplish the user's task. ",
-    "Implement the plan in a fresh context. Treat the plan as the source of ",
-    "user intent, re-read files as needed, and carry the work through ",
-    "implementation and verification."
+    "此前的 agent 已生成下方计划以完成用户任务。",
+    "请在全新上下文中执行该计划，将其视为用户意图的来源，",
+    "按需重新阅读文件，并完成实现与验证。"
 );
-pub(super) const PLAN_IMPLEMENTATION_DEFAULT_UNAVAILABLE: &str = "Default mode unavailable";
-pub(super) const PLAN_IMPLEMENTATION_NO_APPROVED_PLAN: &str = "No approved plan available";
+pub(super) const PLAN_IMPLEMENTATION_DEFAULT_UNAVAILABLE: &str = "默认模式不可用";
+pub(super) const PLAN_IMPLEMENTATION_NO_APPROVED_PLAN: &str = "没有已批准的计划";
 
 /// Builds the confirmation prompt shown after a plan is approved in Plan mode.
 ///
@@ -70,8 +69,8 @@ pub(super) fn selection_view_params(
     };
 
     let clear_context_description = clear_context_usage_label.map_or_else(
-        || "Fresh thread with this plan.".to_string(),
-        |label| format!("Fresh thread. Context: {label}."),
+        || "使用此计划创建新对话。".to_string(),
+        |label| format!("新对话。上下文：{label}。"),
     );
 
     SelectionViewParams {
@@ -81,7 +80,7 @@ pub(super) fn selection_view_params(
         items: vec![
             SelectionItem {
                 name: PLAN_IMPLEMENTATION_YES.to_string(),
-                description: Some("Switch to Default and start coding.".to_string()),
+                description: Some("切换到默认模式并开始编码。".to_string()),
                 selected_description: None,
                 is_current: false,
                 actions: implement_actions,
@@ -101,7 +100,7 @@ pub(super) fn selection_view_params(
             },
             SelectionItem {
                 name: PLAN_IMPLEMENTATION_NO.to_string(),
-                description: Some("Continue planning with the model.".to_string()),
+                description: Some("继续与模型规划。".to_string()),
                 selected_description: None,
                 is_current: false,
                 actions: Vec::new(),

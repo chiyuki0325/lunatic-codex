@@ -3,17 +3,17 @@ source: tui/src/bottom_pane/hooks_browser_view.rs
 expression: "render_lines(&view, 112)"
 ---
                                                                                                                 
-  PreToolUse hooks                                                                                              
-  Turn hooks on or off. Your changes are saved automatically.                                                   
+  PreToolUse 个  Hook                                                                                            
+  启 用 或 禁 用  Hook。 更 改 会 自 动 保 存 。                                                                              
                                                                                                                 
-  [x] Hook 1                                                                                                    
+  [x] 第  1 个  Hook                                                                                              
                                                                                                                 
-  Event     PreToolUse                                                                                          
-  Matcher   Bash                                                                                                
-  Source    Plugin - security-tools@openai-curated                                                              
-  MCP Server scanner                                                                                            
-  MCP Tool  scan_file                                                                                           
-  Timeout   30s                                                                                                 
-  Trust     Trusted                                                                                             
+  事 件       PreToolUse                                                                                        
+  匹 配 器      Bash                                                                                             
+  来 源       插 件  - security-tools@openai-curated                                                              
+  MCP 服 务 器  scanner                                                                                          
+  MCP 工 具   scan_file                                                                                         
+  超 时       30 秒                                                                                              
+  信 任       已 信 任                                                                                             
                                                                                                                 
-  Press space or enter to toggle; esc to go back
+  按 下  Space 或  Enter 以 切 换 ； Esc 以 返 回                                                                         

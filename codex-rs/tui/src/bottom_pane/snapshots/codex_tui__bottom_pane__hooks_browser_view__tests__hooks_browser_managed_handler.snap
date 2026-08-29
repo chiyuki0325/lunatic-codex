@@ -3,17 +3,17 @@ source: tui/src/bottom_pane/hooks_browser_view.rs
 expression: "render_lines(&view, 112)"
 ---
                                                                                                                 
-  PermissionRequest hooks                                                                                       
-  Turn hooks on or off. Your changes are saved automatically.                                                   
+  PermissionRequest 个  Hook                                                                                     
+  启 用 或 禁 用  Hook。 更 改 会 自 动 保 存 。                                                                              
                                                                                                                 
-  [x] Hook 1                                                                                                    
+  [x] 第  1 个  Hook                                                                                              
                                                                                                                 
-  Event     PermissionRequest                                                                                   
-  Matcher   Bash                                                                                                
-  Source    Admin config                                                                                        
-  Command   /enterprise/hooks/permission-check.sh                                                               
-  Mode      Sync                                                                                                
-  Timeout   30s                                                                                                 
-  Trust     Managed                                                                                             
+  事 件       PermissionRequest                                                                                 
+  匹 配 器      Bash                                                                                             
+  来 源       管 理 员 配 置                                                                                         
+  命 令       /enterprise/hooks/permission-check.sh                                                             
+  模 式       同 步                                                                                               
+  超 时       30 秒                                                                                              
+  信 任       受 管 理                                                                                             
                                                                                                                 
-  Managed hooks are always on; press esc to go back
+  受 管  Hook 始 终 启 用 ； 按 下  Esc 以 返 回                                                                            

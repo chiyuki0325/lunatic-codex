@@ -93,7 +93,7 @@ async fn status_command_uses_catalog_default_reasoning_when_config_empty() {
         other => panic!("expected status output, got {other:?}"),
     };
     assert!(
-        rendered.contains("gpt-5.4 (reasoning medium, summaries auto)"),
+        rendered.contains("gpt-5.4 (推理 medium, 摘要 auto)"),
         "expected /status to render the catalog default reasoning effort, got: {rendered}"
     );
 }
@@ -130,7 +130,7 @@ async fn status_command_renders_native_and_foreign_instruction_sources() {
         "expected /status to show native-relative and environment-native foreign paths, got: {rendered}"
     );
     assert!(
-        !rendered.contains("Agents.md  <none>"),
+        !rendered.contains("Agents.md  <无>"),
         "expected /status to avoid stale <none> when app-server provided instruction sources, got: {rendered}"
     );
 }

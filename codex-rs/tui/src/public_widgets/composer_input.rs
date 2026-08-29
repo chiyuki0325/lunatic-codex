@@ -42,7 +42,7 @@ impl ComposerInput {
             /*has_input_focus*/ true,
             sender,
             /*enhanced_keys_supported*/ true,
-            "Compose new task".to_string(),
+            "输入新任务".to_string(),
             /*disable_paste_burst*/ false,
         );
         Self { inner, _tx: tx, rx }

@@ -3,9 +3,9 @@ source: tui/src/chatwidget/tests.rs
 expression: snapshot
 ---
 History:
-• Ran echo repro-marker
+• 已运行 echo repro-marker
   └ repro-marker
 
 Active:
 • Exploring
-  └ Read null
+  └ 读取 null

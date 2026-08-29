@@ -447,12 +447,12 @@ fn handle_startup_draft_key(bottom_pane: &mut BottomPane, key: KeyEvent) -> io::
 fn startup_session_header(config: Option<&Config>) -> Box<dyn HistoryCell> {
     let placeholder_style = Style::default().add_modifier(Modifier::DIM | Modifier::ITALIC);
     let directory = config.map_or_else(
-        || PathBuf::from("loading"),
+        || PathBuf::from("加载中"),
         |config| config.cwd.to_path_buf(),
     );
     Box::new(
         history_cell::SessionHeaderHistoryCell::new_with_style(
-            "loading".to_string(),
+            "加载中".to_string(),
             placeholder_style,
             /*reasoning_effort*/ None,
             /*show_fast_status*/ false,
@@ -472,8 +472,8 @@ fn startup_draft_renderable<'a>(
     renderable.push(/*flex*/ 1, RenderableItem::Borrowed(header));
     let loading_message = match session_action {
         StartupDraftSessionAction::New => None,
-        StartupDraftSessionAction::Resume => Some("  Resuming session…"),
-        StartupDraftSessionAction::Fork => Some("  Forking session…"),
+        StartupDraftSessionAction::Resume => Some("  正在恢复会话…"),
+        StartupDraftSessionAction::Fork => Some("  正在派生会话…"),
     };
     if let Some(loading_message) = loading_message {
         renderable.push(

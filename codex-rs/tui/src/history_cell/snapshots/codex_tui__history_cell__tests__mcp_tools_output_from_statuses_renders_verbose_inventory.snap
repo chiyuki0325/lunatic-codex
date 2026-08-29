@@ -4,10 +4,10 @@ expression: rendered
 ---
 /mcp
 
-🔌  MCP Tools
+🔌  MCP 工具
 
   • plugin_docs
-    • Auth: Unsupported
-    • Tools: lookup
-    • Resources: Docs (file:///docs)
-    • Resource templates: Doc Template (file:///docs/{id})
+    • 认证：不支持
+    • 工具：lookup
+    • 资源：Docs (file:///docs)
+    • 资源模板：Doc Template (file:///docs/{id})

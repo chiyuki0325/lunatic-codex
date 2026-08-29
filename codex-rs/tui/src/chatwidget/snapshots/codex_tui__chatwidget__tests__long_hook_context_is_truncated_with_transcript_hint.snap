@@ -5,6 +5,6 @@ expression: history
 • SessionStart hook (stopped)
   hook context: This hook context is intentionally long enough to wrap across
     several terminal rows while keeping the complete value available in the
-    … +2 lines (ctrl + t to view transcript)
+    … 另有 2 行（ctrl + t 查看转录记录）
   stop: The hook stopped this turn for an important reason.
     This second line must remain visible in full.

@@ -52,7 +52,7 @@ impl PickerState {
             return;
         };
         let Some(thread_id) = row.thread_id else {
-            self.inline_error = Some(String::from("Selected session does not have a thread ID."));
+            self.inline_error = Some(String::from("所选会话没有对话 ID。"));
             self.request_frame();
             return;
         };
@@ -63,9 +63,7 @@ impl PickerState {
                 current_thread_id: Some(current_thread_id)
             } if current_thread_id == thread_id
         ) {
-            self.inline_error = Some(String::from(
-                "Use /archive to archive the current session and exit.",
-            ));
+            self.inline_error = Some(String::from("请使用 /archive 归档当前会话并退出。"));
             self.request_frame();
             return;
         }
@@ -86,7 +84,7 @@ impl PickerState {
         self.archive_state = ArchiveState::Idle;
 
         if let Err(error) = result {
-            self.inline_error = Some(format!("Failed to archive session: {error}"));
+            self.inline_error = Some(format!("归档会话失败：{error}"));
             self.request_frame();
             return;
         }
@@ -159,7 +157,7 @@ impl PickerState {
         match result {
             Ok(target) => Some(SessionSelection::Resume(target)),
             Err(error) => {
-                self.inline_error = Some(format!("Failed to restore archived session: {error}"));
+                self.inline_error = Some(format!("恢复已归档会话失败：{error}"));
                 self.request_frame();
                 None
             }

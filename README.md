@@ -16,7 +16,7 @@
 
 以下为特性列表，`[ ]` 为在此版本未集成的特性，`[x]` 为已集成的特性。分支位于 `lunatic/feature-id`。集成完毕后更新状态。
 
-- [ ] 界面全部中文化（`chinese-translation`）
+- [x] 界面全部中文化（`chinese-translation`）
 - [ ] 输入框、工作中分行、更新屏蔽等界面定制和改善（`ui-customization`）
 - [ ] /ps /model 等命令改为即时查看、异步提交（`async-commands`）
 - [ ] /context 上下文窗口占用查看（`cc-context`）

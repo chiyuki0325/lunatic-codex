@@ -118,10 +118,7 @@ impl Renderable for RequestUserInputOverlay {
 impl RequestUserInputOverlay {
     fn unanswered_confirmation_data(&self) -> UnansweredConfirmationData {
         let unanswered = self.unanswered_question_count();
-        let subtitle = format!(
-            "{unanswered} unanswered question{}",
-            if unanswered == 1 { "" } else { "s" }
-        );
+        let subtitle = format!("还有 {unanswered} 个问题未回答");
         UnansweredConfirmationData {
             title_line: Line::from(super::UNANSWERED_CONFIRM_TITLE.bold()),
             subtitle_line: Line::from(subtitle.dim()),
@@ -222,7 +219,7 @@ impl RequestUserInputOverlay {
             &layout.rows,
             &layout.state,
             layout.rows.len().max(1),
-            "No choices",
+            "没有可选项",
         );
 
         cursor_y = cursor_y.saturating_add(rows_height);
@@ -319,7 +316,7 @@ impl RequestUserInputOverlay {
                     &option_rows,
                     &options_state,
                     option_rows.len().max(1),
-                    "No options",
+                    "没有选项",
                 );
             }
         }
@@ -347,7 +344,7 @@ impl RequestUserInputOverlay {
         let option_tip = if options_hidden {
             let selected = self.selected_option_index().unwrap_or(0).saturating_add(1);
             let total = self.options_len();
-            Some(super::FooterTip::new(format!("option {selected}/{total}")))
+            Some(super::FooterTip::new(format!("选项 {selected}/{total}")))
         } else {
             None
         };

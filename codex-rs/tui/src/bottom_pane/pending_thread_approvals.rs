@@ -45,7 +45,7 @@ impl PendingThreadApprovals {
         let mut lines = Vec::new();
         for thread in self.threads.iter().take(3) {
             let wrapped = adaptive_wrap_lines(
-                std::iter::once(Line::from(format!("Approval needed in {thread}"))),
+                std::iter::once(Line::from(format!("{thread} 中有待批准请求"))),
                 RtOptions::new(width as usize)
                     .initial_indent(Line::from(vec!["  ".into(), "!".red().bold(), " ".into()]))
                     .subsequent_indent(Line::from("    ")),
@@ -61,7 +61,7 @@ impl PendingThreadApprovals {
             Line::from(vec![
                 "    ".into(),
                 "/subagents".cyan().bold(),
-                " to switch threads".dim(),
+                " 切换线程".dim(),
             ])
             .dim(),
         );
@@ -119,8 +119,8 @@ mod tests {
         assert_snapshot!(
             snapshot_rows(&widget, /*width*/ 40).replace(' ', "."),
             @r"
-        ..!.Approval.needed.in.Robie.[explorer].
-        ..../subagents.to.switch.threads........
+        ..!.Robie.[explorer].中.有.待.批.准.请.求......
+        ..../subagents.切.换.线.程..................
         "
         );
     }
@@ -138,11 +138,11 @@ mod tests {
         assert_snapshot!(
             snapshot_rows(&widget, /*width*/ 44).replace(' ', "."),
             @r"
-        ..!.Approval.needed.in.Main.[default].......
-        ..!.Approval.needed.in.Robie.[explorer].....
-        ..!.Approval.needed.in.Inspector............
+        ..!.Main.[default].中.有.待.批.准.请.求............
+        ..!.Robie.[explorer].中.有.待.批.准.请.求..........
+        ..!.Inspector.中.有.待.批.准.请.求.................
         ............................................
-        ..../subagents.to.switch.threads............
+        ..../subagents.切.换.线.程......................
         "
         );
     }

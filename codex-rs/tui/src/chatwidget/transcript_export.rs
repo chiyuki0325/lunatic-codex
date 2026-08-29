@@ -8,24 +8,21 @@ impl ChatWidget {
         match crate::clipboard_copy::copy_to_clipboard(markdown) {
             Ok(lease) => {
                 self.clipboard_lease = lease;
-                self.add_info_message(
-                    "Copied conversation to clipboard".to_string(),
-                    /*hint*/ None,
-                );
+                self.add_info_message("已将对话复制到剪贴板".to_string(), /*hint*/ None);
             }
-            Err(error) => self.add_error_message(format!("Copy failed: {error}")),
+            Err(error) => self.add_error_message(format!("复制失败：{error}")),
         }
     }
 
     pub(super) fn show_transcript_export_popup(&mut self) {
         self.show_selection_view(SelectionViewParams {
-            title: Some("Export conversation".to_string()),
-            subtitle: Some("Save the complete conversation as Markdown".to_string()),
+            title: Some("导出对话".to_string()),
+            subtitle: Some("将完整对话保存为 Markdown".to_string()),
             footer_hint: Some(standard_popup_hint_line()),
             items: vec![
                 SelectionItem {
-                    name: "Copy to clipboard".to_string(),
-                    description: Some("Copy the complete Markdown transcript".to_string()),
+                    name: "复制到剪贴板".to_string(),
+                    description: Some("复制完整的 Markdown 对话记录".to_string()),
                     is_disabled: cfg!(target_os = "android"),
                     actions: vec![Box::new(|tx| {
                         tx.send(AppEvent::ExportTranscript {
@@ -36,8 +33,8 @@ impl ChatWidget {
                     ..Default::default()
                 },
                 SelectionItem {
-                    name: "Save to file".to_string(),
-                    description: Some("Choose a Markdown filename".to_string()),
+                    name: "保存到文件".to_string(),
+                    description: Some("选择 Markdown 文件名".to_string()),
                     actions: vec![Box::new(|tx| {
                         tx.send(AppEvent::OpenTranscriptExportFilePrompt);
                     })],
@@ -58,8 +55,8 @@ impl ChatWidget {
             |thread_id| format!("codex-session-{thread_id}.md"),
         );
         let view = CustomPromptView::new(
-            "Save conversation".to_string(),
-            "Type a filename and press Enter".to_string(),
+            "保存对话".to_string(),
+            "输入文件名后按下 Enter".to_string(),
             filename,
             /*context_label*/ None,
             Box::new(move |filename| {

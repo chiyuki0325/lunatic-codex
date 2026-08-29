@@ -37,7 +37,7 @@ impl App {
         let thread_id = self
             .chat_widget
             .thread_id()
-            .ok_or_else(|| "No active conversation to export.".to_string())?;
+            .ok_or_else(|| "没有可导出的活动对话。".to_string())?;
         let visibility = if self.config.show_raw_agent_reasoning {
             RawReasoningVisibility::Visible
         } else {
@@ -64,7 +64,7 @@ impl App {
                 };
                 let path = write_transcript(cwd, &path, &markdown)?;
                 self.chat_widget.add_info_message(
-                    format!("Saved conversation to {}", path.display()),
+                    format!("对话已保存至 {}", path.display()),
                     /*hint*/ None,
                 );
             }
@@ -83,7 +83,7 @@ pub(super) async fn load_export_transcript(
     let mut thread = app_server
         .thread_read(thread_id, /*include_turns*/ false)
         .await
-        .map_err(|error| format!("could not load conversation: {error}"))?;
+        .map_err(|error| format!("无法加载对话：{error}"))?;
     if thread.ephemeral {
         return Ok(visible_transcript);
     }
@@ -110,7 +110,7 @@ pub(super) async fn load_export_transcript(
                 _ => return Ok(visible_transcript),
             }
         } else {
-            return Err(format!("could not load conversation history: {error}"));
+            return Err(format!("无法加载对话记录：{error}"));
         }
     }
     let mut cells: Vec<Arc<dyn HistoryCell>> = Vec::new();
@@ -135,8 +135,7 @@ fn export_activity_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
         ThreadItem::FileChange {
             changes, status, ..
         } => {
-            let mut lines =
-                vec![format!("file changes: {status:?} · {} changes", changes.len()).into()];
+            let mut lines = vec![format!("文件变更：{status:?} · {} 项变更", changes.len()).into()];
             for change in changes {
                 lines.push(format!("{:?}: {}", change.kind, change.path).into());
                 lines.extend(change.diff.lines().map(|line| line.to_string().into()));
@@ -153,7 +152,7 @@ fn export_activity_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
             ..
         } => {
             let mut lines =
-                vec![format!("mcp tool: {server}/{tool}({arguments}) · {status:?}").into()];
+                vec![format!("MCP 工具：{server}/{tool}({arguments}) · {status:?}").into()];
             if let Some(result) = result {
                 for content in &result.content {
                     match serde_json::from_value::<rmcp::model::ContentBlock>(content.clone()) {
@@ -161,30 +160,30 @@ fn export_activity_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
                             lines.extend(raw_lines_from_source(&text.text));
                         }
                         Ok(rmcp::model::ContentBlock::Image(_)) => {
-                            lines.push("<image content>".into());
+                            lines.push("<图像内容>".into());
                         }
                         Ok(rmcp::model::ContentBlock::Audio(_)) => {
-                            lines.push("<audio content>".into());
+                            lines.push("<音频内容>".into());
                         }
                         Ok(rmcp::model::ContentBlock::Resource(_)) => {
                             let uri = content
                                 .pointer("/resource/uri")
                                 .and_then(serde_json::Value::as_str)
-                                .unwrap_or("<unknown embedded resource>");
-                            lines.push(format!("embedded resource: {uri}").into());
+                                .unwrap_or("<未知嵌入资源>");
+                            lines.push(format!("嵌入资源：{uri}").into());
                         }
                         Ok(rmcp::model::ContentBlock::ResourceLink(link)) => {
-                            lines.push(format!("link: {}", link.uri).into());
+                            lines.push(format!("链接：{}", link.uri).into());
                         }
                         _ => lines.push(content.to_string().into()),
                     }
                 }
                 if let Some(content) = &result.structured_content {
-                    lines.push(format!("structured result: {content}").into());
+                    lines.push(format!("结构化结果：{content}").into());
                 }
             }
             if let Some(error) = error {
-                lines.extend(raw_lines_from_source(&format!("error: {}", error.message)));
+                lines.extend(raw_lines_from_source(&format!("错误：{}", error.message)));
             }
             lines
         }
@@ -219,7 +218,7 @@ fn visible_export_items(turns: Vec<Turn>) -> Vec<ThreadItem> {
 }
 
 fn render_markdown_transcript(cells: &[Arc<dyn HistoryCell>]) -> Result<String, String> {
-    let mut markdown = String::from("# Codex conversation\n");
+    let mut markdown = String::from("# Codex 对话\n");
     for cell in cells {
         let lines = if let Some(user) = cell.as_any().downcast_ref::<UserHistoryCell>() {
             let (message, _) =
@@ -245,10 +244,10 @@ fn render_markdown_transcript(cells: &[Arc<dyn HistoryCell>]) -> Result<String, 
                 && lines.first().is_some_and(|line| {
                     let text = line.to_string();
                     [
-                        "• Saved conversation to ",
-                        "• Copied conversation to clipboard",
-                        "■ Export failed: ",
-                        "■ Copy failed: ",
+                        "• 对话已保存至 ",
+                        "• 对话已复制到剪贴板",
+                        "■ 导出失败：",
+                        "■ 复制失败：",
                     ]
                     .iter()
                     .any(|prefix| text.starts_with(prefix))
@@ -257,15 +256,15 @@ fn render_markdown_transcript(cells: &[Arc<dyn HistoryCell>]) -> Result<String, 
             continue;
         }
         let (heading, indent) = if cell.as_any().is::<UserHistoryCell>() {
-            ("User", false)
+            ("用户", false)
         } else if cell.as_any().is::<AgentMarkdownCell>() {
-            ("Assistant", false)
+            ("助手", false)
         } else if cell.as_any().is::<ProposedPlanCell>() {
-            ("Plan", false)
+            ("计划", false)
         } else if cell.as_any().is::<ReasoningSummaryCell>() {
-            ("Reasoning", false)
+            ("推理", false)
         } else {
-            ("Activity", true)
+            ("活动", true)
         };
         markdown.push_str(&format!("\n## {heading}\n\n"));
         for line in lines {
@@ -278,10 +277,10 @@ fn render_markdown_transcript(cells: &[Arc<dyn HistoryCell>]) -> Result<String, 
             markdown.push('\n');
         }
     }
-    if markdown != "# Codex conversation\n" {
+    if markdown != "# Codex 对话\n" {
         Ok(markdown)
     } else {
-        Err("No conversation content to export.".to_string())
+        Err("没有可导出的对话内容。".to_string())
     }
 }
 

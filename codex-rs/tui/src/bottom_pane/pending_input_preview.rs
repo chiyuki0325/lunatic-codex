@@ -88,12 +88,12 @@ impl PendingInputPreview {
         let mut lines = vec![];
 
         if !self.pending_steers.is_empty() {
-            let mut header = vec!["Messages to be submitted after next tool call".into()];
+            let mut header = vec!["将在下次工具调用后提交的消息".into()];
             if let Some(interrupt_binding) = self.interrupt_binding {
                 header.extend(vec![
-                    " (press ".dim(),
+                    "（按下 ".dim(),
                     interrupt_binding.into(),
-                    " to interrupt and send immediately)".dim(),
+                    " 可中断并立即发送）".dim(),
                 ]);
             }
             Self::push_section_header(&mut lines, width, Line::from(header));
@@ -113,11 +113,7 @@ impl PendingInputPreview {
             if !lines.is_empty() {
                 lines.push(Line::from(""));
             }
-            Self::push_section_header(
-                &mut lines,
-                width,
-                "Messages to be submitted at end of turn".into(),
-            );
+            Self::push_section_header(&mut lines, width, "将在本轮结束时提交的消息".into());
 
             for steer in &self.rejected_steers {
                 let wrapped = adaptive_wrap_lines(
@@ -134,7 +130,7 @@ impl PendingInputPreview {
             if !lines.is_empty() {
                 lines.push(Line::from(""));
             }
-            Self::push_section_header(&mut lines, width, "Queued follow-up inputs".into());
+            Self::push_section_header(&mut lines, width, "已排队的后续输入".into());
 
             for message in &self.queued_messages {
                 let wrapped = adaptive_wrap_lines(
@@ -158,7 +154,7 @@ impl PendingInputPreview {
                 Line::from(vec![
                     "    ".into(),
                     edit_binding.into(),
-                    " edit last queued message".into(),
+                    " 编辑最后一条排队消息".into(),
                 ])
                 .dim(),
             );

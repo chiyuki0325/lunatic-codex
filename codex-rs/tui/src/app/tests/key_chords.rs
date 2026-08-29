@@ -73,7 +73,7 @@ async fn completed_global_chord_reuses_the_existing_action_handler() -> Result<(
         @r"
         › Ask Codex to do anything
 
-           ctrl + x … waiting for next key    esc cancel
+           ctrl + x … 等待下一次按键    Esc 取消
         "
     );
 

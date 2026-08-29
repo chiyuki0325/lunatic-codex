@@ -180,26 +180,25 @@ use tokio::sync::mpsc::UnboundedSender;
 use tracing::debug;
 use tracing::warn;
 
-const DEFAULT_MODEL_DISPLAY_NAME: &str = "loading";
-const MULTI_AGENT_ENABLE_TITLE: &str = "Enable subagents?";
-const MULTI_AGENT_ENABLE_YES: &str = "Yes, enable";
-const MULTI_AGENT_ENABLE_NO: &str = "Not now";
-const MULTI_AGENT_ENABLE_NOTICE: &str = "Subagents will be enabled in the next session.";
-const TRUSTED_ACCESS_FOR_CYBER_VERIFICATION_WARNING: &str = "Your conversations have multiple flags for possible cybersecurity risk. Responses may take longer because extra safety checks are on. To get authorized for security work, join the Trusted Access for Cyber program: https://chatgpt.com/cyber";
+const DEFAULT_MODEL_DISPLAY_NAME: &str = "加载中";
+const MULTI_AGENT_ENABLE_TITLE: &str = "启用 agent？";
+const MULTI_AGENT_ENABLE_YES: &str = "是，启用";
+const MULTI_AGENT_ENABLE_NO: &str = "暂不启用";
+const MULTI_AGENT_ENABLE_NOTICE: &str = "agent 将在下一个会话中启用。";
+const TRUSTED_ACCESS_FOR_CYBER_VERIFICATION_WARNING: &str = "您的对话多次触发潜在网络安全风险标记。由于已启用额外安全检查，响应可能需要更长时间。若要获得安全工作授权，请加入 Trusted Access for Cyber 计划：https://chatgpt.com/cyber";
 const MEMORIES_DOC_URL: &str = "https://developers.openai.com/codex/memories";
-const MEMORIES_ENABLE_TITLE: &str = "Enable memories?";
-const MEMORIES_ENABLE_YES: &str = "Yes, enable";
-const MEMORIES_ENABLE_NO: &str = "Not now";
-const MEMORIES_ENABLE_NOTICE: &str = "Memories will be enabled in the next session.";
-const PLAN_MODE_REASONING_SCOPE_TITLE: &str = "Apply reasoning change";
-const PLAN_MODE_REASONING_SCOPE_PLAN_ONLY: &str = "Apply to Plan mode override";
-const PLAN_MODE_REASONING_SCOPE_ALL_MODES: &str = "Apply to global default and Plan mode override";
+const MEMORIES_ENABLE_TITLE: &str = "启用记忆？";
+const MEMORIES_ENABLE_YES: &str = "是，启用";
+const MEMORIES_ENABLE_NO: &str = "暂不启用";
+const MEMORIES_ENABLE_NOTICE: &str = "记忆将在下一个会话中启用。";
+const PLAN_MODE_REASONING_SCOPE_TITLE: &str = "应用推理强度变更";
+const PLAN_MODE_REASONING_SCOPE_PLAN_ONLY: &str = "应用到 Plan 模式覆盖值";
+const PLAN_MODE_REASONING_SCOPE_ALL_MODES: &str = "应用到全局默认值和 Plan 模式覆盖值";
 const CONNECTORS_SELECTION_VIEW_ID: &str = "connectors-selection";
 const PET_SELECTION_LOADING_VIEW_ID: &str = "pet-selection-loading";
 const AMBIENT_PET_WRAP_GAP_COLUMNS: u16 = 2;
-const TUI_STUB_MESSAGE: &str = "Not available in TUI yet.";
-const PARENT_OWNED_INPUT_MESSAGE: &str =
-    "This sub-agent is controlled by its parent. Direct input is disabled.";
+const TUI_STUB_MESSAGE: &str = "TUI 暂不支持。";
+const PARENT_OWNED_INPUT_MESSAGE: &str = "此 subagent 由其父 agent 控制，已禁用直接输入。";
 
 /// Choose the keybinding used to edit the most-recently queued message.
 ///
@@ -489,11 +488,11 @@ use codex_utils_approval_presets::builtin_approval_presets;
 use strum::IntoEnumIterator;
 use unicode_segmentation::UnicodeSegmentation;
 
-const USER_SHELL_COMMAND_HELP_TITLE: &str = "Prefix a command with ! to run it locally";
-const USER_SHELL_COMMAND_HELP_HINT: &str = "Example: !ls";
-const ASK_FOR_APPROVAL_LABEL: &str = "Ask for approval";
-const APPROVE_FOR_ME_LABEL: &str = "Approve for me";
-const AUTO_REVIEW_DESCRIPTION: &str = "Only ask for actions detected as potentially unsafe.";
+const USER_SHELL_COMMAND_HELP_TITLE: &str = "在命令前添加 ! 可在本地运行";
+const USER_SHELL_COMMAND_HELP_HINT: &str = "示例：!ls";
+const ASK_FOR_APPROVAL_LABEL: &str = "请求审批";
+const APPROVE_FOR_ME_LABEL: &str = "由我审批";
+const AUTO_REVIEW_DESCRIPTION: &str = "仅对检测为可能不安全的操作请求审批。";
 const DEFAULT_OPENAI_BASE_URL: &str = "https://api.openai.com/v1";
 const DEFAULT_STATUS_LINE_ITEMS: [&str; 2] = ["model-with-reasoning", "current-dir"];
 
@@ -1076,9 +1075,7 @@ impl ChatWidget {
         let items = vec![
             SelectionItem {
                 name: MULTI_AGENT_ENABLE_YES.to_string(),
-                description: Some(
-                    "Save the setting now. You will need a new session to use it.".to_string(),
-                ),
+                description: Some("立即保存设置。需新建会话后才能使用。".to_string()),
                 actions: vec![Box::new(|tx| {
                     tx.send(AppEvent::UpdateFeatureFlags {
                         updates: vec![(Feature::Collab, true)],
@@ -1092,7 +1089,7 @@ impl ChatWidget {
             },
             SelectionItem {
                 name: MULTI_AGENT_ENABLE_NO.to_string(),
-                description: Some("Keep subagents disabled.".to_string()),
+                description: Some("保持禁用 agent。".to_string()),
                 dismiss_on_select: true,
                 ..Default::default()
             },
@@ -1100,7 +1097,7 @@ impl ChatWidget {
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
             title: Some(MULTI_AGENT_ENABLE_TITLE.to_string()),
-            subtitle: Some("Subagents are currently disabled in your config.".to_string()),
+            subtitle: Some("配置当前已禁用 agent。".to_string()),
             footer_hint: Some(standard_popup_hint_line()),
             items,
             ..Default::default()
@@ -1126,9 +1123,7 @@ impl ChatWidget {
         let items = vec![
             SelectionItem {
                 name: MEMORIES_ENABLE_YES.to_string(),
-                description: Some(
-                    "Save the setting now. You will need a new session to use it.".to_string(),
-                ),
+                description: Some("立即保存设置。需新建会话后才能使用。".to_string()),
                 actions: vec![Box::new(|tx| {
                     tx.send(AppEvent::UpdateFeatureFlags {
                         updates: vec![(Feature::MemoryTool, true)],
@@ -1139,7 +1134,7 @@ impl ChatWidget {
             },
             SelectionItem {
                 name: MEMORIES_ENABLE_NO.to_string(),
-                description: Some("Keep memories disabled.".to_string()),
+                description: Some("保持禁用记忆。".to_string()),
                 dismiss_on_select: true,
                 ..Default::default()
             },
@@ -1147,9 +1142,9 @@ impl ChatWidget {
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
             title: Some(MEMORIES_ENABLE_TITLE.to_string()),
-            subtitle: Some("Memories are currently disabled in your config.".to_string()),
+            subtitle: Some("配置当前已禁用记忆。".to_string()),
             footer_note: Some(Line::from(vec![
-                "Learn more: ".dim(),
+                "了解更多：".dim(),
                 MEMORIES_DOC_URL.cyan().underlined(),
             ])),
             footer_hint: Some(standard_popup_hint_line()),
@@ -1313,7 +1308,7 @@ impl ChatWidget {
             self.bottom_pane.set_task_running(/*running*/ true);
         }
         self.review.is_review_mode = true;
-        let banner = format!(">> Code review started: {hint} <<");
+        let banner = format!(">> 代码审查已开始：{hint} <<");
         self.add_to_history(history_cell::new_review_status_line(banner));
         self.request_redraw();
     }
@@ -1325,7 +1320,7 @@ impl ChatWidget {
         self.review.is_review_mode = false;
         self.restore_pre_review_token_info();
         self.add_to_history(history_cell::new_review_status_line(
-            "<< Code review finished >>".to_string(),
+            "<< 代码审查已完成 >>".to_string(),
         ));
         self.request_redraw();
     }
@@ -1483,10 +1478,7 @@ impl ChatWidget {
         self.submit_op(AppCommand::clean_background_terminals());
         self.unified_exec_processes.clear();
         self.sync_unified_exec_footer();
-        self.add_info_message(
-            "Stopping all background terminals.".to_string(),
-            /*hint*/ None,
-        );
+        self.add_info_message("正在停止所有后台终端。".to_string(), /*hint*/ None);
     }
 
     fn plugins_for_mentions(&self) -> Option<&[PluginCapabilitySummary]> {
@@ -1576,11 +1568,11 @@ impl ChatWidget {
     fn rename_confirmation_cell(name: &str, thread_id: Option<ThreadId>) -> PlainHistoryCell {
         let mut line = vec![
             "• ".into(),
-            "Session renamed to ".into(),
+            "会话已重命名为 ".into(),
             name.to_string().cyan(),
         ];
         if let Some(hint) = resume_hint(Some(name), thread_id) {
-            line.extend([". To resume this session run ".into(), hint.cyan()]);
+            line.extend(["。恢复此会话请运行 ".into(), hint.cyan()]);
         }
         PlainHistoryCell::new(vec![line.into()])
     }
@@ -1671,9 +1663,9 @@ impl ChatWidget {
 
     pub(crate) fn raw_output_mode_notice(enabled: bool) -> &'static str {
         if enabled {
-            "Raw output mode on: transcript text is shown for clean terminal selection."
+            "原始输出模式已开启：显示转录记录文本，便于在终端中选择。"
         } else {
-            "Raw output mode off: rich transcript rendering restored."
+            "原始输出模式已关闭：已恢复富文本转录记录渲染。"
         }
     }
 
@@ -1738,9 +1730,9 @@ impl ChatWidget {
     pub(crate) fn toggle_vim_mode_and_notify(&mut self) {
         let enabled = self.bottom_pane.toggle_vim_enabled();
         let message = if enabled {
-            "Vim mode enabled."
+            "Vim 模式已开启。"
         } else {
-            "Vim mode disabled."
+            "Vim 模式已关闭。"
         };
         self.add_info_message(message.to_string(), /*hint*/ None);
     }
@@ -2032,8 +2024,8 @@ impl Drop for ChatWidget {
     }
 }
 
-const PLACEHOLDER: &str = "Ask Codex to do anything";
-const SIDE_PLACEHOLDER: &str = "Ask a follow-up question";
+const PLACEHOLDER: &str = "让 Codex 完成任何任务";
+const SIDE_PLACEHOLDER: &str = "提出后续问题";
 
 // Extract the first bold (Markdown) element in the form **...** from `s`.
 // Returns the inner text if found; otherwise `None`.

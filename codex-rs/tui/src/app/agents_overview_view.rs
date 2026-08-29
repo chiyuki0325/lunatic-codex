@@ -66,10 +66,10 @@ impl AgentsOverviewGroup {
 
     fn label(self) -> &'static str {
         match self {
-            Self::NeedsYou => "Needs input",
-            Self::Working => "Working",
-            Self::Ready => "Ready",
-            Self::Finished => "Finished",
+            Self::NeedsYou => "需要输入",
+            Self::Working => "工作中",
+            Self::Ready => "就绪",
+            Self::Finished => "已完成",
         }
     }
 }
@@ -270,10 +270,10 @@ impl AgentsOverviewView {
 
     fn status(row: &AgentsOverviewRow) -> (&'static str, Span<'static>) {
         match row.group {
-            AgentsOverviewGroup::NeedsYou => ("Needs input", "●".red()),
-            AgentsOverviewGroup::Working => ("Working", "●".green()),
-            AgentsOverviewGroup::Ready => ("Ready", "○".cyan()),
-            AgentsOverviewGroup::Finished => ("Finished", "✓".dim()),
+            AgentsOverviewGroup::NeedsYou => ("需要输入", "●".red()),
+            AgentsOverviewGroup::Working => ("工作中", "●".green()),
+            AgentsOverviewGroup::Ready => ("就绪", "○".cyan()),
+            AgentsOverviewGroup::Finished => ("已完成", "✓".dim()),
         }
     }
 
@@ -350,9 +350,9 @@ impl AgentsOverviewView {
                 .name
                 .as_deref()
                 .or_else(|| (!row.thread.preview.is_empty()).then_some(row.thread.preview.as_str()))
-                .unwrap_or("Untitled task");
+                .unwrap_or("未命名任务");
             let (status, dot) = Self::status(row);
-            let current = if row.is_current { "  current" } else { "" };
+            let current = if row.is_current { "  当前" } else { "" };
             let mut spans = vec![
                 marker,
                 " ".into(),
@@ -375,12 +375,12 @@ impl AgentsOverviewView {
         };
         let (status, dot) = Self::status(row);
         let mut lines = vec![
-            Line::from("Task details".bold()),
+            Line::from("任务详情".bold()),
             Line::default(),
-            Line::from(row.thread.name.as_deref().unwrap_or("Untitled task").bold()),
+            Line::from(row.thread.name.as_deref().unwrap_or("未命名任务").bold()),
             Line::from(vec![dot, " ".into(), status.into()]),
             Line::default(),
-            Line::from("Project".dim()),
+            Line::from("项目".dim()),
             Line::from(row.thread.cwd.display().to_string()),
         ];
         if let Some(branch) = row
@@ -390,7 +390,7 @@ impl AgentsOverviewView {
             .and_then(|git| git.branch.as_ref())
         {
             lines.push(Line::default());
-            lines.push("Branch".dim().into());
+            lines.push("分支".dim().into());
             lines.push(branch.clone().into());
         }
         let preview = crate::text_formatting::truncate_text(
@@ -399,9 +399,9 @@ impl AgentsOverviewView {
         );
         lines.extend([
             Line::default(),
-            Line::from("Latest activity".dim()),
+            Line::from("最近活动".dim()),
             Line::from(match preview.as_str() {
-                "" => "No activity yet.",
+                "" => "暂无活动。",
                 preview => preview,
             }),
         ]);
@@ -563,11 +563,11 @@ impl Renderable for AgentsOverviewView {
     fn cursor_pos(&self, area: Rect) -> Option<(u16, u16)> {
         let state = self.state().clone();
         let (label, input) = if state.searching {
-            ("  Search › ", &state.search)
+            ("  搜索 › ", &state.search)
         } else if state.renaming {
-            ("  Rename › ", &state.input)
+            ("  重命名 › ", &state.input)
         } else {
-            ("  New task › ", &state.input)
+            ("  新建任务 › ", &state.input)
         };
         let x = area
             .x
@@ -592,7 +592,7 @@ impl Renderable for AgentsOverviewView {
         .areas(area);
         let inset =
             |rect: Rect| rect.inner(Margin::new(/*horizontal*/ 2, /*vertical*/ 0));
-        Line::from("Agent command center".bold()).render(inset(header), buf);
+        Line::from("agent 指挥中心".bold()).render(inset(header), buf);
         let (needs_you, working, ready) = self.rows.iter().fold((0, 0, 0), |counts, row| {
             let (needs_you, working, ready) = counts;
             match row.group {
@@ -602,8 +602,8 @@ impl Renderable for AgentsOverviewView {
                 AgentsOverviewGroup::Finished => counts,
             }
         });
-        let attention = format!("{needs_you} need input");
-        Line::from(format!("{attention}   {working} working   {ready} ready").dim())
+        let attention = format!("{needs_you} 个等待输入");
+        Line::from(format!("{attention}   {working} 个进行中   {ready} 个就绪").dim())
             .render(inset(summary), buf);
         Line::from("─".repeat(usize::from(area.width.saturating_sub(4))).dim())
             .render(inset(divider), buf);
@@ -627,14 +627,14 @@ impl Renderable for AgentsOverviewView {
         }
         let state = self.state().clone();
         let (label, input) = if state.searching {
-            ("Search › ", &state.search)
+            ("搜索 › ", &state.search)
         } else if state.renaming {
-            ("Rename › ", &state.input)
+            ("重命名 › ", &state.input)
         } else {
-            ("New task › ", &state.input)
+            ("新建任务 › ", &state.input)
         };
         let placeholder = if input.is_empty() && !state.searching && !state.renaming {
-            "Describe a task and press enter to dispatch it"
+            "描述任务后按下 Enter 以派发它"
         } else {
             ""
         };
@@ -688,7 +688,7 @@ impl Renderable for AgentsOverviewView {
         );
         let mut footer_spans = Vec::new();
         if !navigation_hint.is_empty() {
-            footer_spans.extend([navigation_hint.bold(), " navigate  ".dim()]);
+            footer_spans.extend([navigation_hint.bold(), " 导航  ".dim()]);
         }
         let mut add_hint = |hint: Option<ShortcutHint>, label: &'static str, enabled: bool| {
             if let Some(hint) = hint {
@@ -697,33 +697,33 @@ impl Renderable for AgentsOverviewView {
                 footer_spans.push(format!(" {label}  ").dim());
             }
         };
-        add_hint(list_hint(ListAction::Accept), "open", true);
+        add_hint(list_hint(ListAction::Accept), "打开", true);
         add_hint(
             self.agents_keymap
                 .primary_hint("search", &self.agents_keymap.search),
-            "search",
+            "搜索",
             true,
         );
         add_hint(
             self.agents_keymap
                 .primary_hint("toggle_grouping", &self.agents_keymap.toggle_grouping),
-            "group",
+            "分组",
             true,
         );
         add_hint(
             self.agents_keymap
                 .primary_hint("rename", &self.agents_keymap.rename),
-            "rename",
+            "重命名",
             true,
         );
         add_hint(
             self.agents_keymap
                 .primary_hint("stop", &self.agents_keymap.stop),
-            "stop",
+            "停止",
             self.selected_row()
                 .is_some_and(|row| matches!(row.thread.status, ThreadStatus::Active { .. })),
         );
-        add_hint(list_hint(ListAction::Cancel), "back", true);
+        add_hint(list_hint(ListAction::Cancel), "返回", true);
         let footer_area = inset(footer);
         let mut footer_line: Line = footer_spans.into();
         if footer_line.width() > usize::from(footer_area.width) {

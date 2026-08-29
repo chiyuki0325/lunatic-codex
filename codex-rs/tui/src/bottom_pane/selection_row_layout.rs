@@ -55,7 +55,7 @@ fn combined_description(
     description_layout: SelectionDescriptionLayout,
 ) -> Option<String> {
     match (&row.description, &row.disabled_reason) {
-        (Some(desc), Some(reason)) => Some(format!("{desc} (disabled: {reason})")),
+        (Some(desc), Some(reason)) => Some(format!("{desc}（已禁用：{reason}）")),
         (Some(desc), None) => Some(desc.clone()),
         (None, Some(reason))
             if matches!(
@@ -65,14 +65,14 @@ fn combined_description(
         {
             Some(reason.clone())
         }
-        (None, Some(reason)) => Some(format!("disabled: {reason}")),
+        (None, Some(reason)) => Some(format!("已禁用：{reason}")),
         (None, None) => None,
     }
 }
 
 fn stacked_description(row: &GenericDisplayRow) -> Option<String> {
     match (&row.description, &row.disabled_reason) {
-        (Some(desc), Some(reason)) => Some(format!("{desc} (disabled: {reason})")),
+        (Some(desc), Some(reason)) => Some(format!("{desc}（已禁用：{reason}）")),
         (Some(desc), None) => Some(desc.clone()),
         (None, Some(reason)) => Some(reason.clone()),
         (None, None) => None,
@@ -112,7 +112,7 @@ fn build_name_spans(row: &GenericDisplayRow, name_limit: usize) -> Vec<Span<'sta
         name_spans.push("…".into());
     }
     if row.disabled_reason.is_some() {
-        name_spans.push(" (disabled)".dim());
+        name_spans.push("（已禁用）".dim());
     }
     name_spans
 }

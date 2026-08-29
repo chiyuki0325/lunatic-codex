@@ -1206,7 +1206,7 @@ async fn plan_implementation_popup_skips_when_rate_limit_prompt_pending() {
 
     let popup = render_bottom_popup(&chat, /*width*/ 80);
     assert!(
-        popup.contains("Approaching rate limits"),
+        popup.contains("即将达到用量限制"),
         "expected rate limit popup, got {popup:?}"
     );
     assert!(

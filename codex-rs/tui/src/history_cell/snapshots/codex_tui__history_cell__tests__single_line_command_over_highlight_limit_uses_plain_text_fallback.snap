@@ -2,8 +2,8 @@
 source: tui/src/history_cell/tests.rs
 expression: rendered
 ---
-• Ran AAAAAAAAAAAAAAAAAA
+• 已运行 AAAAAAAAAAAAAAAAAA
   │ AAAAAAAAAAAAAAAAAA
   │ AAAAAAAAAAAAAAAAAA
-  │ … +225 lines
-  └ (no output)
+  │ … 另有 225 行
+  └ （无输出）

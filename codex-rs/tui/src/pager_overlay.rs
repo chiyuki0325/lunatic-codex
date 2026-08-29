@@ -132,7 +132,7 @@ fn render_navigation_hints(area: Rect, buf: &mut Buffer, keymap: &PagerKeymap) {
     ];
     let hints = actions
         .chunks_exact(2)
-        .zip(["to scroll", "to page", "to jump"])
+        .zip(["滚动", "翻页", "跳转"])
         .map(|(actions, description)| {
             (
                 actions
@@ -453,9 +453,9 @@ impl TranscriptHistoryState {
 
     fn session_header_placeholder(self) -> Option<&'static str> {
         match self {
-            Self::LoadingOlder | Self::LoadingBeginning => Some("Loading earlier messages..."),
-            Self::Partial => Some("Earlier messages are available — scroll up to load them"),
-            Self::Failed => Some("Earlier messages unavailable — scroll up to retry"),
+            Self::LoadingOlder | Self::LoadingBeginning => Some("正在加载较早的消息……"),
+            Self::Partial => Some("可加载较早的消息——向上滚动以加载"),
+            Self::Failed => Some("较早的消息暂不可用——向上滚动以重试"),
             Self::Idle | Self::Complete => None,
         }
     }
@@ -856,7 +856,7 @@ impl TranscriptOverlay {
 
         let mut pairs: Vec<(Vec<ShortcutHint>, &str)> = vec![(
             first_or_empty(&self.view.keymap, "close", &self.view.keymap.close),
-            "to quit",
+            "退出",
         )];
         if self.highlight_cell.is_some() {
             pairs.push((
@@ -864,13 +864,10 @@ impl TranscriptOverlay {
                     key_hint::plain(KeyCode::Esc).into(),
                     key_hint::plain(KeyCode::Left).into(),
                 ],
-                "to edit prev",
+                "编辑上一条",
             ));
-            pairs.push((vec![key_hint::plain(KeyCode::Right).into()], "to edit next"));
-            pairs.push((
-                vec![key_hint::plain(KeyCode::Enter).into()],
-                "to edit message",
-            ));
+            pairs.push((vec![key_hint::plain(KeyCode::Right).into()], "编辑下一条"));
+            pairs.push((vec![key_hint::plain(KeyCode::Enter).into()], "编辑消息"));
         } else {
             pairs.push((vec![key_hint::plain(KeyCode::Esc).into()], "to edit prev"));
         }
@@ -893,13 +890,13 @@ impl TranscriptOverlay {
         let label = match self.history_state {
             TranscriptHistoryState::Idle => return,
             TranscriptHistoryState::LoadingOlder | TranscriptHistoryState::LoadingBeginning => {
-                " loading older history... "
+                " 正在加载较早的记录... "
             }
-            TranscriptHistoryState::Partial => " partial history | PgUp for earlier ",
-            TranscriptHistoryState::Failed => " history unavailable | PgUp to retry ",
-            TranscriptHistoryState::Complete => " start of history ",
+            TranscriptHistoryState::Partial => " 记录不完整 | PageUp 查看更早内容 ",
+            TranscriptHistoryState::Failed => " 无法加载记录 | PageUp 重试 ",
+            TranscriptHistoryState::Complete => " 已到记录开头 ",
         };
-        let width = (label.chars().count() as u16).min(area.width);
+        let width = (crate::width::display_width(label) as u16).min(area.width);
         let status_area = Rect::new(
             area.right().saturating_sub(width),
             area.y,
@@ -972,7 +969,7 @@ impl StaticOverlay {
         render_navigation_hints(line1, buf, &self.view.keymap);
         let pairs: Vec<(Vec<ShortcutHint>, &str)> = vec![(
             first_or_empty(&self.view.keymap, "close", &self.view.keymap.close),
-            "to quit",
+            "退出",
         )];
         render_key_hints(line2, buf, &pairs);
     }
@@ -1176,8 +1173,8 @@ mod tests {
 
         let s = buffer_to_text(&buf, area);
         assert!(
-            s.contains("edit next"),
-            "expected 'edit next' hint in overlay footer, got: {s:?}"
+            s.contains("编辑下一条"),
+            "预期浮层页脚包含“编辑下一条”提示，实际为：{s:?}"
         );
     }
 

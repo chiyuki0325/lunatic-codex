@@ -74,7 +74,7 @@ pub(crate) fn thread_to_transcript_cells(
     );
     if cells.is_empty() {
         cells.push(Arc::new(PlainHistoryCell::new(vec![
-            "No transcript content available".italic().dim().into(),
+            "没有可用的对话记录内容".italic().dim().into(),
         ])));
     }
     cells
@@ -149,7 +149,7 @@ pub(crate) fn thread_items_to_transcript_cells(
                     if matches!(raw_reasoning_visibility, RawReasoningVisibility::Visible)
                         && !content.is_empty()
                     {
-                        ("Reasoning".to_string(), content.join("\n\n"))
+                        ("推理过程".to_string(), content.join("\n\n"))
                     } else {
                         split_reasoning_summary_parts(&summary)
                     };
@@ -178,7 +178,7 @@ fn fallback_transcript_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
             .iter()
             .map(|fragment| {
                 vec![
-                    "hook prompt: ".dim(),
+                    "Hook 提示词：".dim(),
                     fragment.text.trim().to_string().into(),
                 ]
                 .into()
@@ -195,9 +195,9 @@ fn fallback_transcript_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
                 vec![vec!["$ ".dim(), command.clone().into()].into()];
             lines.push(
                 format!(
-                    "status: {status:?}{}",
+                    "状态：{status:?}{}",
                     exit_code
-                        .map(|code| format!(" · exit {code}"))
+                        .map(|code| format!(" · 退出码 {code}"))
                         .unwrap_or_default()
                 )
                 .dim()
@@ -217,7 +217,7 @@ fn fallback_transcript_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
         ThreadItem::FileChange {
             changes, status, ..
         } => vec![
-            format!("file changes: {status:?} · {} changes", changes.len())
+            format!("文件变更：{status:?} · {} 处变更", changes.len())
                 .dim()
                 .into(),
         ],
@@ -227,7 +227,7 @@ fn fallback_transcript_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
             status,
             ..
         } => vec![
-            format!("mcp tool: {server}/{tool} · {status:?}")
+            format!("MCP 工具：{server}/{tool} · {status:?}")
                 .dim()
                 .into(),
         ],
@@ -241,10 +241,10 @@ fn fallback_transcript_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
                 .as_ref()
                 .map(|namespace| format!("{namespace}/{tool}"))
                 .unwrap_or_else(|| tool.clone());
-            vec![format!("tool: {name} · {status:?}").dim().into()]
+            vec![format!("工具：{name} · {status:?}").dim().into()]
         }
         ThreadItem::CollabAgentToolCall { tool, status, .. } => {
-            vec![format!("agent tool: {tool:?} · {status:?}").dim().into()]
+            vec![format!("agent 工具：{tool:?} · {status:?}").dim().into()]
         }
         ThreadItem::SubAgentActivity {
             kind, agent_path, ..
@@ -252,11 +252,11 @@ fn fallback_transcript_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
             vec![sub_agent_activity_summary(*kind, agent_path).dim().into()]
         }
         ThreadItem::WebSearch(item) => {
-            vec![vec!["web search: ".dim(), item.query.clone().into()].into()]
+            vec![vec!["网页搜索：".dim(), item.query.clone().into()].into()]
         }
         ThreadItem::ImageView { path, .. } => {
             let path = path.render_for_ui();
-            vec![format!("image: {path}").dim().into()]
+            vec![format!("图像：{path}").dim().into()]
         }
         ThreadItem::ImageGeneration(item) => {
             let saved = item
@@ -264,20 +264,16 @@ fn fallback_transcript_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
                 .as_ref()
                 .map(|path| format!(" · {}", path.as_path().display()))
                 .unwrap_or_default();
-            vec![
-                format!("image generation: {}{saved}", item.status)
-                    .dim()
-                    .into(),
-            ]
+            vec![format!("图像生成：{}{saved}", item.status).dim().into()]
         }
         ThreadItem::EnteredReviewMode { review, .. } => {
-            vec![vec!["review started: ".dim(), review.clone().into()].into()]
+            vec![vec!["审查已开始：".dim(), review.clone().into()].into()]
         }
         ThreadItem::ExitedReviewMode { review, .. } => {
-            vec![vec!["review finished: ".dim(), review.clone().into()].into()]
+            vec![vec!["审查已完成：".dim(), review.clone().into()].into()]
         }
         ThreadItem::ContextCompaction { .. } => {
-            vec!["context compacted".dim().into()]
+            vec!["上下文已压缩".dim().into()]
         }
         ThreadItem::UserMessage { .. }
         | ThreadItem::AgentMessage { .. }

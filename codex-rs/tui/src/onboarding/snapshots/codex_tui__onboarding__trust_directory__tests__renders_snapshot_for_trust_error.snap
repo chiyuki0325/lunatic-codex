@@ -1,19 +1,18 @@
 ---
 source: tui/src/onboarding/trust_directory.rs
-expression: terminal.backend()
+expression: "terminal.backend().to_string().lines().map(str::trim_end).collect::<Vec<_>>().join(\"\\n\")"
 ---
-> You are in /workspace/project
+> 当前目录：/workspace/project
 
-  Do you trust the contents of this directory? Working with untrusted
-  contents comes with higher risk of prompt injection. Trusting the
-  directory allows project-local config, hooks, and exec policies to
-  load.
+  是否信任此目录中的内容？
+  处理不受信任的内容会增加提示词注入风险。
+  信任后将加载本地配置、Hook 和命令执行策略。
 
-› 1. Yes, continue                                                    
-  2. No, quit
+› 1. 是，继续
+  2. 否，退出
 
   Failed to set trust for /workspace/project: config/batchWrite failed
-  in TUI: Invalid configuration: features.fast_mode=true is not       
-  supported; allowed set [fast_mode=false]                            
+  in TUI: Invalid configuration: features.fast_mode=true is not
+  supported; allowed set [fast_mode=false]
 
-  Press enter to continue
+  按下 Enter 继续

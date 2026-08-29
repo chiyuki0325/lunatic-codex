@@ -1,14 +1,14 @@
 ---
 source: tui/src/bottom_pane/feedback_view.rs
-assertion_line: 728
+assertion_line: 725
 expression: rendered
 ---
-Upload logs?
+上传日志？
 
-The following files will be sent:
+将发送以下文件：
   • codex-logs.log
   • codex-doctor-report.json
-  • codex-apps-tools-cache.json (if available)
-  • codex-app-directory-cache.json (if available)
+  • codex-apps-tools-cache.json（如可用）
+  • codex-app-directory-cache.json（如可用）
   • rollout.jsonl
   • auto-review-rollout.jsonl

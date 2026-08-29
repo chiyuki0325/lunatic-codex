@@ -4,6 +4,6 @@ expression: "hook_live_and_history_snapshot(&chat, \"running\", \"\")"
 ---
 running
 live hooks:
-• Running 3 PreToolUse hooks: checking command policy
+• 正在运行 3 PreToolUse hooks: checking command policy
 history:
 <empty>

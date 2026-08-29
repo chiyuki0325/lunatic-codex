@@ -30,7 +30,7 @@ pub(super) fn materialize_document(
     let title = path
         .file_stem()
         .and_then(|stem| stem.to_str())
-        .unwrap_or("Visualization")
+        .unwrap_or("可视化")
         .replace('-', " ");
     let document = render_fragment(&fragment, &title);
 

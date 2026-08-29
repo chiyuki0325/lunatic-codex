@@ -188,10 +188,7 @@ async fn misalignment_policy_in_parent_stops_active_side_conversation() -> Resul
     .await?;
 
     assert!(app.chat_widget.has_misalignment_policy_violation());
-    assert!(
-        render_bottom_popup(&app.chat_widget, /*width*/ 80)
-            .contains("Chat stopped as a precaution")
-    );
+    assert!(render_bottom_popup(&app.chat_widget, /*width*/ 80).contains("对话已作为预防措施停止"));
     assert_matches!(op_rx.try_recv(), Ok(Op::Interrupt));
 
     Ok(())

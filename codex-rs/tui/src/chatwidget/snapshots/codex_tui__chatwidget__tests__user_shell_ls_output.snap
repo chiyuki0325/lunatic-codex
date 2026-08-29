@@ -2,6 +2,6 @@
 source: tui/src/chatwidget/tests.rs
 expression: blob
 ---
-• You ran ls
+• 你运行了 ls
   └ file1
     file2

@@ -304,9 +304,7 @@ async fn stale_rate_limit_read_does_not_dismiss_visible_workspace_advisory() -> 
         turn_completed_notification(ThreadId::new(), "turn-1", TurnStatus::Completed),
         /*replay_kind*/ None,
     );
-    assert!(
-        render_bottom_popup(&app.chat_widget, /*width*/ 100).contains("Approaching rate limits")
-    );
+    assert!(render_bottom_popup(&app.chat_widget, /*width*/ 100).contains("即将达到用量限制"));
 
     Box::pin(app.handle_event(
         &mut tui,
@@ -323,9 +321,7 @@ async fn stale_rate_limit_read_does_not_dismiss_visible_workspace_advisory() -> 
     ))
     .await?;
 
-    assert!(
-        render_bottom_popup(&app.chat_widget, /*width*/ 100).contains("Approaching rate limits")
-    );
+    assert!(render_bottom_popup(&app.chat_widget, /*width*/ 100).contains("即将达到用量限制"));
     app_server.shutdown().await?;
     Ok(())
 }

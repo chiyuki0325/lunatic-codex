@@ -161,7 +161,7 @@ impl AppLinkViewParams {
             app_id,
             title,
             description: None,
-            instructions: "Sign in to this app in your browser, then return here.".to_string(),
+            instructions: "请在浏览器中登录此应用，然后返回此处。".to_string(),
             url: url.to_string(),
             is_installed: true,
             is_enabled: true,
@@ -185,10 +185,9 @@ impl AppLinkViewParams {
     ) -> Self {
         Self {
             app_id: elicitation_id.to_string(),
-            title: "Action required".to_string(),
-            description: Some(format!("Server: {server_name}")),
-            instructions: "Complete the requested action in your browser, then return here."
-                .to_string(),
+            title: "需要操作".to_string(),
+            description: Some(format!("服务器：{server_name}")),
+            instructions: "请在浏览器中完成请求的操作，然后返回此处。".to_string(),
             url: url.to_string(),
             is_installed: true,
             is_enabled: true,
@@ -292,14 +291,14 @@ impl AppLinkView {
     fn action_labels(&self) -> Vec<&'static str> {
         if self.is_auth_suggestion() {
             return match self.screen {
-                AppLinkScreen::Link => vec!["Open sign-in URL", "Back"],
-                AppLinkScreen::InstallConfirmation => vec!["I already signed in", "Back"],
+                AppLinkScreen::Link => vec!["打开登录 URL", "返回"],
+                AppLinkScreen::InstallConfirmation => vec!["我已登录", "返回"],
             };
         }
         if self.is_external_action_suggestion() {
             return match self.screen {
-                AppLinkScreen::Link => vec!["Open link", "Back"],
-                AppLinkScreen::InstallConfirmation => vec!["I finished", "Back"],
+                AppLinkScreen::Link => vec!["打开链接", "返回"],
+                AppLinkScreen::InstallConfirmation => vec!["我已完成", "返回"],
             };
         }
 
@@ -307,19 +306,19 @@ impl AppLinkView {
             AppLinkScreen::Link => {
                 if self.is_installed {
                     vec![
-                        "Manage on ChatGPT",
+                        "在 ChatGPT 中管理",
                         if self.is_enabled {
-                            "Disable app"
+                            "禁用应用"
                         } else {
-                            "Enable app"
+                            "启用应用"
                         },
-                        "Back",
+                        "返回",
                     ]
                 } else {
-                    vec!["Install on ChatGPT", "Back"]
+                    vec!["在 ChatGPT 中安装", "返回"]
                 }
             }
-            AppLinkScreen::InstallConfirmation => vec!["I already Installed it", "Back"],
+            AppLinkScreen::InstallConfirmation => vec!["我已安装", "返回"],
         }
     }
 
@@ -508,7 +507,7 @@ impl AppLinkView {
         }
         let is_browser_action_suggestion = self.is_browser_action_suggestion();
         if self.is_installed && !is_browser_action_suggestion {
-            for line in wrap("Use $ to insert this app into the prompt.", usable_width) {
+            for line in wrap("使用 $ 将此应用插入提示词。", usable_width) {
                 lines.push(Line::from(line.into_owned()));
             }
             lines.push(Line::from(""));
@@ -529,16 +528,14 @@ impl AppLinkView {
             }
             if !is_browser_action_suggestion {
                 for line in wrap(
-                    "Newly installed apps can take a few minutes to appear in /apps.",
+                    "新安装的应用可能需要几分钟才会显示在 /apps 中。",
                     usable_width,
                 ) {
                     lines.push(Line::from(line.into_owned()));
                 }
                 if !self.is_installed {
-                    for line in wrap(
-                        "After installed, use $ to insert this app into the prompt.",
-                        usable_width,
-                    ) {
+                    for line in wrap("安装后，使用 $ 将此应用插入提示词。", usable_width)
+                    {
                         lines.push(Line::from(line.into_owned()));
                     }
                 }
@@ -563,14 +560,14 @@ impl AppLinkView {
         lines.push(Line::from(
             if is_auth_suggestion {
                 if is_codex_apps_auth {
-                    "Finish App Sign In"
+                    "完成应用登录"
                 } else {
-                    "Finish Authentication"
+                    "完成认证"
                 }
             } else if is_external_action_suggestion {
-                "Finish in Browser"
+                "在浏览器中完成"
             } else {
-                "Finish App Setup"
+                "完成应用设置"
             }
             .bold(),
         ));
@@ -579,39 +576,34 @@ impl AppLinkView {
         if is_auth_suggestion {
             for line in wrap(
                 if is_codex_apps_auth {
-                    "Sign in to the app on ChatGPT in the browser window that just opened."
+                    "请在刚打开的浏览器窗口中登录 ChatGPT 内的应用。"
                 } else {
-                    "Complete authentication in the browser window that just opened."
+                    "请在刚打开的浏览器窗口中完成认证。"
                 },
                 usable_width,
             ) {
                 lines.push(Line::from(line.into_owned()));
             }
-            for line in wrap(
-                "Then return here and select \"I already signed in\".",
-                usable_width,
-            ) {
+            for line in wrap("然后返回此处并选择“我已登录”。", usable_width) {
                 lines.push(Line::from(line.into_owned()));
             }
         } else if is_external_action_suggestion {
-            for line in wrap(
-                "Complete the requested action in the browser window that just opened.",
-                usable_width,
-            ) {
+            for line in wrap("请在刚打开的浏览器窗口中完成请求的操作。", usable_width)
+            {
                 lines.push(Line::from(line.into_owned()));
             }
-            for line in wrap("Then return here and select \"I finished\".", usable_width) {
+            for line in wrap("然后返回此处并选择“我已完成”。", usable_width) {
                 lines.push(Line::from(line.into_owned()));
             }
         } else {
             for line in wrap(
-                "Complete app setup on ChatGPT in the browser window that just opened.",
+                "请在刚打开的浏览器窗口中完成 ChatGPT 应用设置。",
                 usable_width,
             ) {
                 lines.push(Line::from(line.into_owned()));
             }
             for line in wrap(
-                "Sign in there if needed, then return here and select \"I already Installed it\".",
+                "如有需要，请在其中登录，然后返回此处并选择“我已安装”。",
                 usable_width,
             ) {
                 lines.push(Line::from(line.into_owned()));
@@ -621,11 +613,11 @@ impl AppLinkView {
         lines.push(Line::from(""));
         lines.push(Line::from(vec![
             if is_auth_suggestion {
-                "Sign-in URL:"
+                "登录 URL："
             } else if is_external_action_suggestion {
-                "Link:"
+                "链接："
             } else {
-                "Setup URL:"
+                "设置 URL："
             }
             .dim(),
         ]));
@@ -669,19 +661,19 @@ impl AppLinkView {
     }
 
     fn hint_line(&self) -> Line<'static> {
-        let mut spans = vec!["Use ".into(), key_hint::plain(KeyCode::Tab).into()];
+        let mut spans = vec!["使用 ".into(), key_hint::plain(KeyCode::Tab).into()];
         if let Some(move_up) = self.list_keymap.primary_hint(ListAction::MoveUp) {
             spans.extend([" / ".into(), move_up.into()]);
         }
         if let Some(move_down) = self.list_keymap.primary_hint(ListAction::MoveDown) {
             spans.extend([" ".into(), move_down.into()]);
         }
-        spans.push(" to move".into());
+        spans.push(" 以移动".into());
         if let Some(accept) = self.list_keymap.primary_hint(ListAction::Accept) {
-            spans.extend([", ".into(), accept.into(), " to select".into()]);
+            spans.extend(["，按下 ".into(), accept.into(), " 以选择".into()]);
         }
         if let Some(cancel) = self.list_keymap.primary_hint(ListAction::Cancel) {
-            spans.extend([", ".into(), cancel.into(), " to close".into()]);
+            spans.extend(["，按下 ".into(), cancel.into(), " 以关闭".into()]);
         }
         Line::from(spans)
     }
@@ -855,7 +847,7 @@ impl crate::render::renderable::Renderable for AppLinkView {
                 &action_rows,
                 &action_state,
                 action_rows.len().max(1),
-                "No actions",
+                "没有操作",
             );
         }
 
@@ -962,10 +954,9 @@ mod tests {
             params,
             AppLinkViewParams {
                 app_id: "payment-123".to_string(),
-                title: "Action required".to_string(),
-                description: Some("Server: payments".to_string()),
-                instructions: "Complete the requested action in your browser, then return here."
-                    .to_string(),
+                title: "需要操作".to_string(),
+                description: Some("服务器：payments".to_string()),
+                instructions: "请在浏览器中完成请求的操作，然后返回此处。".to_string(),
                 url: "https://payments.example/checkout/123".to_string(),
                 is_installed: true,
                 is_enabled: true,
@@ -1066,7 +1057,7 @@ mod tests {
 
         assert_eq!(
             view.action_labels(),
-            vec!["Manage on ChatGPT", "Disable app", "Back"]
+            vec!["在 ChatGPT 中管理", "禁用应用", "返回"]
         );
     }
 
@@ -1217,7 +1208,7 @@ mod tests {
 
         assert_eq!(
             view.action_labels(),
-            vec!["Manage on ChatGPT", "Enable app", "Back"]
+            vec!["在 ChatGPT 中管理", "启用应用", "返回"]
         );
     }
 
@@ -1645,7 +1636,7 @@ mod tests {
                 app_id: "connector_google_calendar".to_string(),
                 title: "Google Calendar".to_string(),
                 description: None,
-                instructions: "Sign in to this app in your browser, then return here.".to_string(),
+                instructions: "请在浏览器中登录此应用，然后返回此处。".to_string(),
                 url: "https://chatgpt.com/apps/google-calendar/connector_google_calendar"
                     .to_string(),
                 is_installed: true,

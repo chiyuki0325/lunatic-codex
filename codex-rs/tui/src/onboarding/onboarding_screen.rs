@@ -682,12 +682,12 @@ async fn persist_selected_trust(
                 })
                 .await
                 .map(|_| ())
-                .wrap_err("config/batchWrite failed while persisting remote project trust")
+                .wrap_err("通过 config/batchWrite 保存远程项目信任状态失败")
         }
         (Some(request_handle), None) => write_trusted_project(request_handle, &trust_target)
             .await
             .map(|_| ()),
-        (None, _) => Err(color_eyre::eyre::eyre!("app server unavailable")),
+        (None, _) => Err(color_eyre::eyre::eyre!("app-server 不可用")),
     };
 
     match result {
@@ -701,7 +701,7 @@ async fn persist_selected_trust(
             if let Step::TrustDirectory(widget) = &mut onboarding_screen.steps[trust_step_index] {
                 widget.selection = None;
                 widget.error = Some(format!(
-                    "Failed to set trust for {}: {error}",
+                    "无法为 {} 设置信任：{error}",
                     trust_target.display()
                 ));
             }
@@ -871,7 +871,7 @@ mod tests {
             widget
                 .error
                 .as_deref()
-                .is_some_and(|error| error.contains("app server unavailable"))
+                .is_some_and(|error| error.contains("app-server 不可用"))
         );
     }
 }

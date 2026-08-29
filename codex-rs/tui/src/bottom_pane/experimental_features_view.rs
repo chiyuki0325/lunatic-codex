@@ -56,10 +56,8 @@ impl ExperimentalFeaturesView {
         keymap: ListKeymap,
     ) -> Self {
         let mut header = ColumnRenderable::new();
-        header.push(Line::from("Experimental features".bold()));
-        header.push(Line::from(
-            "Toggle experimental features. Changes are saved to config.toml.".dim(),
-        ));
+        header.push(Line::from("实验功能".bold()));
+        header.push(Line::from("切换实验功能。更改将保存到 config.toml。".dim()));
 
         let mut view = Self {
             features,
@@ -258,7 +256,7 @@ impl Renderable for ExperimentalFeaturesView {
                 &rows,
                 &self.state,
                 MAX_POPUP_ROWS,
-                "  No experimental features available for now",
+                "  目前没有可用的实验性功能",
             );
         }
 
@@ -289,15 +287,15 @@ impl Renderable for ExperimentalFeaturesView {
 
 fn experimental_popup_hint_line(keymap: &ListKeymap) -> Line<'static> {
     let mut spans = vec![
-        "Press ".into(),
+        "按下 ".into(),
         key_hint::plain(KeyCode::Char(' ')).into(),
-        " to select".into(),
+        " 以选择".into(),
     ];
     if let Some(accept) = keymap.primary_hint(ListAction::Accept) {
         spans.extend([
-            " or ".into(),
+            "，或按下 ".into(),
             accept.into(),
-            " to save for next conversation".into(),
+            " 以保存至下次对话".into(),
         ]);
     }
     Line::from(spans)

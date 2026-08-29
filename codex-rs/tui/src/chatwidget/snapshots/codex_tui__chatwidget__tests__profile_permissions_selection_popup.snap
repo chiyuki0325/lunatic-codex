@@ -13,7 +13,7 @@ expression: "render_bottom_popup(&chat, 80)"
   3. Full Access                 Codex can edit files outside this workspace
                                  and access the internet without asking for
                                  approval. Exercise caution when using.
-  4. Read Only                   Codex can read files in the current
+  4. 只读                   Codex can read files in the current
                                  workspace. Approval is required to edit files
                                  or access the internet.
 

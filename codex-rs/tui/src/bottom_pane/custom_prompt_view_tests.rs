@@ -213,8 +213,8 @@ fn escape_without_vim_cancels_prompt() {
 fn custom_prompt_view() -> (CustomPromptView, Receiver<String>) {
     let (submitted, submitted_rx) = std::sync::mpsc::channel();
     let view = CustomPromptView::new(
-        "Edit goal".to_string(),
-        "Type a goal objective and press Enter".to_string(),
+        "编辑目标".to_string(),
+        "输入目标并按下 Enter".to_string(),
         String::new(),
         /*context_label*/ None,
         Box::new(move |text| {

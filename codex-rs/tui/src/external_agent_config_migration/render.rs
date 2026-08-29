@@ -78,14 +78,14 @@ impl WidgetRef for &ExternalAgentConfigMigrationScreen {
         let error_height = u16::from(self.error.is_some());
         let intro_lines = match self.view {
             MigrationView::Summary => vec![
-                Line::from("Bring over supported setup from another coding agent."),
-                Line::from("Codex may add files to your current project folder."),
-                Line::from("Your existing setup will not be changed."),
+                Line::from("从其他编程 agent 迁移受支持的配置。"),
+                Line::from("Codex 可能会向当前项目文件夹添加文件。"),
+                Line::from("不会更改现有配置。"),
             ],
             MigrationView::Customize => vec![
-                Line::from("Choose items to import."),
-                Line::from("Codex may add files to your current project folder."),
-                Line::from("Your existing setup will not be changed."),
+                Line::from("选择要导入的项目。"),
+                Line::from("Codex 可能会向当前项目文件夹添加文件。"),
+                Line::from("不会更改现有配置。"),
             ],
         };
         let intro_height = intro_lines.len() as u16;
@@ -118,8 +118,8 @@ impl WidgetRef for &ExternalAgentConfigMigrationScreen {
         .areas(inner_area);
 
         let title = match self.view {
-            MigrationView::Summary => "Import setup",
-            MigrationView::Customize => "Choose what to import",
+            MigrationView::Summary => "导入配置",
+            MigrationView::Customize => "选择要导入的内容",
         };
         let heading = Line::from(vec!["> ".into(), title.bold()]);
         heading.render(header_area, buf);
@@ -167,37 +167,37 @@ impl WidgetRef for &ExternalAgentConfigMigrationScreen {
 
         let footer = match self.view {
             MigrationView::Summary => Line::from(vec![
-                "Use ".dim(),
+                "使用 ".dim(),
                 key_hint::plain(KeyCode::Up).into(),
                 "/".dim(),
                 key_hint::plain(KeyCode::Down).into(),
-                " to move, ".dim(),
+                " 以移动，按下 ".dim(),
                 key_hint::plain(KeyCode::Enter).into(),
-                " to select, ".dim(),
+                " 以选择，按下 ".dim(),
                 "c".cyan(),
-                " to customize".dim(),
+                " 以自定义".dim(),
             ]),
             MigrationView::Customize if self.focus == FocusArea::Actions => Line::from(vec![
-                "Press ".dim(),
+                "按下 ".dim(),
                 key_hint::plain(KeyCode::Enter).into(),
-                " to continue, ".dim(),
+                " 以继续，使用 ".dim(),
                 key_hint::plain(KeyCode::Up).into(),
                 "/".dim(),
                 key_hint::plain(KeyCode::Down).into(),
-                " to move, ".dim(),
+                " 以移动，按下 ".dim(),
                 "b".cyan(),
-                " to go back".dim(),
+                " 以返回".dim(),
             ]),
             MigrationView::Customize => Line::from(vec![
-                "Use ".dim(),
+                "使用 ".dim(),
                 key_hint::plain(KeyCode::Up).into(),
                 "/".dim(),
                 key_hint::plain(KeyCode::Down).into(),
-                " to move, ".dim(),
+                " 以移动，按下 ".dim(),
                 key_hint::plain(KeyCode::Char(' ')).into(),
-                " to toggle, ".dim(),
+                " 以切换，按下 ".dim(),
                 "b".cyan(),
-                " to go back".dim(),
+                " 以返回".dim(),
             ]),
         };
         footer.render(footer_area, buf);

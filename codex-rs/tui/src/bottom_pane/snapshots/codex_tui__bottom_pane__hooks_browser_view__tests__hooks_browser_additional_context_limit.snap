@@ -3,18 +3,18 @@ source: tui/src/bottom_pane/hooks_browser_view.rs
 expression: "render_lines(&view, 112)"
 ---
                                                                                                                 
-  PreToolUse hooks                                                                                              
-  Turn hooks on or off. Your changes are saved automatically.                                                   
+  PreToolUse 个  Hook                                                                                            
+  启 用 或 禁 用  Hook。 更 改 会 自 动 保 存 。                                                                              
                                                                                                                 
-  [x] Hook 1                                                                                                    
+  [x] 第  1 个  Hook                                                                                              
                                                                                                                 
-  Event     PreToolUse                                                                                          
-  Matcher   Bash                                                                                                
-  Source    User config - /tmp/hooks.json                                                                       
-  Command   /tmp/pre-tool-use.sh                                                                                
-  Mode      Sync                                                                                                
-  Timeout   30s                                                                                                 
-  Context   unlimited                                                                                           
-  Trust     Trusted                                                                                             
+  事 件       PreToolUse                                                                                        
+  匹 配 器      Bash                                                                                             
+  来 源       用 户 配 置  - /tmp/hooks.json                                                                        
+  命 令       /tmp/pre-tool-use.sh                                                                              
+  模 式       同 步                                                                                               
+  超 时       30 秒                                                                                              
+  上 下 文      不 限                                                                                              
+  信 任       已 信 任                                                                                             
                                                                                                                 
-  Press space or enter to toggle; esc to go back
+  按 下  Space 或  Enter 以 切 换 ； Esc 以 返 回                                                                         

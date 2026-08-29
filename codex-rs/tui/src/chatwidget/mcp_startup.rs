@@ -11,8 +11,8 @@ use codex_app_server_protocol::McpServerStatusUpdatedNotification;
 
 use super::ChatWidget;
 
-const MCP_STARTUP_SINGLE_HEADER_PREFIX: &str = "Booting MCP server:";
-const MCP_STARTUP_MULTI_HEADER_PREFIX: &str = "Starting MCP servers";
+const MCP_STARTUP_SINGLE_HEADER_PREFIX: &str = "正在启动 MCP 服务器：";
+const MCP_STARTUP_MULTI_HEADER_PREFIX: &str = "正在启动 MCP 服务器";
 
 #[derive(Debug, Clone)]
 pub(crate) enum McpStartupStatus {
@@ -185,16 +185,16 @@ impl ChatWidget {
     pub(super) fn finish_mcp_startup(&mut self, failed: Vec<String>, cancelled: Vec<String>) {
         if !cancelled.is_empty() {
             self.on_warning(format!(
-                "MCP startup interrupted. The following servers were not initialized: {}",
+                "MCP 启动已中断。以下服务器未初始化：{}",
                 cancelled.join(", ")
             ));
         }
         let mut parts = Vec::new();
         if !failed.is_empty() {
-            parts.push(format!("failed: {}", failed.join(", ")));
+            parts.push(format!("失败：{}", failed.join(", ")));
         }
         if !parts.is_empty() {
-            self.on_warning(format!("MCP startup incomplete ({})", parts.join("; ")));
+            self.on_warning(format!("MCP 启动未完成（{}）", parts.join("；")));
         }
 
         let mcp_startup_owned_status = self.status_header_is_mcp_startup_owned();
@@ -273,9 +273,9 @@ impl ChatWidget {
             McpServerStartupState::Starting => McpStartupStatus::Starting,
             McpServerStartupState::Ready => McpStartupStatus::Ready,
             McpServerStartupState::Failed => McpStartupStatus::Failed {
-                error: notification.error.unwrap_or_else(|| {
-                    format!("MCP client for `{}` failed to start", notification.name)
-                }),
+                error: notification
+                    .error
+                    .unwrap_or_else(|| format!("`{}` 的 MCP 客户端启动失败", notification.name)),
             },
             McpServerStartupState::Cancelled => McpStartupStatus::Cancelled,
         };

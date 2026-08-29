@@ -58,8 +58,8 @@ use crate::render::renderable::Renderable;
 use crate::text_formatting::format_json_compact;
 use crate::text_formatting::truncate_text;
 
-const ANSWER_PLACEHOLDER: &str = "Type your answer";
-const OPTIONAL_ANSWER_PLACEHOLDER: &str = "Type your answer (optional)";
+const ANSWER_PLACEHOLDER: &str = "输入答案";
+const OPTIONAL_ANSWER_PLACEHOLDER: &str = "输入答案（可选）";
 const FOOTER_SEPARATOR: &str = " | ";
 const MIN_COMPOSER_HEIGHT: u16 = 3;
 const MIN_OVERLAY_HEIGHT: u16 = 8;
@@ -270,55 +270,55 @@ impl McpServerElicitationFormRequest {
             (McpServerElicitationResponseMode::FormContent, Vec::new())
         } else if is_message_only_schema {
             let allow_description = if is_tool_approval_action {
-                "Run the tool and continue."
+                "运行工具并继续。"
             } else {
-                "Allow this request and continue."
+                "允许此请求并继续。"
             };
             let mut options = vec![McpServerElicitationOption {
-                label: "Allow".to_string(),
+                label: "允许".to_string(),
                 description: Some(allow_description.to_string()),
                 value: Value::String(APPROVAL_ACCEPT_ONCE_VALUE.to_string()),
             }];
             if approval_supports_persist_mode(meta, APPROVAL_PERSIST_SESSION_VALUE) {
                 let description = if is_tool_approval_action {
-                    "Run the tool and remember this choice for this session."
+                    "运行工具，并在本次会话中记住此选择。"
                 } else {
-                    "Allow this request and remember this choice for this session."
+                    "允许此请求，并在本次会话中记住此选择。"
                 };
                 options.push(McpServerElicitationOption {
-                    label: "Allow for this session".to_string(),
+                    label: "在本次会话中允许".to_string(),
                     description: Some(description.to_string()),
                     value: Value::String(APPROVAL_ACCEPT_SESSION_VALUE.to_string()),
                 });
             }
             if approval_supports_persist_mode(meta, APPROVAL_PERSIST_ALWAYS_VALUE) {
                 let description = if is_tool_approval_action {
-                    "Run the tool and remember this choice for future tool calls."
+                    "运行工具，并为后续工具调用记住此选择。"
                 } else {
-                    "Allow this request and remember this choice for future requests."
+                    "允许此请求，并为后续请求记住此选择。"
                 };
                 options.push(McpServerElicitationOption {
-                    label: "Always allow".to_string(),
+                    label: "始终允许".to_string(),
                     description: Some(description.to_string()),
                     value: Value::String(APPROVAL_ACCEPT_ALWAYS_VALUE.to_string()),
                 });
             }
             if is_tool_approval_action {
                 options.push(McpServerElicitationOption {
-                    label: "Cancel".to_string(),
-                    description: Some("Cancel this tool call".to_string()),
+                    label: "取消".to_string(),
+                    description: Some("取消此次工具调用".to_string()),
                     value: Value::String(APPROVAL_CANCEL_VALUE.to_string()),
                 });
             } else {
                 options.extend([
                     McpServerElicitationOption {
-                        label: "Deny".to_string(),
-                        description: Some("Decline this request and continue.".to_string()),
+                        label: "拒绝".to_string(),
+                        description: Some("拒绝此请求并继续。".to_string()),
                         value: Value::String(APPROVAL_DECLINE_VALUE.to_string()),
                     },
                     McpServerElicitationOption {
-                        label: "Cancel".to_string(),
-                        description: Some("Cancel this request".to_string()),
+                        label: "取消".to_string(),
+                        description: Some("取消此请求".to_string()),
                         value: Value::String(APPROVAL_CANCEL_VALUE.to_string()),
                     },
                 ]);
@@ -582,7 +582,7 @@ fn parse_field(
             let options = [true, false]
                 .into_iter()
                 .map(|value| {
-                    let label = if value { "True" } else { "False" }.to_string();
+                    let label = if value { "是" } else { "否" }.to_string();
                     McpServerElicitationOption {
                         label,
                         description: None,
@@ -998,23 +998,21 @@ impl McpServerElicitationOverlay {
         };
         if let Some(submit_hint) = submit_hint.map(ShortcutHint::display_label) {
             if self.field_count() == 1 {
-                tips.push(FooterTip::highlighted(format!("{submit_hint} to submit")));
+                tips.push(FooterTip::highlighted(format!("{submit_hint} 以提交")));
             } else if is_last_field {
-                tips.push(FooterTip::highlighted(format!(
-                    "{submit_hint} to submit all"
-                )));
+                tips.push(FooterTip::highlighted(format!("{submit_hint} 以全部提交")));
             } else {
-                tips.push(FooterTip::new(format!("{submit_hint} to submit answer")));
+                tips.push(FooterTip::new(format!("{submit_hint} 以提交回答")));
             }
         }
         if self.field_count() > 1 {
             if self.current_field_is_select() {
-                tips.push(FooterTip::new("←/→ to navigate fields"));
+                tips.push(FooterTip::new("←/→ 以切换字段"));
             } else {
-                tips.push(FooterTip::new("ctrl + p / ctrl + n change field"));
+                tips.push(FooterTip::new("Ctrl + P / Ctrl + N 以切换字段"));
             }
         }
-        tips.push(FooterTip::new("esc to cancel"));
+        tips.push(FooterTip::new("Esc 以取消"));
         tips
     }
 
@@ -1164,7 +1162,7 @@ impl McpServerElicitationOverlay {
     fn submit_answers(&mut self) {
         self.save_current_draft();
         if let Some(idx) = self.first_required_unanswered_index() {
-            self.validation_error = Some("Answer required fields before submitting.".to_string());
+            self.validation_error = Some("请先回答必填字段再提交。".to_string());
             self.jump_to_field(idx);
             return;
         }
@@ -1330,7 +1328,7 @@ impl McpServerElicitationOverlay {
                 state.selected_idx = Some(0);
             }
             state.ensure_visible(rows.len(), area.height as usize);
-            render_rows(area, buf, &rows, &state, rows.len().max(1), "No options");
+            render_rows(area, buf, &rows, &state, rows.len().max(1), "没有选项");
             return;
         }
         if self.current_field_is_secret() {
@@ -1350,7 +1348,7 @@ impl McpServerElicitationOverlay {
         let option_tip = if options_hidden {
             let selected = self.selected_option_index().unwrap_or(0).saturating_add(1);
             let total = self.options_len();
-            Some(FooterTip::new(format!("option {selected}/{total}")))
+            Some(FooterTip::new(format!("选项 {selected}/{total}")))
         } else {
             None
         };
@@ -1464,14 +1462,14 @@ impl Renderable for McpServerElicitationOverlay {
         let progress_line = if self.field_count() > 0 {
             let idx = self.current_index() + 1;
             let total = self.field_count();
-            let base = format!("Field {idx}/{total}");
+            let base = format!("字段 {idx}/{total}");
             if unanswered > 0 {
-                Line::from(format!("{base} ({unanswered} required unanswered)").dim())
+                Line::from(format!("{base}（{unanswered} 个必填字段未回答）").dim())
             } else {
                 Line::from(base.dim())
             }
         } else {
-            Line::from("No fields".dim())
+            Line::from("没有字段".dim())
         };
         Paragraph::new(progress_line).render(progress_area, buf);
         self.render_prompt(prompt_area, buf);
@@ -1910,12 +1908,12 @@ mod tests {
                     input: McpServerElicitationFieldInput::Select {
                         options: vec![
                             McpServerElicitationOption {
-                                label: "True".to_string(),
+                                label: "是".to_string(),
                                 description: None,
                                 value: Value::Bool(true),
                             },
                             McpServerElicitationOption {
-                                label: "False".to_string(),
+                                label: "否".to_string(),
                                 description: None,
                                 value: Value::Bool(false),
                             },
@@ -1980,18 +1978,18 @@ mod tests {
                     input: McpServerElicitationFieldInput::Select {
                         options: vec![
                             McpServerElicitationOption {
-                                label: "Allow".to_string(),
-                                description: Some("Allow this request and continue.".to_string()),
+                                label: "允许".to_string(),
+                                description: Some("允许此请求并继续。".to_string()),
                                 value: Value::String(APPROVAL_ACCEPT_ONCE_VALUE.to_string()),
                             },
                             McpServerElicitationOption {
-                                label: "Deny".to_string(),
-                                description: Some("Decline this request and continue.".to_string()),
+                                label: "拒绝".to_string(),
+                                description: Some("拒绝此请求并继续。".to_string()),
                                 value: Value::String(APPROVAL_DECLINE_VALUE.to_string()),
                             },
                             McpServerElicitationOption {
-                                label: "Cancel".to_string(),
-                                description: Some("Cancel this request".to_string()),
+                                label: "取消".to_string(),
+                                description: Some("取消此请求".to_string()),
                                 value: Value::String(APPROVAL_CANCEL_VALUE.to_string()),
                             },
                         ],
@@ -2037,13 +2035,13 @@ mod tests {
                     input: McpServerElicitationFieldInput::Select {
                         options: vec![
                             McpServerElicitationOption {
-                                label: "Allow".to_string(),
-                                description: Some("Run the tool and continue.".to_string()),
+                                label: "允许".to_string(),
+                                description: Some("运行工具并继续。".to_string()),
                                 value: Value::String(APPROVAL_ACCEPT_ONCE_VALUE.to_string()),
                             },
                             McpServerElicitationOption {
-                                label: "Cancel".to_string(),
-                                description: Some("Cancel this tool call".to_string()),
+                                label: "取消".to_string(),
+                                description: Some("取消此次工具调用".to_string()),
                                 value: Value::String(APPROVAL_CANCEL_VALUE.to_string()),
                             },
                         ],

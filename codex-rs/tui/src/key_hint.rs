@@ -26,9 +26,9 @@ const ALT_PREFIX: &str = "⌥ + ";
 #[cfg(all(not(test), target_os = "macos"))]
 const ALT_PREFIX: &str = "⌥ + ";
 #[cfg(all(not(test), not(target_os = "macos")))]
-const ALT_PREFIX: &str = "alt + ";
-const CTRL_PREFIX: &str = "ctrl + ";
-const SHIFT_PREFIX: &str = "shift + ";
+const ALT_PREFIX: &str = "Alt + ";
+const CTRL_PREFIX: &str = "Ctrl + ";
+const SHIFT_PREFIX: &str = "Shift + ";
 
 /// One concrete key event that can trigger a TUI action.
 ///
@@ -99,15 +99,24 @@ impl KeyBinding {
     pub(crate) fn display_label(&self) -> String {
         let modifiers = modifiers_to_string(self.modifiers);
         let key = match self.key {
-            KeyCode::Enter => "enter".to_string(),
-            KeyCode::Char(' ') => "space".to_string(),
-            KeyCode::Up => "↑".to_string(),
-            KeyCode::Down => "↓".to_string(),
+            KeyCode::Backspace => "Backspace".to_string(),
+            KeyCode::Enter => "Enter".to_string(),
             KeyCode::Left => "←".to_string(),
             KeyCode::Right => "→".to_string(),
-            KeyCode::PageUp => "pgup".to_string(),
-            KeyCode::PageDown => "pgdn".to_string(),
-            _ => self.key.to_string().to_ascii_lowercase(),
+            KeyCode::Up => "↑".to_string(),
+            KeyCode::Down => "↓".to_string(),
+            KeyCode::Home => "Home".to_string(),
+            KeyCode::End => "End".to_string(),
+            KeyCode::PageUp => "PageUp".to_string(),
+            KeyCode::PageDown => "PageDown".to_string(),
+            KeyCode::Tab => "Tab".to_string(),
+            KeyCode::BackTab => "BackTab".to_string(),
+            KeyCode::Delete => "Delete".to_string(),
+            KeyCode::Insert => "Insert".to_string(),
+            KeyCode::F(number) => format!("F{number}"),
+            KeyCode::Char(' ') => "Space".to_string(),
+            KeyCode::Esc => "Esc".to_string(),
+            _ => self.key.to_string(),
         };
         format!("{modifiers}{key}")
     }

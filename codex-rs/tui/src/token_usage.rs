@@ -64,21 +64,18 @@ impl fmt::Display for TokenUsage {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "Token usage: total={} input={}{} output={}{}",
+            "Token 用量：总计={} 输入={}{} 输出={}{}",
             format_with_separators(self.blended_total()),
             format_with_separators(self.non_cached_input()),
             if self.cached_input() > 0 {
-                format!(
-                    " (+ {} cached)",
-                    format_with_separators(self.cached_input())
-                )
+                format!("（+{} 缓存）", format_with_separators(self.cached_input()))
             } else {
                 String::new()
             },
             format_with_separators(self.output_tokens),
             if self.reasoning_output_tokens > 0 {
                 format!(
-                    " (reasoning {})",
+                    "（推理 {}）",
                     format_with_separators(self.reasoning_output_tokens)
                 )
             } else {

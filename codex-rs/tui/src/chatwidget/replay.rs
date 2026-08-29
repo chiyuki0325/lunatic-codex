@@ -216,7 +216,7 @@ impl ChatWidget {
                 self.exit_review_mode_after_item();
             }
             ThreadItem::ContextCompaction { .. } => {
-                self.add_info_message("Context compacted".to_string(), /*hint*/ None);
+                self.add_info_message("上下文已压缩".to_string(), /*hint*/ None);
             }
             ThreadItem::HookPrompt { .. } => {}
             ThreadItem::CollabAgentToolCall {

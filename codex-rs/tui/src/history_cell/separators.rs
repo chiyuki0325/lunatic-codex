@@ -32,7 +32,7 @@ impl HistoryCell for FinalMessageSeparator {
             .filter(|seconds| *seconds > 60)
             .map(crate::status_indicator_widget::fmt_elapsed_compact)
         {
-            label_parts.push(format!("Worked for {elapsed_seconds}"));
+            label_parts.push(format!("工作耗时 {elapsed_seconds}"));
         }
         if let Some(metrics_label) = self.runtime_metrics.and_then(runtime_metrics_label) {
             label_parts.push(metrics_label);
@@ -60,7 +60,7 @@ impl HistoryCell for FinalMessageSeparator {
             .filter(|seconds| *seconds > 60)
             .map(crate::status_indicator_widget::fmt_elapsed_compact)
         {
-            label_parts.push(format!("Worked for {elapsed_seconds}"));
+            label_parts.push(format!("工作耗时 {elapsed_seconds}"));
         }
         if let Some(metrics_label) = self.runtime_metrics.and_then(runtime_metrics_label) {
             label_parts.push(metrics_label);
@@ -77,50 +77,46 @@ pub(crate) fn runtime_metrics_label(summary: RuntimeMetricsSummary) -> Option<St
     let mut parts = Vec::new();
     if summary.tool_calls.count > 0 {
         let duration = format_duration_ms(summary.tool_calls.duration_ms);
-        let calls = pluralize(summary.tool_calls.count, "call", "calls");
         parts.push(format!(
-            "Local tools: {} {calls} ({duration})",
+            "本地工具：{} 次调用（{duration}）",
             summary.tool_calls.count
         ));
     }
     if summary.api_calls.count > 0 {
         let duration = format_duration_ms(summary.api_calls.duration_ms);
-        let calls = pluralize(summary.api_calls.count, "call", "calls");
         parts.push(format!(
-            "Inference: {} {calls} ({duration})",
+            "推理：{} 次调用（{duration}）",
             summary.api_calls.count
         ));
     }
     if summary.websocket_calls.count > 0 {
         let duration = format_duration_ms(summary.websocket_calls.duration_ms);
         parts.push(format!(
-            "WebSocket: {} events send ({duration})",
+            "WebSocket：已发送 {} 个事件（{duration}）",
             summary.websocket_calls.count
         ));
     }
     if summary.streaming_events.count > 0 {
         let duration = format_duration_ms(summary.streaming_events.duration_ms);
-        let stream_label = pluralize(summary.streaming_events.count, "Stream", "Streams");
-        let events = pluralize(summary.streaming_events.count, "event", "events");
         parts.push(format!(
-            "{stream_label}: {} {events} ({duration})",
+            "流式：{} 个事件（{duration}）",
             summary.streaming_events.count
         ));
     }
     if summary.websocket_events.count > 0 {
         let duration = format_duration_ms(summary.websocket_events.duration_ms);
         parts.push(format!(
-            "{} events received ({duration})",
+            "已接收 {} 个事件（{duration}）",
             summary.websocket_events.count
         ));
     }
     if summary.responses_api_overhead_ms > 0 {
         let duration = format_duration_ms(summary.responses_api_overhead_ms);
-        parts.push(format!("Responses API overhead: {duration}"));
+        parts.push(format!("Responses API 开销：{duration}"));
     }
     if summary.responses_api_inference_time_ms > 0 {
         let duration = format_duration_ms(summary.responses_api_inference_time_ms);
-        parts.push(format!("Responses API inference: {duration}"));
+        parts.push(format!("Responses API 推理：{duration}"));
     }
     if summary.responses_api_engine_iapi_ttft_ms > 0
         || summary.responses_api_engine_service_ttft_ms > 0
@@ -166,8 +162,4 @@ fn format_duration_ms(duration_ms: u64) -> String {
     } else {
         format!("{duration_ms}ms")
     }
-}
-
-fn pluralize(count: u64, singular: &'static str, plural: &'static str) -> &'static str {
-    if count == 1 { singular } else { plural }
 }

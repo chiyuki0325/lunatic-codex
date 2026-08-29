@@ -32,7 +32,7 @@ pub(crate) fn new_debug_config_output(
 
     if let Some(proxy) = session_network_proxy {
         lines.push("".into());
-        lines.push("Session runtime:".bold().into());
+        lines.push("会话运行时：".bold().into());
         lines.push("  - network_proxy".into());
         let SessionNetworkProxyRuntime {
             http_addr,
@@ -125,26 +125,22 @@ fn render_debug_config_lines(
 ) -> Vec<Line<'static>> {
     let mut lines = vec!["/debug-config".magenta().into(), "".into()];
 
-    lines.push(
-        "Config layer stack (lowest precedence first):"
-            .bold()
-            .into(),
-    );
+    lines.push("配置层堆栈（优先级从低到高）：".bold().into());
     let mut layers = stack.all_layers_low_to_high().peekable();
     if layers.peek().is_none() {
-        lines.push("  <none>".dim().into());
+        lines.push("  <无>".dim().into());
     } else {
         for (index, layer) in layers.enumerate() {
             let source = format_config_layer_source(&layer.name, CONFIG_TOML_FILE);
             let status = if layer.is_disabled() {
-                "disabled"
+                "已禁用"
             } else {
-                "enabled"
+                "已启用"
             };
-            lines.push(format!("  {}. {source} ({status})", index + 1).into());
+            lines.push(format!("  {}. {source}（{status}）", index + 1).into());
             lines.extend(render_non_file_layer_details(layer));
             if let Some(reason) = &layer.disabled_reason {
-                lines.push(format!("     reason: {reason}").dim().into());
+                lines.push(format!("     原因：{reason}").dim().into());
             }
         }
     }
@@ -153,7 +149,7 @@ fn render_debug_config_lines(
     let requirements_toml = stack.requirements_toml();
 
     lines.push("".into());
-    lines.push("Requirements:".bold().into());
+    lines.push("要求：".bold().into());
     let mut requirement_lines = Vec::new();
 
     if let Some(sqlite_home) = requirements.sqlite_home.as_ref() {
@@ -304,7 +300,7 @@ fn render_debug_config_lines(
     if requirements_toml.guardian_policy_config.is_some() {
         requirement_lines.push(requirement_line(
             "guardian_policy_config",
-            "configured".to_string(),
+            "已配置".to_string(),
             requirements.guardian_policy_config_source.as_ref(),
         ));
     }
@@ -352,7 +348,7 @@ fn render_debug_config_lines(
     if requirements_toml.rules.is_some() {
         requirement_lines.push(requirement_line(
             "rules",
-            "configured".to_string(),
+            "已配置".to_string(),
             requirements.exec_policy_source(),
         ));
     }
@@ -390,7 +386,7 @@ fn render_debug_config_lines(
     }
 
     if requirement_lines.is_empty() {
-        lines.push("  <none>".dim().into());
+        lines.push("  <无>".dim().into());
     } else {
         lines.extend(requirement_lines);
     }
@@ -417,7 +413,7 @@ fn render_session_flag_details(config: &TomlValue) -> Vec<Line<'static>> {
     flatten_toml_key_values(config, /*prefix*/ None, &mut pairs);
 
     if pairs.is_empty() {
-        return vec!["     - <none>".dim().into()];
+        return vec!["     - <无>".dim().into()];
     }
 
     pairs
@@ -450,30 +446,30 @@ fn render_non_file_layer_value(layer: &ConfigLayerEntry) -> Vec<Line<'static>> {
         .map(ToString::to_string)
         .unwrap_or_else(|| format_toml_value(&layer.config));
     if value.is_empty() {
-        return vec![format!("     {label}: <empty>").dim().into()];
+        return vec![format!("     {label}：<空>").dim().into()];
     }
 
     if value.contains('\n') {
-        let mut lines = vec![format!("     {label}:").into()];
+        let mut lines = vec![format!("     {label}：").into()];
         lines.extend(value.lines().map(|line| format!("       {line}").into()));
         lines
     } else {
-        vec![format!("     {label}: {value}").into()]
+        vec![format!("     {label}：{value}").into()]
     }
 }
 
 fn non_file_layer_value_label(source: &ConfigLayerSource) -> &'static str {
     match source {
         ConfigLayerSource::Mdm { .. } | ConfigLayerSource::LegacyManagedConfigTomlFromMdm => {
-            "MDM value"
+            "MDM 配置值"
         }
-        ConfigLayerSource::EnterpriseManaged { .. } => "Enterprise-managed config value",
+        ConfigLayerSource::EnterpriseManaged { .. } => "企业托管配置值",
         ConfigLayerSource::PackagedDefaults { .. }
         | ConfigLayerSource::SessionFlags
         | ConfigLayerSource::System { .. }
         | ConfigLayerSource::User { .. }
         | ConfigLayerSource::Project { .. }
-        | ConfigLayerSource::LegacyManagedConfigTomlFromFile { .. } => "Layer value",
+        | ConfigLayerSource::LegacyManagedConfigTomlFromFile { .. } => "配置层值",
     }
 }
 
@@ -513,13 +509,13 @@ fn requirement_line(
 ) -> Line<'static> {
     let source = source
         .map(ToString::to_string)
-        .unwrap_or_else(|| "<unspecified>".to_string());
-    format!("  - {name}: {value} (source: {source})").into()
+        .unwrap_or_else(|| "<未指定>".to_string());
+    format!("  - {name}：{value}（来源：{source}）").into()
 }
 
 fn join_or_empty(values: Vec<String>) -> String {
     if values.is_empty() {
-        "<empty>".to_string()
+        "<空>".to_string()
     } else {
         values.join(", ")
     }

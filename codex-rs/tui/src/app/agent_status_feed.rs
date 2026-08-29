@@ -33,12 +33,12 @@ impl HistoryCell for AgentStatusHistoryCell {
     fn display_lines(&self, width: u16) -> Vec<Line<'static>> {
         let mut lines: Vec<Line<'static>> = vec![
             "/subagents".magenta().into(),
-            "Sub-agents running".bold().into(),
+            "运行中的 subagent".bold().into(),
             "".into(),
         ];
 
         if self.entries.is_empty() {
-            lines.push("  • No sub-agents running.".italic().into());
+            lines.push("  • 没有运行中的 subagent。".italic().into());
             return lines;
         }
 
@@ -47,7 +47,7 @@ impl HistoryCell for AgentStatusHistoryCell {
             let preview_width = width.saturating_sub(AGENT_STATUS_PREVIEW_INDENT).max(1);
             let preview_lines = entry.preview_lines(preview_width);
             if preview_lines.is_empty() {
-                lines.push(vec!["    ".into(), "No recent activity yet.".dim().italic()].into());
+                lines.push(vec!["    ".into(), "暂无近期活动。".dim().italic()].into());
             } else {
                 lines.extend(preview_lines.into_iter().map(indent_preview_line));
             }
@@ -142,7 +142,7 @@ fn activity_summary(item: &ThreadItem) -> Option<String> {
             return bounded_summary(&format!("$ {command}"));
         }
         ThreadItem::FileChange { changes, .. } => {
-            return bounded_summary(&format!("Updated {} file(s)", changes.len()));
+            return bounded_summary(&format!("已更新 {} 个文件", changes.len()));
         }
         ThreadItem::McpToolCall { server, tool, .. } => {
             return bounded_summary(&format!("MCP {server}/{tool}"));
@@ -154,15 +154,15 @@ fn activity_summary(item: &ThreadItem) -> Option<String> {
                 .as_ref()
                 .map(|namespace| format!("{namespace}/{tool}"))
                 .unwrap_or_else(|| tool.clone());
-            return bounded_summary(&format!("Tool {tool}"));
+            return bounded_summary(&format!("工具 {tool}"));
         }
         ThreadItem::CollabAgentToolCall { tool, .. } => {
             let action = match tool {
-                CollabAgentTool::SpawnAgent => "Spawned an agent",
-                CollabAgentTool::SendInput => "Sent input to an agent",
-                CollabAgentTool::ResumeAgent => "Resumed an agent",
-                CollabAgentTool::Wait => "Waited for an agent",
-                CollabAgentTool::CloseAgent => "Closed an agent",
+                CollabAgentTool::SpawnAgent => "已启动 agent",
+                CollabAgentTool::SendInput => "已向 agent 发送输入",
+                CollabAgentTool::ResumeAgent => "已恢复 agent",
+                CollabAgentTool::Wait => "正在等待 agent",
+                CollabAgentTool::CloseAgent => "已关闭 agent",
             };
             return Some(action.to_string());
         }
@@ -170,23 +170,23 @@ fn activity_summary(item: &ThreadItem) -> Option<String> {
             kind, agent_path, ..
         } => {
             let action = match kind {
-                SubAgentActivityKind::Started => "Started",
-                SubAgentActivityKind::Interacted => "Contacted",
-                SubAgentActivityKind::Interrupted => "Interrupted",
+                SubAgentActivityKind::Started => "已启动",
+                SubAgentActivityKind::Interacted => "已联系",
+                SubAgentActivityKind::Interrupted => "已中断",
             };
             return bounded_summary(&format!("{action} {agent_path}"));
         }
         ThreadItem::WebSearch(item) => {
-            return bounded_summary(&format!("Web search: {}", item.query));
+            return bounded_summary(&format!("网页搜索：{}", item.query));
         }
         ThreadItem::ImageView { path, .. } => {
             let path = path.render_for_ui();
-            return bounded_summary(&format!("Viewed {path}"));
+            return bounded_summary(&format!("已查看 {path}"));
         }
-        ThreadItem::ImageGeneration(_) => return Some("Generated an image".to_string()),
-        ThreadItem::EnteredReviewMode { .. } => return Some("Entered review mode".to_string()),
-        ThreadItem::ExitedReviewMode { .. } => return Some("Exited review mode".to_string()),
-        ThreadItem::ContextCompaction { .. } => return Some("Compacted context".to_string()),
+        ThreadItem::ImageGeneration(_) => return Some("已生成图像".to_string()),
+        ThreadItem::EnteredReviewMode { .. } => return Some("已进入审查模式".to_string()),
+        ThreadItem::ExitedReviewMode { .. } => return Some("已退出审查模式".to_string()),
+        ThreadItem::ContextCompaction { .. } => return Some("已压缩上下文".to_string()),
         ThreadItem::UserMessage { .. } | ThreadItem::HookPrompt { .. } | ThreadItem::Sleep(_) => {
             return None;
         }

@@ -2,10 +2,10 @@
 source: tui/src/chatwidget/tests/popups_and_settings.rs
 expression: popup
 ---
-  Plugins
+  插件
   Failed to load plugin details.
 
      Plugin detail unavailable  Failed to load plugin details.
-› 1. Back to plugins            Return to the plugin list.
+› 1. 返回插件列表            返回插件列表。
 
-  Press esc to close.
+  按 Esc 关闭。

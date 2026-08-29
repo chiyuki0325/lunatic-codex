@@ -7,8 +7,8 @@ impl ChatWidget {
         let mut items: Vec<SelectionItem> = Vec::new();
 
         items.push(SelectionItem {
-            name: "Review against a base branch".to_string(),
-            description: Some("(PR Style)".into()),
+            name: "审查与基准分支的差异".to_string(),
+            description: Some("（PR 风格）".into()),
             actions: vec![Box::new({
                 let cwd = self.config.cwd.to_path_buf();
                 move |tx| {
@@ -21,7 +21,7 @@ impl ChatWidget {
         });
 
         items.push(SelectionItem {
-            name: "Review uncommitted changes".to_string(),
+            name: "审查未提交的更改".to_string(),
             actions: vec![Box::new(move |tx: &AppEventSender| {
                 tx.review(ReviewTarget::UncommittedChanges);
             })],
@@ -30,7 +30,7 @@ impl ChatWidget {
         });
 
         items.push(SelectionItem {
-            name: "Review a commit".to_string(),
+            name: "审查提交".to_string(),
             actions: vec![Box::new({
                 let cwd = self.config.cwd.to_path_buf();
                 move |tx| {
@@ -43,7 +43,7 @@ impl ChatWidget {
         });
 
         items.push(SelectionItem {
-            name: "Custom review instructions".to_string(),
+            name: "自定义审查说明".to_string(),
             actions: vec![Box::new(move |tx| {
                 tx.send(AppEvent::OpenReviewCustomPrompt);
             })],
@@ -53,7 +53,7 @@ impl ChatWidget {
         });
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
-            title: Some("Select a review preset".into()),
+            title: Some("选择审查预设".into()),
             footer_hint: Some(standard_popup_hint_line()),
             items,
             ..Default::default()
@@ -64,7 +64,7 @@ impl ChatWidget {
         let branches = local_git_branches(cwd).await;
         let current_branch = current_branch_name(cwd)
             .await
-            .unwrap_or_else(|| "(detached HEAD)".to_string());
+            .unwrap_or_else(|| "（分离的 HEAD）".to_string());
         let mut items: Vec<SelectionItem> = Vec::with_capacity(branches.len());
 
         for option in branches {
@@ -83,11 +83,11 @@ impl ChatWidget {
         }
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
-            title: Some("Select a base branch".to_string()),
+            title: Some("选择基准分支".to_string()),
             footer_hint: Some(standard_popup_hint_line()),
             items,
             is_searchable: true,
-            search_placeholder: Some("Type to search branches".to_string()),
+            search_placeholder: Some("输入内容以搜索分支".to_string()),
             ..Default::default()
         });
     }
@@ -116,11 +116,11 @@ impl ChatWidget {
         }
 
         self.bottom_pane.show_selection_view(SelectionViewParams {
-            title: Some("Select a commit to review".to_string()),
+            title: Some("选择要审查的提交".to_string()),
             footer_hint: Some(standard_popup_hint_line()),
             items,
             is_searchable: true,
-            search_placeholder: Some("Type to search commits".to_string()),
+            search_placeholder: Some("输入内容以搜索提交".to_string()),
             ..Default::default()
         });
     }
@@ -128,8 +128,8 @@ impl ChatWidget {
     pub(crate) fn show_review_custom_prompt(&mut self) {
         let tx = self.app_event_tx.clone();
         let view = CustomPromptView::new(
-            "Custom review instructions".to_string(),
-            "Type instructions and press Enter".to_string(),
+            "自定义审查说明".to_string(),
+            "输入说明后按下 Enter".to_string(),
             /*initial_text*/ String::new(),
             /*context_label*/ None,
             Box::new(move |prompt: String| {
@@ -172,11 +172,11 @@ pub(crate) fn show_review_commit_picker_with_entries(
     }
 
     chat.bottom_pane.show_selection_view(SelectionViewParams {
-        title: Some("Select a commit to review".to_string()),
+        title: Some("选择要审查的提交".to_string()),
         footer_hint: Some(standard_popup_hint_line()),
         items,
         is_searchable: true,
-        search_placeholder: Some("Type to search commits".to_string()),
+        search_placeholder: Some("输入内容以搜索提交".to_string()),
         ..Default::default()
     });
 }

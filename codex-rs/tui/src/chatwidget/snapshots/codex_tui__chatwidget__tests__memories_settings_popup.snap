@@ -2,16 +2,13 @@
 source: tui/src/chatwidget/tests/popups_and_settings.rs
 expression: popup
 ---
-  Memories
-  Choose how Codex uses and creates memories. Changes are saved to config.toml
+  记忆
+  选择 Codex 使用和创建记忆的方式。更改将保存到 config.toml
 
-› [x] Use memories       Use memories in the following threads. Applied at
-                         next thread.
-  [ ] Generate memories  Generate memories from the following threads. Current
-                         thread included.
-  Reset all memories     Clear local memory files and summaries. Existing
-                         threads stay intact.
+› [x] 使用记忆          在后续会话中使用记忆。将在下一个会话生效。
+  [ ] 生成记忆          从后续会话中生成记忆，包含当前会话。
+  重置所有记忆          清除本地记忆文件和摘要，保留现有会话。
 
-  Learn more: https://developers.openai.com/codex/memories
+  了解更多：https://developers.openai.com/codex/memories
 
-  Press space to toggle; enter to save or select
+  按下 space 切换；按下 enter 保存或选择

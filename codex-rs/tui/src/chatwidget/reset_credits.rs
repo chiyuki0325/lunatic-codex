@@ -34,27 +34,27 @@ pub(super) fn reset_credit_options(
                 Some(expires_at) => DateTime::<Utc>::from_timestamp(expires_at, 0)
                     .map(|expires_at| {
                         format!(
-                            "Expires {}",
+                            "到期时间 {}",
                             expires_at
                                 .with_timezone(&Local)
                                 .format("%H:%M on %-d %b %Y")
                         )
                     })
-                    .unwrap_or_else(|| "Expiration unavailable".to_string()),
-                None => "Does not expire".to_string(),
+                    .unwrap_or_else(|| "到期时间不可用".to_string()),
+                None => "永不过期".to_string(),
             };
             let reset_title = credit
                 .title
                 .as_deref()
                 .map(str::trim)
                 .filter(|title| !title.is_empty())
-                .unwrap_or("Full reset");
+                .unwrap_or("完全重置");
             let reset_description = credit
                 .description
                 .as_deref()
                 .map(str::trim)
                 .filter(|description| !description.is_empty())
-                .unwrap_or("Reset your current usage limits.");
+                .unwrap_or("重置当前使用上限。");
             ResetCreditOption {
                 credit_id: Some(credit.id.clone()),
                 name: reset_title.to_string(),
@@ -67,9 +67,9 @@ pub(super) fn reset_credit_options(
     if options.is_empty() {
         options.push(ResetCreditOption {
             credit_id: None,
-            name: "Full reset".to_string(),
+            name: "完全重置".to_string(),
             detail: None,
-            description: "Reset your current usage limits.".to_string(),
+            description: "重置当前使用上限。".to_string(),
         });
     }
 

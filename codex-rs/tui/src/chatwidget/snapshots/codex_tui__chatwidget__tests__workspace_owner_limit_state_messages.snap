@@ -2,7 +2,7 @@
 source: tui/src/chatwidget/tests/status_and_layout.rs
 expression: "rendered_cases.join(\"\\n---\\n\")"
 ---
-■ You're out of credits. Your workspace is out of credits. Add credits to continue using Codex.
+■ 你的额度已用尽。你的工作区额度已用尽。添加额度后可继续使用 Codex。
 
 ---
-■ Usage limit reached. You've reached your usage limit. Increase your limits to continue using codex.
+■ 已达到使用上限。提高上限后可继续使用 Codex。

@@ -42,13 +42,13 @@ pub(super) fn render_footer(area: Rect, buf: &mut Buffer, search_mode: SearchMod
 fn footer_hint_line() -> Line<'static> {
     Line::from(vec![
         key_hint::plain(KeyCode::Enter).into(),
-        " insert · ".dim(),
+        " 插入 · ".dim(),
         key_hint::plain(KeyCode::Esc).into(),
-        " close · ".dim(),
+        " 关闭 · ".dim(),
         key_hint::plain(KeyCode::Left).into(),
         "/".dim(),
         key_hint::plain(KeyCode::Right).into(),
-        " switch search modes".dim(),
+        " 切换搜索模式".dim(),
     ])
 }
 

@@ -44,37 +44,31 @@ impl App {
         if matches!(self.app_server_target, AppServerTarget::Embedded) {
             let workload_identity_selected = codex_login::is_workload_identity_selected();
             self.chat_widget.show_selection_view(SelectionViewParams {
-                title: Some("Shared agents unavailable".to_string()),
+                title: Some("共享 agent 不可用".to_string()),
                 subtitle: Some(
                     if workload_identity_selected {
-                        "The agents dashboard is unavailable while workload identity is active."
+                        "启用工作负载身份时，agent 面板不可用。"
                     } else if cfg!(unix) {
-                        "This session isn’t connected to a shared background server."
+                        "此会话未连接到共享后台服务器。"
                     } else {
-                        "Connect to a remote background server to use the agents dashboard."
+                        "请连接到远程后台服务器以使用 agent 面板。"
                     }
                     .to_string(),
                 ),
-                footer_note: (cfg!(unix) && !workload_identity_selected).then(|| {
-                    Line::from(
-                        "Starting a background server will not interrupt or move this session."
-                            .dim(),
-                    )
-                }),
+                footer_note: (cfg!(unix) && !workload_identity_selected)
+                    .then(|| Line::from("启动后台服务器不会中断或迁移此会话。".dim())),
                 footer_hint: Some(standard_popup_hint_line_for_keymap(&self.keymap.list)),
                 items: [
                     #[cfg(unix)]
                     (!workload_identity_selected).then(|| SelectionItem {
-                        name: "Start background server".to_string(),
-                        description: Some(
-                            "Open `codex agents` in another terminal afterward.".to_string(),
-                        ),
+                        name: "启动后台服务器".to_string(),
+                        description: Some("随后请在另一个终端中运行 `codex agents`。".to_string()),
                         actions: vec![Box::new(|tx| tx.send(AppEvent::StartAgentsDaemon))],
                         dismiss_on_select: true,
                         ..Default::default()
                     }),
                     Some(SelectionItem {
-                        name: "Return to this session".to_string(),
+                        name: "返回此会话".to_string(),
                         dismiss_on_select: true,
                         ..Default::default()
                     }),
@@ -232,7 +226,7 @@ impl App {
             Ok(threads) => threads,
             Err(error) => {
                 self.chat_widget
-                    .add_error_message(format!("Failed to load shared agents: {error}"));
+                    .add_error_message(format!("加载共享 agent 失败：{error}"));
                 if std::mem::take(&mut self.agents_overview.refresh_pending) {
                     self.refresh_agents_overview_threads(app_server);
                 }
@@ -375,9 +369,8 @@ impl App {
             {
                 Ok(thread) => thread,
                 Err(error) => {
-                    self.chat_widget.add_error_message(format!(
-                        "Agent session {root_thread_id} is unavailable: {error}"
-                    ));
+                    self.chat_widget
+                        .add_error_message(format!("agent 会话 {root_thread_id} 不可用：{error}"));
                     return Ok(AppRunControl::Continue);
                 }
             };
@@ -394,7 +387,7 @@ impl App {
                 Ok(config) => config,
                 Err(error) => {
                     self.chat_widget
-                        .add_error_message(format!("Failed to load task settings: {error}"));
+                        .add_error_message(format!("加载任务设置失败：{error}"));
                     return Ok(AppRunControl::Continue);
                 }
             };
@@ -412,7 +405,7 @@ impl App {
                 Ok(resumed) => resumed,
                 Err(error) => {
                     self.chat_widget
-                        .add_error_message(format!("Failed to attach to task: {error}"));
+                        .add_error_message(format!("连接到任务失败：{error}"));
                     return Ok(AppRunControl::Continue);
                 }
             };
@@ -463,7 +456,7 @@ impl App {
                 .await
             {
                 self.chat_widget
-                    .add_error_message(format!("Failed to attach to task: {error}"));
+                    .add_error_message(format!("连接到任务失败：{error}"));
                 return Ok(AppRunControl::Continue);
             }
             let mut destination_config = self.chat_widget.config_ref().clone();
@@ -579,7 +572,7 @@ impl App {
                     }
                     return self
                         .chat_widget
-                        .add_error_message(format!("Failed to load project settings: {error}"));
+                        .add_error_message(format!("加载项目设置失败：{error}"));
                 }
             },
             None => self.fresh_session_config(),
@@ -595,7 +588,7 @@ impl App {
             }
             return self
                 .chat_widget
-                .add_error_message("Permission profile has different settings.".to_string());
+                .add_error_message("权限配置文件的设置不同。".to_string());
         }
         self.apply_runtime_policy_overrides(&mut config);
         apply_managed_new_thread_defaults(
@@ -625,7 +618,7 @@ impl App {
                     state.input = prompt;
                 }
                 self.chat_widget
-                    .add_error_message(format!("Failed to start background task: {error}"));
+                    .add_error_message(format!("启动后台任务失败：{error}"));
             }
         }
     }
@@ -655,7 +648,7 @@ impl App {
                 state.input = prompt;
             }
             self.chat_widget
-                .add_error_message(format!("Failed to send task message: {error}"));
+                .add_error_message(format!("发送任务消息失败：{error}"));
         }
     }
 
@@ -677,7 +670,7 @@ impl App {
                     .map(|turn| turn.id),
                 Err(error) => {
                     self.chat_widget
-                        .add_error_message(format!("Failed to stop background task: {error}"));
+                        .add_error_message(format!("停止后台任务失败：{error}"));
                     self.refresh_agents_overview_threads(app_server);
                     return;
                 }
@@ -688,7 +681,7 @@ impl App {
         };
         if let Err(error) = app_server.turn_interrupt(thread_id, turn_id).await {
             self.chat_widget
-                .add_error_message(format!("Failed to stop background task: {error}"));
+                .add_error_message(format!("停止后台任务失败：{error}"));
             self.refresh_agents_overview_threads(app_server);
         }
     }
