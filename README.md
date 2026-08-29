@@ -22,11 +22,10 @@
 - [ ] /context 上下文窗口占用查看（`cc-context`）
 - [ ] /rewind 回滚当前会话到先前位点（`cc-rewind`）
 - [ ] Worktree 工具调用强制隔离（`worktree-isolation`）
-- [ ] 输入框 Tab 键进入 raw 模式（`input-box-raw`）
-- [ ] 默认开启新版 Subagent（`default-new-subagent`）
+- [ ] 输入框 Ctrl+Tab 键进入 raw 模式（`input-box-raw`）
+- [ ] 改善 multi-agent 交互体验（`enhance-multi-agent`）
 - [ ] User Answer Questions 不需要必须 plan 模式 + 功能改善（`survey-while-working`）
 - [ ] 批准工具调用后可快捷提权（`yes-then-yolo`）
-- [ ] 提供多套工具定义，可切换 Claude、DSH 风格（`multi-tool-shapes`）
 - [ ] 自带 MCP 提供的代码智能支持，像 CC 一样提示安装 LSP（`mcp-lsp-bridge`）
 - [ ] 上下文压缩抑制尝试（`suppress-autocompact`）
 - [ ] 工作运行时阻止自动睡眠和锁屏（平台相关  Linux / macOS）（`caffeine`）
