@@ -1767,9 +1767,17 @@ impl App {
             // thread, so unrelated shutdowns cannot consume this marker.
             self.pending_shutdown_exit_thread_id = None;
         }
+        let turn_completed = matches!(
+            &event,
+            ThreadBufferedEvent::Notification(notification)
+                if matches!(notification.as_ref(), ServerNotification::TurnCompleted(_))
+        );
         let had_active_view = self.chat_widget.has_active_view();
         self.handle_thread_event_now_recovering_file_changes(event)
             .await;
+        if turn_completed && !self.chat_widget.is_agent_turn_running() {
+            self.start_next_background_settings_update(app_server);
+        }
         if !had_active_view
             && self.chat_widget.has_active_view()
             && self.startup_protected_input_boundary

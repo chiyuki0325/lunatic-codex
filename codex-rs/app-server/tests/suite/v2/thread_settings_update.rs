@@ -4,6 +4,7 @@ use app_test_support::MockResponsesConfig;
 use app_test_support::TestAppServer;
 use app_test_support::create_final_assistant_message_sse_response;
 use app_test_support::create_mock_responses_server_sequence_unchecked;
+use app_test_support::create_shell_command_sse_response;
 use app_test_support::write_models_cache;
 use codex_app_server_protocol::JSONRPCError;
 use codex_app_server_protocol::RequestId;
@@ -164,14 +165,36 @@ async fn thread_settings_update_cwd_retargets_default_environment() -> Result<()
 }
 
 #[tokio::test]
-async fn thread_settings_update_while_turn_is_active_emits_notification() -> Result<()> {
-    let server = responses::start_mock_server().await;
-    let first_response =
-        responses::sse_response(create_final_assistant_message_sse_response("first done")?)
-            .set_delay(Duration::from_secs(2));
-    let _requests = responses::mount_response_sequence(&server, vec![first_response]).await;
+async fn thread_settings_update_does_not_retarget_active_turn() -> Result<()> {
+    let initial_model = "mock-model";
+    let updated_model = "mock-model-4";
+    #[cfg(target_os = "windows")]
+    let command = vec![
+        "powershell".to_string(),
+        "-Command".to_string(),
+        "Start-Sleep -Seconds 2".to_string(),
+    ];
+    #[cfg(not(target_os = "windows"))]
+    let command = vec![
+        "python3".to_string(),
+        "-c".to_string(),
+        "import time; time.sleep(2)".to_string(),
+    ];
+    let server = create_mock_responses_server_sequence_unchecked(vec![
+        create_shell_command_sse_response(
+            command,
+            /*workdir*/ None,
+            Some(5_000),
+            "call-model-switch",
+        )?,
+        create_final_assistant_message_sse_response("done")?,
+    ])
+    .await;
     let codex_home = TempDir::new()?;
-    create_config_toml(codex_home.path(), &server.uri())?;
+    MockResponsesConfig::new(&server.uri())
+        .with_approval_policy("never")
+        .with_sandbox_mode("danger-full-access")
+        .write(codex_home.path())?;
 
     let mut mcp = TestAppServer::builder()
         .with_codex_home(codex_home.path())
@@ -181,7 +204,12 @@ async fn thread_settings_update_while_turn_is_active_emits_notification() -> Res
     start_text_turn(&mut mcp, thread.id.clone()).await?;
     timeout(
         DEFAULT_TIMEOUT,
-        mcp.read_stream_until_notification_message("turn/started"),
+        mcp.read_stream_until_matching_notification("item/started", |notification| {
+            notification
+                .params
+                .as_ref()
+                .is_some_and(|params| params["item"]["id"] == "call-model-switch")
+        }),
     )
     .await??;
 
@@ -189,21 +217,29 @@ async fn thread_settings_update_while_turn_is_active_emits_notification() -> Res
         &mut mcp,
         ThreadSettingsUpdateParams {
             thread_id: thread.id.clone(),
-            model: Some("mock-model-4".to_string()),
+            model: Some(updated_model.to_string()),
             ..Default::default()
         },
     )
     .await?;
-
     let updated = read_thread_settings_updated(&mut mcp).await?;
     assert_eq!(updated.thread_id, thread.id);
-    assert_eq!(updated.thread_settings.model, "mock-model-4");
+    assert_eq!(updated.thread_settings.model, updated_model);
 
     timeout(
         DEFAULT_TIMEOUT,
         mcp.read_stream_until_notification_message("turn/completed"),
     )
     .await??;
+
+    let request_bodies = received_response_bodies(&server).await?;
+    assert_eq!(request_bodies.len(), 2);
+    assert!(
+        request_bodies
+            .iter()
+            .all(|body| body.get("model").and_then(Value::as_str) == Some(initial_model)),
+        "switching the next-turn model must not cause responses_item_routing_unavailable in the active turn: {request_bodies:#?}"
+    );
     Ok(())
 }
 

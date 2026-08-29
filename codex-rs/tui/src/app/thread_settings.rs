@@ -98,8 +98,15 @@ impl App {
         self.start_next_background_settings_update(app_server);
     }
 
-    fn start_next_background_settings_update(&mut self, app_server: &AppServerSession) {
+    pub(super) fn start_next_background_settings_update(&mut self, app_server: &AppServerSession) {
         if self.settings_updates.in_flight {
+            return;
+        }
+        if matches!(
+            self.settings_updates.queue.front(),
+            Some(BackgroundSettingsUpdate::Thread { .. })
+        ) && self.chat_widget.is_agent_turn_running()
+        {
             return;
         }
         let Some(update) = self.settings_updates.queue.pop_front() else {
