@@ -5,6 +5,7 @@ use insta::assert_snapshot;
 use pretty_assertions::assert_eq;
 use ratatui::buffer::Buffer;
 use ratatui::style::Color;
+use ratatui::style::Modifier;
 use tokio::sync::mpsc::unbounded_channel;
 use unicode_width::UnicodeWidthStr;
 
@@ -116,11 +117,11 @@ fn selection_scrolls_to_nested_candidate_and_keeps_closed_entries() {
     }
 
     assert_snapshot!(snapshot(&selector, now + Duration::from_secs(90), 86), @r###"
-                                              ↑/↓ 选择 · Enter 以聚焦该 agent · Esc 返回
-        └ ● Turing [default]                                              空闲 · 1min30s
+                                   ↑/↓ 选择 · Enter 以聚焦该 agent · x 以停止 · Esc 返回
+        └ ○ Turing [default]                                              空闲 · 1min30s
           └ ● Hopper [worker]                                           运行中 · 1min30s
-        ● Lovelace [reviewer]                                           已关闭 · 1min30s
-      > ● Shannon [default]                                               空闲 · 1min30s
+        ○ Lovelace [reviewer]                                           已关闭 · 1min30s
+      > ○ Shannon [default]                                               空闲 · 1min30s
     "###);
 }
 
@@ -191,10 +192,44 @@ fn idle_dot_uses_terminal_default_foreground() {
     let idle_dot = (0..area.width)
         .find_map(|x| {
             let cell = &buffer[(x, 2)];
-            (cell.symbol() == "●").then_some(cell)
+            (cell.symbol() == "○").then_some(cell)
         })
         .expect("idle status dot");
     assert_eq!(idle_dot.fg, Color::Reset);
+}
+
+#[test]
+fn selected_row_is_light_green_and_x_stops_running_agent() {
+    let now = Instant::now();
+    let root = thread_id(1);
+    let child = thread_id(2);
+    let mut selector = AgentSelector::default();
+    selector.update(
+        vec![
+            entry(1, "Codex [default]", 0, true, false, now),
+            entry(2, "Curie [default]", 0, true, false, now),
+        ],
+        Some(root),
+    );
+    let (tx, mut rx) = unbounded_channel();
+    let tx = AppEventSender::new(tx);
+
+    selector.enter_selection();
+    selector.handle_key_event(KeyEvent::new(KeyCode::Down, KeyModifiers::NONE), &tx);
+    let area = Rect::new(0, 0, 60, selector.desired_height());
+    let mut buffer = Buffer::empty(area);
+    selector.render_at(area, &mut buffer, now);
+
+    let marker = &buffer[(2, 2)];
+    assert_eq!(marker.symbol(), ">");
+    assert_eq!(marker.fg, Color::LightGreen);
+    assert!(marker.style().add_modifier.contains(Modifier::BOLD));
+
+    selector.handle_key_event(KeyEvent::new(KeyCode::Char('x'), KeyModifiers::NONE), &tx);
+    assert!(matches!(
+        rx.try_recv(),
+        Ok(AppEvent::StopAgentsOverviewThread { thread_id }) if thread_id == child
+    ));
 }
 
 #[test]

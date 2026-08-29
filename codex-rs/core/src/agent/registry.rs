@@ -55,6 +55,7 @@ pub(crate) struct AgentMetadata {
     pub(crate) agent_path: Option<AgentPath>,
     pub(crate) agent_nickname: Option<String>,
     pub(crate) agent_role: Option<String>,
+    pub(crate) agent_semantic_name: Option<String>,
 }
 
 fn format_agent_nickname(name: &str, nickname_reset_count: usize) -> String {
@@ -174,6 +175,32 @@ impl AgentRegistry {
             .get(&thread_id)
             .and_then(|agent| active_agents.agent_tree.get(&agent.path))
             .cloned()
+    }
+
+    pub(crate) fn set_agent_semantic_name(
+        &self,
+        thread_id: ThreadId,
+        agent_path: &AgentPath,
+        semantic_name: String,
+    ) -> bool {
+        let mut active_agents = self
+            .active_agents
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
+        let Some(registered) = active_agents.thread_paths.get(&thread_id) else {
+            return false;
+        };
+        if registered.path != agent_path.as_str() {
+            return false;
+        }
+        let Some(metadata) = active_agents.agent_tree.get_mut(agent_path.as_str()) else {
+            return false;
+        };
+        if metadata.agent_id != Some(thread_id) || metadata.agent_semantic_name.is_some() {
+            return false;
+        }
+        metadata.agent_semantic_name = Some(semantic_name);
+        true
     }
 
     pub(crate) fn save_evicted_environments(

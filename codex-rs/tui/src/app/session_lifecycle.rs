@@ -252,6 +252,10 @@ impl App {
                 if is_parent_owned {
                     self.agent_navigation.mark_parent_owned(thread_id);
                 }
+                if agent_path.is_some() {
+                    self.agent_navigation
+                        .set_agent_semantic_name(thread_id, thread.name);
+                }
                 self.agent_navigation.set_agent_path(thread_id, agent_path);
                 if is_running {
                     self.agent_navigation.mark_running(thread_id);
@@ -370,8 +374,9 @@ impl App {
     /// cache.
     ///
     /// Thread switches reconstruct the `ChatWidget`, which loses the `collab_agent_metadata` map.
-    /// This helper copies every known nickname/role from `AgentNavigationState` into the
-    /// replacement widget so that replayed collab items render agent names immediately.
+    /// This helper copies every known nickname, role, and semantic name from
+    /// `AgentNavigationState` into the replacement widget so that replayed collab items render
+    /// agent names immediately.
     pub(super) fn replace_chat_widget(&mut self, mut chat_widget: ChatWidget) {
         // Transfer the last-written terminal title to the replacement widget
         // so it knows what OSC title is currently displayed. Without this, the
@@ -388,6 +393,8 @@ impl App {
                 entry.agent_nickname.clone(),
                 entry.agent_role.clone(),
             );
+            chat_widget
+                .set_collab_agent_semantic_name(thread_id, entry.agent_semantic_name.clone());
         }
         self.chat_widget = chat_widget;
         self.sync_active_agent_label();
@@ -818,6 +825,7 @@ impl App {
         let mut refreshed_thread_ids = HashSet::new();
         for thread in find_loaded_subagent_threads_for_primary(threads, primary_thread_id) {
             let agent_path = thread.agent_path;
+            let agent_semantic_name = thread.agent_semantic_name;
             let has_live_channel = self
                 .thread_event_channels
                 .get(&thread.thread_id)
@@ -832,6 +840,8 @@ impl App {
                 thread.agent_role,
                 is_closed,
             );
+            self.agent_navigation
+                .set_agent_semantic_name(thread.thread_id, agent_semantic_name);
             self.agent_navigation
                 .set_agent_path(thread.thread_id, agent_path);
             // A live channel can have an empty store after a successful spawn. Only apply server

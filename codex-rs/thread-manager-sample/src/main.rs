@@ -357,6 +357,7 @@ async fn run_turn(thread: &CodexThread, thread_id: &str, prompt: String) -> anyh
             | EventMsg::CollabResumeBegin(_)
             | EventMsg::CollabResumeEnd(_)
             | EventMsg::SubAgentActivity(_)
+            | EventMsg::AgentSemanticNameUpdated(_)
             | EventMsg::AgentMessageContentDelta(_)
             | EventMsg::PlanDelta(_)
             | EventMsg::ReasoningContentDelta(_)

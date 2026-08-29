@@ -1231,6 +1231,7 @@ pub struct MultiAgentV2Config {
     pub expose_spawn_agent_model_overrides: bool,
     pub wait_agent_enabled: bool,
     pub non_code_mode_only: bool,
+    pub semantic_name_language: String,
 }
 
 impl MultiAgentV2Config {
@@ -1250,6 +1251,7 @@ impl MultiAgentV2Config {
             expose_spawn_agent_model_overrides: true,
             wait_agent_enabled: true,
             non_code_mode_only: true,
+            semantic_name_language: "zh-CN".to_string(),
         }
     }
 }
@@ -2689,6 +2691,12 @@ fn resolve_multi_agent_v2_config(config_toml: &ConfigToml) -> MultiAgentV2Config
     let non_code_mode_only = base
         .and_then(|config| config.non_code_mode_only)
         .unwrap_or(default.non_code_mode_only);
+    let semantic_name_language = base
+        .and_then(|config| config.semantic_name_language.as_deref())
+        .map(str::trim)
+        .filter(|language| !language.is_empty())
+        .unwrap_or(&default.semantic_name_language)
+        .to_string();
 
     MultiAgentV2Config {
         max_concurrent_threads_per_session,
@@ -2705,6 +2713,7 @@ fn resolve_multi_agent_v2_config(config_toml: &ConfigToml) -> MultiAgentV2Config
         expose_spawn_agent_model_overrides,
         wait_agent_enabled,
         non_code_mode_only,
+        semantic_name_language,
     }
 }
 

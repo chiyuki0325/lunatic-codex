@@ -1142,6 +1142,12 @@ impl App {
             notification.thread.agent_role.clone(),
             /*is_closed*/ false,
         );
+        let agent_path = crate::app_server_session::source_agent_path(&notification.thread.source);
+        if agent_path.is_some() {
+            self.agent_navigation
+                .set_agent_semantic_name(thread_id, notification.thread.name.clone());
+        }
+        self.agent_navigation.set_agent_path(thread_id, agent_path);
         Some(session)
     }
 

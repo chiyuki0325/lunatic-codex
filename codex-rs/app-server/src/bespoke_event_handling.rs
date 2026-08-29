@@ -56,6 +56,7 @@ use codex_app_server_protocol::ServerRequestPayload;
 use codex_app_server_protocol::StrictReviewRequiredNotification;
 use codex_app_server_protocol::ThreadGoalUpdatedNotification;
 use codex_app_server_protocol::ThreadItem;
+use codex_app_server_protocol::ThreadNameUpdatedNotification;
 use codex_app_server_protocol::ThreadRealtimeClosedNotification;
 use codex_app_server_protocol::ThreadRealtimeErrorNotification;
 use codex_app_server_protocol::ThreadRealtimeItemAddedNotification;
@@ -1201,6 +1202,16 @@ pub(crate) async fn apply_bespoke_event_handling(
             outgoing
                 .send_global_server_notification(ServerNotification::ThreadGoalUpdated(
                     notification,
+                ))
+                .await;
+        }
+        EventMsg::AgentSemanticNameUpdated(event) => {
+            outgoing
+                .send_global_server_notification(ServerNotification::ThreadNameUpdated(
+                    ThreadNameUpdatedNotification {
+                        thread_id: event.agent_thread_id.to_string(),
+                        thread_name: Some(event.semantic_name),
+                    },
                 ))
                 .await;
         }

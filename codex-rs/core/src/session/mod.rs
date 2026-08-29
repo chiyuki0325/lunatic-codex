@@ -2132,6 +2132,14 @@ impl Session {
             .await;
     }
 
+    pub(crate) async fn send_ephemeral_event(&self, turn_context: &TurnContext, msg: EventMsg) {
+        self.deliver_event_raw(Event {
+            id: turn_context.sub_id.clone(),
+            msg,
+        })
+        .await;
+    }
+
     /// Delivers an event without creating a local rollout for a thread that has not materialized.
     pub(crate) async fn send_event_raw_without_materializing_rollout(&self, event: Event) {
         let persist = match self.current_rollout_path().await {

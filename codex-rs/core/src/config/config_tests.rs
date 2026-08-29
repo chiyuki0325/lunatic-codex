@@ -11593,6 +11593,25 @@ subagent_developer_instructions = "  \t  "
     assert_eq!(resolve_multi_agent_v2_config(&config_toml), expected);
 }
 
+#[test]
+fn multi_agent_v2_semantic_name_language_defaults_to_chinese_and_trims_override() {
+    assert_eq!(
+        resolve_multi_agent_v2_config(&ConfigToml::default()).semantic_name_language,
+        "zh-CN"
+    );
+
+    let config_toml = toml::from_str(
+        r#"[features.multi_agent_v2]
+semantic_name_language = "  ja-JP  "
+"#,
+    )
+    .expect("multi-agent v2 config should parse");
+    assert_eq!(
+        resolve_multi_agent_v2_config(&config_toml).semantic_name_language,
+        "ja-JP"
+    );
+}
+
 #[tokio::test]
 async fn multi_agent_v2_empty_usage_hint_overrides_are_preserved() -> std::io::Result<()> {
     let codex_home = TempDir::new()?;

@@ -3,6 +3,7 @@ use crate::agent::control::SpawnAgentForkMode;
 use crate::agent::control::SpawnAgentOptions;
 use crate::agent::next_thread_spawn_depth;
 use crate::agent::role::DEFAULT_ROLE_NAME;
+use crate::agent::semantic_name::schedule_agent_semantic_name;
 use crate::agent_communication::AgentCommunicationContext;
 use crate::agent_communication::AgentCommunicationKind;
 use crate::session::multi_agents::resolve_usage_hints;
@@ -12,6 +13,7 @@ use crate::tools::handlers::multi_agents_v2::message_tool::message_content;
 use codex_protocol::AgentPath;
 use codex_protocol::protocol::MultiAgentVersion;
 use codex_tools::ToolSpec;
+use std::sync::Arc;
 
 #[derive(Default)]
 pub(crate) struct Handler {
@@ -54,6 +56,8 @@ async fn handle_spawn_agent(
     let args: SpawnAgentArgs = parse_arguments(&arguments)?;
     let fork_mode = args.fork_mode()?;
     let message = message_content(args.message)?;
+    let semantic_name_task_name = args.task_name.clone();
+    let semantic_name_message = message.clone();
     let role_name = args
         .agent_type
         .as_deref()
@@ -183,6 +187,15 @@ async fn handle_spawn_agent(
         },
     )
     .await;
+    schedule_agent_semantic_name(
+        Arc::clone(&session),
+        Arc::clone(&step_context),
+        new_thread_id,
+        new_agent_path.clone(),
+        semantic_name_task_name,
+        semantic_name_message,
+        turn.config.multi_agent_v2.semantic_name_language.clone(),
+    );
     let role_tag = role_name.unwrap_or(DEFAULT_ROLE_NAME);
     turn.session_telemetry.counter(
         "codex.multi_agent.spawn",

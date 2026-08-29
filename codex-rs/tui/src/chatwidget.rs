@@ -966,13 +966,29 @@ impl ChatWidget {
         agent_nickname: Option<String>,
         agent_role: Option<String>,
     ) {
+        let agent_semantic_name = self
+            .collab_agent_metadata
+            .get(&thread_id)
+            .and_then(|metadata| metadata.agent_semantic_name.clone());
         self.collab_agent_metadata.insert(
             thread_id,
             AgentMetadata {
                 agent_nickname,
                 agent_role,
+                agent_semantic_name,
             },
         );
+    }
+
+    pub(crate) fn set_collab_agent_semantic_name(
+        &mut self,
+        thread_id: ThreadId,
+        semantic_name: Option<String>,
+    ) {
+        self.collab_agent_metadata
+            .entry(thread_id)
+            .or_default()
+            .agent_semantic_name = semantic_name;
     }
 
     /// Returns the cached metadata for a thread, defaulting to empty if none has been registered.

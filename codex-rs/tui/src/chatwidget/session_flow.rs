@@ -252,6 +252,11 @@ impl ChatWidget {
         thread_id: ThreadId,
         thread_name: Option<String>,
     ) {
+        if self.collab_agent_metadata.contains_key(&thread_id) {
+            self.set_collab_agent_semantic_name(thread_id, thread_name);
+            self.request_redraw();
+            return;
+        }
         if self.thread_id == Some(thread_id) {
             if let Some(name) = thread_name.as_deref() {
                 let cell = Self::rename_confirmation_cell(name, self.thread_id);

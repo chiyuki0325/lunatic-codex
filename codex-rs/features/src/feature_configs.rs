@@ -274,6 +274,10 @@ pub struct MultiAgentV2ConfigToml {
     pub wait_agent_enabled: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub non_code_mode_only: Option<bool>,
+    /// Language requested for asynchronously generated subagent display names.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(length(min = 1, max = 32))]
+    pub semantic_name_language: Option<String>,
 }
 
 impl FeatureConfig for MultiAgentV2ConfigToml {

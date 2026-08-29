@@ -2591,19 +2591,17 @@ async fn multi_agent_v2_namespace_is_supported_by_bedrock_provider() {
 }
 
 #[tokio::test]
-async fn multi_agent_v2_bedrock_workers_only_delegate_when_model_supports_v2() {
-    for (model, model_multi_agent_version, supports_delegation) in [
+async fn multi_agent_v2_workers_can_delegate_after_the_session_resolves_v2() {
+    for (model, model_multi_agent_version) in [
         (
             AMAZON_BEDROCK_GPT_5_6_SOL_MODEL_ID,
             Some(MultiAgentVersion::V2),
-            true,
         ),
         (
             AMAZON_BEDROCK_GPT_5_6_LUNA_MODEL_ID,
             Some(MultiAgentVersion::V1),
-            false,
         ),
-        (AMAZON_BEDROCK_GPT_5_5_MODEL_ID, None, false),
+        (AMAZON_BEDROCK_GPT_5_5_MODEL_ID, None),
     ] {
         let plan = probe(|turn| {
             set_feature(turn, Feature::MultiAgentV2, /*enabled*/ true);
@@ -2625,13 +2623,8 @@ async fn multi_agent_v2_bedrock_workers_only_delegate_when_model_supports_v2() {
 
         let spawn_agent_name = ToolName::namespaced("agents", "spawn_agent").to_string();
         let followup_task_name = ToolName::namespaced("agents", "followup_task").to_string();
-        if supports_delegation {
-            plan.assert_visible_contains(&["agents"]);
-            plan.assert_registered_contains(&[&spawn_agent_name, &followup_task_name]);
-        } else {
-            plan.assert_visible_lacks(&["agents"]);
-            plan.assert_registered_lacks(&[&spawn_agent_name, &followup_task_name]);
-        }
+        plan.assert_visible_contains(&["agents"]);
+        plan.assert_registered_contains(&[&spawn_agent_name, &followup_task_name]);
     }
 }
 

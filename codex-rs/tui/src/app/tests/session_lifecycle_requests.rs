@@ -1854,6 +1854,7 @@ fn session_lifecycle_avoids_redundant_subagent_metadata_reads() -> Result<()> {
                     Some(&AgentPickerThreadEntry {
                         agent_nickname: Some("worker".to_string()),
                         agent_role: Some("worker".to_string()),
+                        agent_semantic_name: None,
                         agent_path: Some("/root/worker".to_string()),
                         is_running: false,
                         is_closed: false,

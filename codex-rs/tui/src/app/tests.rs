@@ -1622,6 +1622,7 @@ async fn collab_receiver_notification_caches_thread_without_app_server_read() {
         Some(&AgentPickerThreadEntry {
             agent_nickname: None,
             agent_role: None,
+            agent_semantic_name: None,
             agent_path: None,
             is_running: false,
             is_closed: false,
@@ -1720,6 +1721,7 @@ async fn open_agent_picker_keeps_missing_threads_for_replay() -> Result<()> {
         Some(&AgentPickerThreadEntry {
             agent_nickname: None,
             agent_role: None,
+            agent_semantic_name: None,
             agent_path: None,
             is_running: false,
             is_closed: true,
@@ -1755,6 +1757,7 @@ async fn open_agent_picker_preserves_cached_metadata_for_replay_threads() -> Res
         Some(&AgentPickerThreadEntry {
             agent_nickname: Some("Robie".to_string()),
             agent_role: Some("explorer".to_string()),
+            agent_semantic_name: None,
             agent_path: None,
             is_running: false,
             is_closed: true,
@@ -1786,6 +1789,7 @@ async fn open_agent_picker_preserves_running_hints_until_observed_completion() -
     let mut expected_entry = AgentPickerThreadEntry {
         agent_nickname: None,
         agent_role: None,
+        agent_semantic_name: None,
         agent_path: Some("/root/child".to_string()),
         is_running: true,
         is_closed: false,
@@ -1882,6 +1886,7 @@ async fn open_agent_picker_clears_running_hint_from_completed_snapshot() -> Resu
         Some(&AgentPickerThreadEntry {
             agent_nickname: None,
             agent_role: None,
+            agent_semantic_name: None,
             agent_path: Some("/root/child".to_string()),
             is_running: false,
             is_closed: false,
@@ -1955,6 +1960,7 @@ async fn open_agent_picker_refreshes_replay_only_path_backed_liveness() -> Resul
         Some(&AgentPickerThreadEntry {
             agent_nickname: None,
             agent_role: None,
+            agent_semantic_name: None,
             agent_path: Some("/root/child".to_string()),
             is_running: false,
             is_closed: true,
@@ -2011,6 +2017,7 @@ async fn open_agent_picker_marks_terminal_read_errors_closed() -> Result<()> {
         Some(&AgentPickerThreadEntry {
             agent_nickname: Some("Robie".to_string()),
             agent_role: Some("explorer".to_string()),
+            agent_semantic_name: None,
             agent_path: None,
             is_running: false,
             is_closed: true,
@@ -2051,6 +2058,7 @@ fn open_agent_picker_marks_loaded_threads_open() -> Result<()> {
             Some(&AgentPickerThreadEntry {
                 agent_nickname: None,
                 agent_role: None,
+                agent_semantic_name: None,
                 agent_path: None,
                 is_running: false,
                 is_closed: false,
@@ -2155,6 +2163,7 @@ fn selected_and_resumed_threads_use_server_capability_for_v1_and_v2_children() -
             Some(&AgentPickerThreadEntry {
                 agent_nickname: Some("child-0".to_string()),
                 agent_role: Some("worker".to_string()),
+                agent_semantic_name: None,
                 agent_path: Some("/root/child-0".to_string()),
                 is_running: true,
                 is_closed: false,
@@ -3923,6 +3932,7 @@ async fn inactive_thread_started_notification_initializes_replay_session() -> Re
         Some(&AgentPickerThreadEntry {
             agent_nickname: Some("Robie".to_string()),
             agent_role: Some("explorer".to_string()),
+            agent_semantic_name: None,
             agent_path: None,
             is_running: false,
             is_closed: false,

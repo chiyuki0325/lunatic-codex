@@ -44,7 +44,7 @@ semantic_name: Codex 多 Agent 调研员
 
 生成请求使用可配置的语言字段，本分支默认为简体中文 `zh-CN`。请求只携带经过硬上限约束的 `task_name`、`message`、目标语言和固定命名指令，不继承 parent/child Responses history，不写入双方的模型可见上下文。
 
-语义名称生成不得阻塞 agent 启动：spawn 先按现有流程完成，初始展示使用现有身份；辅助请求异步完成后更新 metadata 和 TUI。请求失败、超时或返回空名称时回退到 task path，不影响 agent 工作与通信。
+语义名称生成不得阻塞 agent 启动：spawn 先按现有流程完成，初始展示使用 nickname 与 `task_name`；辅助请求异步完成后更新 metadata 和 TUI。请求失败、超时或返回空名称时继续使用 `task_name`，不影响 agent 工作与通信。
 
 ### 3. 底栏树形 agent 选择器
 
@@ -52,19 +52,20 @@ semantic_name: Codex 多 Agent 调研员
 
 选择器按 `AgentPath` 的父子关系进行深度优先的树形展示。每深入一级增加缩进和类似 `└` 的连接符，使 subagent 自己 spawn 的孙级 agent 保持清晰归属。root 默认身份为 `Codex [default]`；其它 agent 优先显示 `nickname · semantic_name [role]`，缺失 role 时回退为 `[default]`。
 
-空 composer 中按 `↓` 进入选择模式；`↑/↓` 循环移动，`Enter` 立即聚焦候选，`Esc` 不切换并返回输入。聚焦切换不得等待、暂停、中断或取消当前运行中的 agent。`/subagents` 打开同一 inline 选择器，现有 `Alt+←/→` 直接切换继续保留。
+空 composer 中按 `↓` 进入选择模式；`↑/↓` 循环移动，`Enter` 立即聚焦候选，`x` 停止候选当前正在执行的任务，`Esc` 不切换并返回输入。聚焦切换不得等待、暂停、中断或取消当前运行中的 agent。`/subagents` 打开同一 inline 选择器，现有 `Alt+←/→` 直接切换继续保留。
 
 ## 用户体验
 
 - 用户新建 Codex 会话后，不需要在 `config.toml` 中手动开启 `features.multi_agent_v2`。
 - V2 每个 session tree 默认提供 16 个并发槽，包含 root，因此最多可同时驻留 15 个直属或嵌套 subagent。
 - 新会话的根 agent 使用 V2 task path `/root`；新建子 agent 使用稳定、可读的 `/root/<task_name>` 路径。
-- 子 agent 的消息和完成通知沿用 V2 mailbox 机制，能够使用相对 task name 或 canonical task path 通信。
+- 子 agent 的消息和完成通知沿用 V2 mailbox 机制，能够使用相对 task name 或 canonical task path 通信；继承到 V2 的子 agent 保留完整 V2 协作工具，可继续 spawn 孙级 agent。
 - 语义名称生成后，已有 Started activity、状态卡和 inline 选择器显示 `nickname · semantic name`，并保留 task path 作为次级协议身份。
-- 语义名称尚未生成或不可用时显示 `nickname · task path`；nickname 也缺失时回退为纯 task path，状态展示不能因此失败。
+- 语义名称尚未生成或不可用时显示 `nickname · task_name`；nickname 也缺失时回退为纯 `task_name`，状态展示不能因此失败。
 - nickname 与 semantic name 不互相覆盖；名称只有终端宽度不足时才按 Unicode 显示宽度截断。
-- running 使用绿色实心圆；idle 使用终端默认前景色，不显式刷白；closed 条目保持弱化。
-- 普通模式右侧提示 `按 ↓ 以聚焦其它 agent`；选择模式提示 `↑/↓ 选择 · Enter 以聚焦该 agent · Esc 返回`。
+- running 使用绿色实心圆 `●`；idle 使用终端默认前景色的空心圆 `○`，不显式刷白；closed 条目保持弱化。
+- 选择模式用行首 `>` 标识候选，并将候选整行渲染为浅绿色粗体。
+- 普通模式右侧提示 `按 ↓ 以聚焦其它 agent`；选择模式提示 `↑/↓ 选择 · Enter 以聚焦该 agent · x 以停止 · Esc 返回`。
 - 用户明确禁用 agents 时，不暴露 V1 或 V2 multi-agent 工具，也不触发语义名称生成请求。
 
 ## 版本选择规则
@@ -103,6 +104,7 @@ semantic_name: Codex 多 Agent 调研员
 - 不修改生成 V2 reserved tools 的实现或其任何 schema 文本；必须用回归测试锁定实际发往 Responses API 的工具定义，避免无意变化导致 HTTP 400。
 - 在 agent metadata 中新增独立的可选语义名称字段，以 `AgentPath` 所属 metadata 作为唯一事实来源，不维护另一份容易失同步的全局 `task_name -> semantic_name` HashMap。
 - 辅助命名请求与 parent/child 推理隔离：不带工具、不继承 `previous_response_id` 或对话历史、不产生 inter-agent message，也不写入 model-visible context。
+- 不得通过向 Multi-agent V2 工作区、tool router 或 agent 可见工具集合添加命名工具来实现；命名能力只存在于 Core 内部的独立 Responses 请求中，V2 agent 的工作区和工具面保持原样。
 - 输入和输出都必须有硬上限；输出去除首尾空白与包裹引号，只接受单行非空名称，超长结果按 Unicode 字符边界处理。
 - 命名任务异步执行，不能占用 multi-agent 并发 slot，不能延迟 `spawn_agent` tool result，也不能因请求失败而关闭或回滚已经创建的 agent。
 - 语义名称完成后通过现有 metadata/activity 更新路径刷新 TUI，并持久化到 rollout，使 resume 后不重复调用模型生成名称。
@@ -140,18 +142,19 @@ semantic_name: Codex 多 Agent 调研员
 - 请求只包含有界的 `task_name`、`message`、固定命名指令和语言标识，不包含父会话历史或 multi-agent tools。
 - 默认语言 `zh-CN` 能将 `research_codex_multi_agent` 与对应 message 生成为类似 `Codex 多 Agent 调研员` 的简短中文名称。
 - 修改语言配置后，新 spawn 使用指定语言；已持久化的名称保持不变。
-- 命名请求缓慢、失败、超时或输出无效时，agent 仍立即正常工作，展示稳定回退到 task path。
+- 命名请求缓慢、失败、超时或输出无效时，agent 仍立即正常工作，展示稳定回退到 `task_name`。
 - 辅助请求及其响应不出现在 parent 或 child 的模型上下文、mailbox 和 `spawn_agent` tool result 中。
 
 ### TUI 身份展示与选择器
 
 - semantic name 可用时，V2 `Started`、`Interacted`、`Interrupted` 等持久 activity 和选择器显示 `nickname · semantic name [role]`，task path 作为次级协议身份保留。
-- semantic name 尚未生成或缺失时回退为 `nickname · task path [role]`；nickname 也缺失时精确回退为 path 与 role，root 最终回退为 `Codex [default]`。
+- semantic name 尚未生成或缺失时回退为 `nickname · task_name [role]`；nickname 也缺失时精确回退为 `task_name [role]`，root 最终回退为 `Codex [default]`。
 - nickname 和 semantic name 只改变展示文本，不替代 `AgentPath`，不进入 mailbox target，也不改变 reserved tool result。
 - 普通模式最多显示四个 running agent；idle 和 closed 不进入预览。选择模式最多显示四个可滚动候选，包含 running、idle 和 retained closed 条目。
+- running 条目使用绿色实心圆 `●`；idle 条目使用终端默认前景色的空心圆 `○`；当前候选以 `>` 开头，并将整行显示为浅绿色粗体。
 - 嵌套 agent 按 `AgentPath` 层级深度优先排列，子级与孙级使用累积缩进及 `└` 树形前缀。
-- 空 composer 的 `↓` 只在没有 popup、modal、history navigation 或 paste 冲突时进入选择模式；`Enter` 切换 thread 的过程中不得等待或中断任何 running agent。
-- 长 nickname、semantic name、task path 和中英文混排仅在终端宽度不足时按 Unicode display width 截断，并保留右侧状态与交互提示。
+- 空 composer 的 `↓` 只在没有 popup、modal、history navigation 或 paste 冲突时进入选择模式；`Enter` 切换 thread 的过程中不得等待或中断任何 running agent；`x` 只停止候选当前正在执行的任务并保持选择模式；`Esc` 返回输入。
+- 长 nickname、semantic name、task_name 和中英文混排仅在终端宽度不足时按 Unicode display width 截断，并保留右侧状态与交互提示。
 
 ## 测试要求
 
@@ -166,8 +169,8 @@ semantic_name: Codex 多 Agent 调研员
 - 辅助命名请求的输入裁剪、默认中文、可配置语言、单行输出规范化、失败回退、异步更新和单次生成测试；
 - metadata 写入与 resume 恢复测试，证明恢复已有语义名称时不会再次请求模型；
 - V2 activity 与 inline selector 的 `nickname · semantic name [role]` snapshots，包括生成前与失败时的 fallback、缺失 nickname 和长文本布局；
-- selector 的 running 预览、idle 汇总、closed 弱化、三级树形层级、四行滚动、窄终端截断和空闲圆点默认前景色 snapshots；
-- selector 输入路由测试，覆盖空 composer 的 `↓`、冲突场景、循环选择、`Enter` 非阻塞聚焦和 `Esc` 返回；
+- selector 的 running `●`、idle `○` 默认前景色、候选整行浅绿色粗体、idle 汇总、closed 弱化、三级树形层级、四行滚动和窄终端截断 snapshots；
+- selector 输入路由测试，覆盖空 composer 的 `↓`、冲突场景、循环选择、`Enter` 非阻塞聚焦、`x` 停止运行任务和 `Esc` 返回；
 - 更新 config schema，并执行 `just write-config-schema`。
 
 代码改动完成后按仓库规则在远端开发机运行 `just fmt`、`just fix -p codex-core`、相关 crate 测试和所需集成测试。本地仅进行不涉及编译的静态检查。

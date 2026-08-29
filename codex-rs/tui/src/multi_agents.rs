@@ -36,6 +36,8 @@ pub(crate) struct AgentPickerThreadEntry {
     pub(crate) agent_nickname: Option<String>,
     /// Agent type shown in brackets when present, for example `worker`.
     pub(crate) agent_role: Option<String>,
+    /// Generated task-specific display name, independent from the random nickname.
+    pub(crate) agent_semantic_name: Option<String>,
     /// Canonical v2 agent path, when the thread was observed through v2 activity.
     pub(crate) agent_path: Option<String>,
     /// Whether the latest liveness refresh says the agent thread is actively working.
@@ -57,12 +59,16 @@ pub(crate) struct AgentMetadata {
     pub(crate) agent_nickname: Option<String>,
     /// Agent type shown in brackets when present, for example `worker`.
     pub(crate) agent_role: Option<String>,
+    /// Generated task-specific display name.
+    pub(crate) agent_semantic_name: Option<String>,
 }
 
 #[derive(Clone, Copy)]
 struct AgentLabel<'a> {
     thread_id: Option<ThreadId>,
     nickname: Option<&'a str>,
+    semantic_name: Option<&'a str>,
+    task_name: Option<&'a str>,
     role: Option<&'a str>,
 }
 
@@ -292,37 +298,52 @@ pub(crate) fn sub_agent_activity_display(item: &ThreadItem) -> Option<SubAgentAc
     })
 }
 
-pub(crate) fn sub_agent_activity_history_cell(item: &ThreadItem) -> Option<PlainHistoryCell> {
+pub(crate) fn sub_agent_activity_history_cell(
+    item: &ThreadItem,
+    metadata: &AgentMetadata,
+) -> Option<PlainHistoryCell> {
     let ThreadItem::SubAgentActivity {
-        kind, agent_path, ..
+        kind,
+        agent_thread_id,
+        agent_path,
+        ..
     } = item
     else {
         return None;
     };
     Some(collab_event(
-        sub_agent_activity_title(*kind, agent_path),
+        sub_agent_activity_title(
+            *kind,
+            AgentLabel {
+                thread_id: parse_thread_id(agent_thread_id),
+                nickname: metadata.agent_nickname.as_deref(),
+                semantic_name: metadata.agent_semantic_name.as_deref(),
+                task_name: task_name_from_agent_path(agent_path),
+                role: metadata.agent_role.as_deref(),
+            },
+        ),
         Vec::new(),
     ))
 }
 
 pub(crate) fn sub_agent_activity_summary(kind: SubAgentActivityKind, agent_path: &str) -> String {
+    let task_name = task_name_from_agent_path(agent_path).unwrap_or(agent_path);
     match kind {
-        SubAgentActivityKind::Started => format!("启动了一个 subagent `{agent_path}`"),
-        SubAgentActivityKind::Interacted => format!("Interacted with `{agent_path}`"),
-        SubAgentActivityKind::Interrupted => format!("Interrupted `{agent_path}`"),
+        SubAgentActivityKind::Started => format!("启动了一个 subagent `{task_name}`"),
+        SubAgentActivityKind::Interacted => format!("Interacted with `{task_name}`"),
+        SubAgentActivityKind::Interrupted => format!("Interrupted `{task_name}`"),
     }
 }
 
-fn sub_agent_activity_title(kind: SubAgentActivityKind, agent_path: &str) -> Line<'static> {
-    let (prefix, path) = match kind {
-        SubAgentActivityKind::Started => ("启动了一个 subagent ", agent_path),
-        SubAgentActivityKind::Interacted => ("Interacted with ", agent_path),
-        SubAgentActivityKind::Interrupted => ("Interrupted ", agent_path),
+fn sub_agent_activity_title(kind: SubAgentActivityKind, agent: AgentLabel<'_>) -> Line<'static> {
+    let prefix = match kind {
+        SubAgentActivityKind::Started => "启动了一个 subagent ",
+        SubAgentActivityKind::Interacted => "Interacted with ",
+        SubAgentActivityKind::Interrupted => "Interrupted ",
     };
-    title_spans_line(vec![
-        Span::from(prefix).bold(),
-        Span::from(format!("`{path}`")).cyan(),
-    ])
+    let mut spans = vec![Span::from(prefix).bold()];
+    spans.extend(agent_label_spans(agent));
+    title_spans_line(spans)
 }
 
 fn spawn_end(
@@ -484,10 +505,18 @@ fn parse_thread_id(thread_id: &str) -> Option<ThreadId> {
     ThreadId::from_string(thread_id).ok()
 }
 
+fn task_name_from_agent_path(agent_path: &str) -> Option<&str> {
+    agent_path
+        .rsplit('/')
+        .find(|segment| !segment.trim().is_empty())
+}
+
 fn agent_label(thread_id: ThreadId, metadata: &AgentMetadata) -> AgentLabel<'_> {
     AgentLabel {
         thread_id: Some(thread_id),
         nickname: metadata.agent_nickname.as_deref(),
+        semantic_name: metadata.agent_semantic_name.as_deref(),
+        task_name: None,
         role: metadata.agent_role.as_deref(),
     }
 }
@@ -502,14 +531,37 @@ fn agent_label_spans(agent: AgentLabel<'_>) -> Vec<Span<'static>> {
         .nickname
         .map(str::trim)
         .filter(|nickname| !nickname.is_empty());
+    let identity = agent
+        .semantic_name
+        .map(str::trim)
+        .filter(|name| !name.is_empty())
+        .or_else(|| {
+            agent
+                .task_name
+                .map(str::trim)
+                .filter(|name| !name.is_empty())
+        });
     let role = agent.role.map(str::trim).filter(|role| !role.is_empty());
 
-    if let Some(nickname) = nickname {
-        spans.push(Span::from(nickname.to_string()).cyan().bold());
-    } else if let Some(thread_id) = agent.thread_id {
-        spans.push(Span::from(thread_id.to_string()).cyan());
-    } else {
-        spans.push(Span::from("agent").cyan());
+    match (nickname, identity) {
+        (Some(nickname), Some(identity)) => {
+            spans.push(
+                Span::from(format!("{nickname} · {identity}"))
+                    .cyan()
+                    .bold(),
+            );
+        }
+        (Some(nickname), None) => spans.push(Span::from(nickname.to_string()).cyan().bold()),
+        (None, Some(identity)) => {
+            spans.push(Span::from(identity.to_string()).cyan().bold());
+        }
+        (None, None) => {
+            if let Some(thread_id) = agent.thread_id {
+                spans.push(Span::from(thread_id.to_string()).cyan());
+            } else {
+                spans.push(Span::from("agent").cyan());
+            }
+        }
     }
 
     if let Some(role) = role {
@@ -691,13 +743,33 @@ mod tests {
             agent_thread_id: ThreadId::new().to_string(),
             agent_path: "/root/child".to_string(),
         };
-        let cell = sub_agent_activity_history_cell(&item).expect("activity renders");
+        let cell = sub_agent_activity_history_cell(&item, &AgentMetadata::default())
+            .expect("activity renders");
         let summary = sub_agent_activity_summary(SubAgentActivityKind::Started, "/root/child");
 
         assert_snapshot!(format!("{}\n{summary}", cell_to_text(&cell)), @r###"
-        • 启动了一个 subagent `/root/child`
-        启动了一个 subagent `/root/child`
+        • 启动了一个 subagent child
+        启动了一个 subagent `child`
         "###);
+    }
+
+    #[test]
+    fn sub_agent_activity_prefers_semantic_name_over_task_name() {
+        let item = ThreadItem::SubAgentActivity {
+            id: "activity-1".to_string(),
+            kind: SubAgentActivityKind::Interrupted,
+            agent_thread_id: ThreadId::new().to_string(),
+            agent_path: "/root/research_codex_multi_agent".to_string(),
+        };
+        let metadata = AgentMetadata {
+            agent_nickname: Some("Archimedes".to_string()),
+            agent_role: Some("researcher".to_string()),
+            agent_semantic_name: Some("Codex 多 Agent 调研员".to_string()),
+        };
+        let cell =
+            sub_agent_activity_history_cell(&item, &metadata).expect("activity renders");
+
+        assert_snapshot!(cell_to_text(&cell), @"• Interrupted Archimedes · Codex 多 Agent 调研员 [researcher]");
     }
 
     #[test]
@@ -950,11 +1022,13 @@ mod tests {
             AgentMetadata {
                 agent_nickname: Some("Robie".to_string()),
                 agent_role: Some("explorer".to_string()),
+                agent_semantic_name: None,
             }
         } else if thread_id == bob_id {
             AgentMetadata {
                 agent_nickname: Some("Bob".to_string()),
                 agent_role: Some("worker".to_string()),
+                agent_semantic_name: None,
             }
         } else {
             AgentMetadata::default()

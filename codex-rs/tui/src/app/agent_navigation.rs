@@ -123,11 +123,18 @@ impl AgentNavigationState {
         if !self.threads.contains_key(&thread_id) {
             self.order.push(thread_id);
         }
-        let (previous_agent_path, previous_is_running, previous_is_closed) = self
-            .threads
-            .get(&thread_id)
-            .map(|entry| (entry.agent_path.clone(), entry.is_running, entry.is_closed))
-            .unwrap_or((None, false, false));
+        let (previous_agent_path, previous_semantic_name, previous_is_running, previous_is_closed) =
+            self.threads
+                .get(&thread_id)
+                .map(|entry| {
+                    (
+                        entry.agent_path.clone(),
+                        entry.agent_semantic_name.clone(),
+                        entry.is_running,
+                        entry.is_closed,
+                    )
+                })
+                .unwrap_or((None, None, false, false));
         let is_running = previous_is_running && !is_closed;
         if previous_is_closed != is_closed || previous_is_running != is_running {
             self.status_changed_at.insert(thread_id, Instant::now());
@@ -141,6 +148,7 @@ impl AgentNavigationState {
             AgentPickerThreadEntry {
                 agent_nickname,
                 agent_role,
+                agent_semantic_name: previous_semantic_name,
                 agent_path: previous_agent_path,
                 is_running,
                 is_closed,
@@ -158,6 +166,7 @@ impl AgentNavigationState {
                 .or_insert_with(|| AgentPickerThreadEntry {
                     agent_nickname: None,
                     agent_role: None,
+                    agent_semantic_name: None,
                     agent_path: None,
                     is_running: false,
                     is_closed: false,
@@ -215,6 +224,16 @@ impl AgentNavigationState {
             && let Some(entry) = self.threads.get_mut(&thread_id)
         {
             entry.agent_path = Some(agent_path);
+        }
+    }
+
+    pub(crate) fn set_agent_semantic_name(
+        &mut self,
+        thread_id: ThreadId,
+        semantic_name: Option<String>,
+    ) {
+        if let Some(entry) = self.threads.get_mut(&thread_id) {
+            entry.agent_semantic_name = semantic_name;
         }
     }
 
@@ -485,13 +504,21 @@ fn selector_label(entry: &AgentPickerThreadEntry, is_primary: bool) -> String {
         .as_deref()
         .map(str::trim)
         .filter(|nickname| !nickname.is_empty());
+    let semantic_name = entry
+        .agent_semantic_name
+        .as_deref()
+        .map(str::trim)
+        .filter(|name| !name.is_empty());
     let path_name = entry
         .agent_path
         .as_deref()
         .map(str::trim)
         .filter(|path| !path.is_empty())
         .and_then(|path| path.rsplit('/').find(|segment| !segment.is_empty()));
-    let name = nickname.or(path_name).unwrap_or("Agent");
+    let identity = semantic_name.or(path_name).unwrap_or("Agent");
+    let name = nickname
+        .map(|nickname| format!("{nickname} · {identity}"))
+        .unwrap_or_else(|| identity.to_string());
     let role = entry
         .agent_role
         .as_deref()
@@ -609,6 +636,7 @@ mod tests {
         let (mut state, main_thread_id, first_agent_id, second_agent_id) = populated_state();
         let grandchild_id = ThreadId::new();
         state.set_agent_path(first_agent_id, Some("/root/research".to_string()));
+        state.set_agent_semantic_name(first_agent_id, Some("后端调研".to_string()));
         state.set_agent_path(second_agent_id, Some("/root/verify".to_string()));
         state.upsert(
             grandchild_id,
@@ -626,9 +654,9 @@ mod tests {
                 .collect::<Vec<_>>(),
             vec![
                 (main_thread_id, "Codex [default]", 0),
-                (first_agent_id, "Robie [explorer]", 0),
-                (grandchild_id, "Turing [default]", 1),
-                (second_agent_id, "Bob [worker]", 0),
+                (first_agent_id, "Robie · 后端调研 [explorer]", 0),
+                (grandchild_id, "Turing · protocol [default]", 1),
+                (second_agent_id, "Bob · verify [worker]", 0),
             ]
         );
     }

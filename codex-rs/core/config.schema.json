@@ -2090,6 +2090,12 @@
         "root_agent_usage_hint_text": {
           "type": "string"
         },
+        "semantic_name_language": {
+          "description": "Language requested for asynchronously generated subagent display names.",
+          "maxLength": 32,
+          "minLength": 1,
+          "type": "string"
+        },
         "subagent_developer_instructions": {
           "description": "Overrides inherited developer instructions for subagents without role-specific instructions.",
           "type": "string"

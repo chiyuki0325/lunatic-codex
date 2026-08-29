@@ -16,7 +16,7 @@ use std::time::Instant;
 
 const MAX_VISIBLE_AGENTS: usize = 4;
 const NORMAL_HINT: &str = "按 ↓ 以聚焦其它 agent";
-const SELECTING_HINT: &str = "↑/↓ 选择 · Enter 以聚焦该 agent · Esc 返回";
+const SELECTING_HINT: &str = "↑/↓ 选择 · Enter 以聚焦该 agent · x 以停止 · Esc 返回";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct AgentSelectorEntry {
@@ -91,6 +91,18 @@ impl AgentSelector {
                     app_event_tx.send(AppEvent::SelectAgentThread(thread_id));
                 }
                 self.selecting = false;
+            }
+            KeyCode::Char('x') => {
+                if let Some(entry) = self
+                    .selected_thread_id
+                    .and_then(|thread_id| self.entries.iter().find(|entry| entry.thread_id == thread_id))
+                    && entry.is_running
+                    && !entry.is_closed
+                {
+                    app_event_tx.send(AppEvent::StopAgentsOverviewThread {
+                        thread_id: entry.thread_id,
+                    });
+                }
             }
             KeyCode::Esc => self.selecting = false,
             _ => return true,
@@ -219,11 +231,17 @@ impl AgentSelector {
             }
             let selected = self.selecting && self.selected_thread_id == Some(entry.thread_id);
             let current = self.current_thread_id == Some(entry.thread_id);
+            let mut entry_line = entry_line(entry, selected, current);
+            let mut status_line = status_line(entry, now);
+            if selected {
+                entry_line = entry_line.light_green().bold();
+                status_line = status_line.light_green().bold();
+            }
             render_split_line(
                 Rect::new(content.x, y, content.width, 1),
                 buf,
-                entry_line(entry, selected, current),
-                status_line(entry, now),
+                entry_line,
+                status_line,
             );
         }
     }
@@ -248,7 +266,7 @@ fn entry_line(entry: &AgentSelectorEntry, selected: bool, current: bool) -> Line
     let dot = if entry.is_running && !entry.is_closed {
         "●".green()
     } else {
-        "●".into()
+        "○".into()
     };
     spans.push(dot);
     spans.push(" ".into());

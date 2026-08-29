@@ -633,6 +633,7 @@ hide_spawn_agent_metadata = true
 expose_spawn_agent_model_overrides = true
 wait_agent_enabled = false
 non_code_mode_only = true
+semantic_name_language = "ja-JP"
 "#,
     )
     .expect("features table should deserialize");
@@ -660,6 +661,7 @@ non_code_mode_only = true
             expose_spawn_agent_model_overrides: Some(true),
             wait_agent_enabled: Some(false),
             non_code_mode_only: Some(true),
+            semantic_name_language: Some("ja-JP".to_string()),
         }))
     );
 }

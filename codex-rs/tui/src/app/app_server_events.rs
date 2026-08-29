@@ -115,6 +115,24 @@ impl App {
             self.refresh_agents_overview_threads(app_server_client);
         }
         match &notification {
+            ServerNotification::ThreadNameUpdated(notification) => {
+                if let Ok(thread_id) =
+                    codex_protocol::ThreadId::from_string(&notification.thread_id)
+                    && self.primary_thread_id != Some(thread_id)
+                    && self
+                        .agent_navigation
+                        .get(&thread_id)
+                        .is_some_and(|entry| entry.agent_path.is_some())
+                {
+                    self.agent_navigation
+                        .set_agent_semantic_name(thread_id, notification.thread_name.clone());
+                    self.chat_widget.set_collab_agent_semantic_name(
+                        thread_id,
+                        notification.thread_name.clone(),
+                    );
+                    self.sync_active_agent_label();
+                }
+            }
             ServerNotification::ServerRequestResolved(notification) => {
                 let notification_thread_id =
                     codex_protocol::ThreadId::from_string(&notification.thread_id).ok();

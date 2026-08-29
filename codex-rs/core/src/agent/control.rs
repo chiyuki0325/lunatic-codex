@@ -48,6 +48,7 @@ use codex_protocol::protocol::TurnEnvironmentSelection;
 use codex_protocol::user_input::UserInput;
 use codex_thread_store::LoadThreadHistoryParams;
 use codex_thread_store::ReadThreadParams;
+use codex_thread_store::ThreadMetadataPatch;
 use serde::Serialize;
 use std::collections::HashMap;
 use std::collections::VecDeque;
@@ -359,6 +360,35 @@ impl AgentControl {
             .ok_or_else(|| CodexErr::ThreadNotFound(agent_id))
     }
 
+    pub(crate) async fn set_agent_semantic_name(
+        &self,
+        agent_id: ThreadId,
+        agent_path: &AgentPath,
+        semantic_name: String,
+    ) -> CodexResult<bool> {
+        let metadata = self.ensure_agent_known(agent_id)?;
+        if metadata.agent_path.as_ref() != Some(agent_path)
+            || metadata.agent_semantic_name.is_some()
+        {
+            return Ok(false);
+        }
+        let state = self.upgrade()?;
+        let thread = state.get_thread(agent_id).await?;
+        thread
+            .update_thread_metadata(
+                ThreadMetadataPatch {
+                    name: Some(Some(semantic_name.clone())),
+                    ..Default::default()
+                },
+                /*include_archived*/ false,
+            )
+            .await
+            .map_err(|err| CodexErr::Fatal(err.to_string()))?;
+        Ok(self
+            .state
+            .set_agent_semantic_name(agent_id, agent_path, semantic_name))
+    }
+
     pub(crate) async fn list_live_agent_subtree_thread_ids(
         &self,
         agent_id: ThreadId,
@@ -623,6 +653,7 @@ impl AgentControl {
             agent_path,
             agent_nickname,
             agent_role,
+            agent_semantic_name: None,
         })
     }
 
