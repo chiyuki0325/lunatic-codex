@@ -133,7 +133,7 @@ impl App {
     pub(super) fn thread_label(&self, thread_id: ThreadId) -> String {
         let is_primary = self.primary_thread_id == Some(thread_id);
         let fallback_label = if is_primary {
-            "Main [default]".to_string()
+            "Codex [default]".to_string()
         } else {
             let thread_id = thread_id.to_string();
             let short_id: String = thread_id.chars().take(8).collect();
@@ -189,10 +189,16 @@ impl App {
     /// intentionally hidden until there is more than one known thread so single-thread sessions do
     /// not spend footer space restating that the user is already on the main conversation.
     pub(super) fn sync_active_agent_label(&mut self) {
+        let current_thread_id = self.current_displayed_thread_id();
         let label = self
             .agent_navigation
-            .active_agent_label(self.current_displayed_thread_id(), self.primary_thread_id);
+            .active_agent_label(current_thread_id, self.primary_thread_id);
+        let selector_entries = self
+            .agent_navigation
+            .selector_entries(self.primary_thread_id);
         self.chat_widget.set_active_agent_label(label);
+        self.chat_widget
+            .set_agent_selector_entries(selector_entries, current_thread_id);
         self.sync_side_thread_ui();
     }
 
@@ -1028,8 +1034,10 @@ impl App {
         };
         if is_turn_started {
             self.agent_navigation.mark_running(thread_id);
+            self.sync_active_agent_label();
         } else if turn_stopped {
             self.agent_navigation.mark_stopped(thread_id);
+            self.sync_active_agent_label();
         }
 
         if let Some(notification) = notification {

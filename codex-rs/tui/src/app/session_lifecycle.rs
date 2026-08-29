@@ -6,7 +6,6 @@
 
 use std::io;
 
-use super::agent_picker::AGENT_PICKER_VIEW_ID;
 use super::app_server_event_targets::ServerNotificationThreadTarget;
 use super::app_server_event_targets::server_notification_thread_target;
 use super::app_server_event_targets::server_request_thread_id;
@@ -150,75 +149,10 @@ impl App {
             return;
         }
 
-        let selected = self
-            .chat_widget
-            .selected_index_for_present_view(AGENT_PICKER_VIEW_ID);
-        let params = self.agent_picker_selection_view_params(selected);
-        if !self
-            .chat_widget
-            .replace_selection_view_if_present(AGENT_PICKER_VIEW_ID, params)
-        {
-            let params = self.agent_picker_selection_view_params(selected);
-            self.chat_widget.show_selection_view(params);
-        }
+        self.sync_active_agent_label();
+        self.chat_widget.open_agent_selector();
         if let Some(primary_thread_id) = self.primary_thread_id {
             self.refresh_agent_picker_threads(app_server, primary_thread_id);
-        }
-    }
-
-    pub(super) fn agent_picker_selection_view_params(
-        &self,
-        selected: Option<usize>,
-    ) -> SelectionViewParams {
-        let mut initial_selected_idx = selected;
-        let items: Vec<SelectionItem> = self
-            .agent_navigation
-            .ordered_threads()
-            .into_iter()
-            .enumerate()
-            .map(|(idx, (thread_id, entry))| {
-                if initial_selected_idx.is_none() && self.active_thread_id == Some(thread_id) {
-                    initial_selected_idx = Some(idx);
-                }
-                let id = thread_id;
-                let is_primary = self.primary_thread_id == Some(thread_id);
-                let name = entry
-                    .agent_path
-                    .as_deref()
-                    .map(str::trim)
-                    .filter(|agent_path| !is_primary && !agent_path.is_empty())
-                    .map(ToOwned::to_owned)
-                    .unwrap_or_else(|| {
-                        format_agent_picker_item_name(
-                            entry.agent_nickname.as_deref(),
-                            entry.agent_role.as_deref(),
-                            is_primary,
-                        )
-                    });
-                let uuid = thread_id.to_string();
-                SelectionItem {
-                    name: name.clone(),
-                    name_prefix_spans: agent_picker_status_dot_spans(entry.is_closed),
-                    description: Some(uuid.clone()),
-                    is_current: self.active_thread_id == Some(thread_id),
-                    actions: vec![Box::new(move |tx| {
-                        tx.send(AppEvent::SelectAgentThread(id));
-                    })],
-                    dismiss_on_select: true,
-                    search_value: Some(format!("{name} {uuid}")),
-                    ..Default::default()
-                }
-            })
-            .collect();
-
-        SelectionViewParams {
-            view_id: Some(AGENT_PICKER_VIEW_ID),
-            title: Some("Subagents".to_string()),
-            subtitle: Some(AgentNavigationState::picker_subtitle()),
-            footer_hint: Some(standard_popup_hint_line()),
-            items,
-            initial_selected_idx,
-            ..Default::default()
         }
     }
 

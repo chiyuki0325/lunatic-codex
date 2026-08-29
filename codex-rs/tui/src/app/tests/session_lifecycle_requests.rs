@@ -1870,20 +1870,10 @@ fn session_lifecycle_avoids_redundant_subagent_metadata_reads() -> Result<()> {
                 futures::FutureExt::now_or_never(app.open_agent_picker(&mut app_server))
                     .expect("opening the agent picker waited for the app server");
                 drop(child_store_guard);
-                insta::assert_snapshot!(
-                    render_bottom_popup(&app.chat_widget, /*width*/ 80)
-                        .replace(&root_thread_id.to_string(), "[root]")
-                        .replace(&child_thread_id.to_string(), "[child]"),
-                    @r###"
-                      Subagents
-                      Select an agent to watch. ⌥ + ← previous, ⌥ + → next.
-
-                    › 1. • Main [default] (current)  [root]
-                      2. • /root/worker              [child]
-
-                      Press enter to confirm or esc to go back
-                    "###
-                );
+                let selector = render_bottom_popup(&app.chat_widget, /*width*/ 80);
+                assert!(selector.contains("Codex [default]"));
+                assert!(selector.contains("worker [worker]"));
+                assert!(selector.contains("Enter") && selector.contains("Esc"));
                 assert_eq!(take_backfill_counts(&requests), (0, 0));
                 tokio::time::timeout(Duration::from_secs(5), started_rx).await??;
                 app.chat_widget
@@ -1949,12 +1939,6 @@ fn session_lifecycle_avoids_redundant_subagent_metadata_reads() -> Result<()> {
                     Some(discovered_thread_id)
                 );
                 assert!(!app.agent_navigation.is_parent_owned(discovered_thread_id));
-                assert_eq!(
-                    app.chat_widget.selected_index_for_present_view(
-                        super::super::agent_picker::AGENT_PICKER_VIEW_ID
-                    ),
-                    Some(1)
-                );
                 assert!(render_bottom_popup(&app.chat_widget, /*width*/ 80).contains("echo hello"));
                 assert!(
                     app.agent_navigation

@@ -10,7 +10,6 @@ use codex_app_server_protocol::ThreadSourceKind;
 use codex_app_server_protocol::ThreadStatus;
 use std::collections::HashSet;
 
-pub(super) const AGENT_PICKER_VIEW_ID: &str = "agent-picker";
 const AGENT_PICKER_PAGE_SIZE: u32 = 100;
 const AGENT_PICKER_MAX_THREADS: usize = 1_000;
 
@@ -105,9 +104,6 @@ impl App {
                 return;
             }
         };
-        let selected = self
-            .chat_widget
-            .selected_index_for_present_view(AGENT_PICKER_VIEW_ID);
         for thread in threads {
             let Ok(thread_id) = ThreadId::from_string(&thread.id) else {
                 continue;
@@ -140,8 +136,6 @@ impl App {
             }
         }
 
-        let params = self.agent_picker_selection_view_params(selected);
-        self.chat_widget
-            .replace_selection_view_if_present(AGENT_PICKER_VIEW_ID, params);
+        self.sync_active_agent_label();
     }
 }

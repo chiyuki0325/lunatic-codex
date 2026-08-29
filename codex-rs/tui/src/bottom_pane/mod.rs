@@ -55,6 +55,7 @@ use std::time::Duration;
 use std::time::Instant;
 
 mod action_required_title;
+mod agent_selector;
 mod app_link_view;
 mod apply_patch_header;
 mod approval_overlay;
@@ -67,6 +68,7 @@ mod status_surface_preview;
 mod title_setup;
 pub(crate) use action_required_title::ACTION_REQUIRED_PREVIEW_PREFIX;
 pub(crate) use action_required_title::build_action_required_title_text;
+pub(crate) use agent_selector::AgentSelectorEntry;
 pub(crate) use app_link_view::AppLinkElicitationTarget;
 pub(crate) use app_link_view::AppLinkSuggestionType;
 pub(crate) use app_link_view::AppLinkView;
@@ -252,6 +254,8 @@ pub(crate) struct BottomPane {
     pending_input_preview: PendingInputPreview,
     /// Inactive threads with pending approval requests.
     pending_thread_approvals: PendingThreadApprovals,
+    /// Inline session-tree navigation shown below the composer footer.
+    agent_selector: agent_selector::AgentSelector,
     context_window_percent: Option<i64>,
     context_window_used_tokens: Option<i64>,
     keymap: RuntimeKeymap,
@@ -316,6 +320,7 @@ impl BottomPane {
             unified_exec_footer: UnifiedExecFooter::new(),
             pending_input_preview: PendingInputPreview::new(),
             pending_thread_approvals: PendingThreadApprovals::new(),
+            agent_selector: agent_selector::AgentSelector::default(),
             esc_backtrack_hint: false,
             animations_enabled,
             context_window_percent: None,
@@ -673,6 +678,26 @@ impl BottomPane {
             self.request_redraw();
             InputResult::None
         } else {
+            if self
+                .agent_selector
+                .handle_key_event(key_event, &self.app_event_tx)
+            {
+                self.request_redraw();
+                return InputResult::None;
+            }
+            if matches!(
+                key_event,
+                KeyEvent {
+                    code: KeyCode::Down,
+                    kind: KeyEventKind::Press | KeyEventKind::Repeat,
+                    ..
+                }
+            ) && self.composer.can_open_agent_selector()
+                && self.agent_selector.enter_selection()
+            {
+                self.request_redraw();
+                return InputResult::None;
+            }
             // If a task is running and a status line is visible, allow the
             // configured action to interrupt even while the composer has focus.
             // When a popup is active, prefer dismissing it over interrupting the task.
@@ -791,6 +816,9 @@ impl BottomPane {
         self.maybe_show_delayed_approval_requests_at(now);
         self.tick_active_view(now);
         self.schedule_active_view_frame();
+        if self.agent_selector.is_visible() {
+            self.request_redraw_in(Duration::from_secs(1));
+        }
     }
 
     fn tick_active_view(&mut self, now: Instant) {
@@ -1837,6 +1865,12 @@ impl BottomPane {
                 }))
             };
             flex2.push(/*flex*/ 0, composer);
+            if self.agent_selector.is_visible() {
+                flex2.push(
+                    /*flex*/ 0,
+                    RenderableItem::Borrowed(&self.agent_selector),
+                );
+            }
             RenderableItem::Owned(Box::new(flex2))
         }
     }
@@ -1857,6 +1891,24 @@ impl BottomPane {
         if self.composer.set_status_line_enabled(enabled) {
             self.request_redraw();
         }
+    }
+
+    pub(crate) fn set_agent_selector_entries(
+        &mut self,
+        entries: Vec<AgentSelectorEntry>,
+        current_thread_id: Option<ThreadId>,
+    ) {
+        if self.agent_selector.update(entries, current_thread_id) {
+            self.request_redraw();
+        }
+    }
+
+    pub(crate) fn open_agent_selector(&mut self) -> bool {
+        let opened = self.view_stack.is_empty() && self.agent_selector.enter_selection();
+        if opened {
+            self.request_redraw();
+        }
+        opened
     }
 
     /// Updates the contextual footer label and requests a redraw only when it changed.
@@ -1982,6 +2034,83 @@ mod tests {
             animations_enabled: true,
             skills: Some(Vec::new()),
         })
+    }
+
+    #[test]
+    fn empty_composer_down_opens_agent_selector_and_enter_focuses() {
+        let (tx, mut rx) = unbounded_channel();
+        let mut pane = test_pane(AppEventSender::new(tx));
+        let root = ThreadId::new();
+        let child = ThreadId::new();
+        let now = Instant::now();
+        pane.set_agent_selector_entries(
+            vec![
+                AgentSelectorEntry {
+                    thread_id: root,
+                    label: "Codex [default]".to_string(),
+                    depth: 0,
+                    is_running: true,
+                    is_closed: false,
+                    status_changed_at: now,
+                },
+                AgentSelectorEntry {
+                    thread_id: child,
+                    label: "Curie [explorer]".to_string(),
+                    depth: 0,
+                    is_running: true,
+                    is_closed: false,
+                    status_changed_at: now,
+                },
+            ],
+            Some(root),
+        );
+
+        assert_eq!(
+            pane.handle_key_event(KeyEvent::new(KeyCode::Down, KeyModifiers::NONE)),
+            InputResult::None
+        );
+        pane.handle_key_event(KeyEvent::new(KeyCode::Down, KeyModifiers::NONE));
+        pane.handle_key_event(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
+
+        assert!(matches!(
+            rx.try_recv(),
+            Ok(AppEvent::SelectAgentThread(thread_id)) if thread_id == child
+        ));
+    }
+
+    #[test]
+    fn draft_composer_keeps_down_arrow_from_agent_selector() {
+        let (tx, mut rx) = unbounded_channel();
+        let mut pane = test_pane(AppEventSender::new(tx));
+        let root = ThreadId::new();
+        let child = ThreadId::new();
+        let now = Instant::now();
+        pane.set_agent_selector_entries(
+            vec![
+                AgentSelectorEntry {
+                    thread_id: root,
+                    label: "Codex [default]".to_string(),
+                    depth: 0,
+                    is_running: true,
+                    is_closed: false,
+                    status_changed_at: now,
+                },
+                AgentSelectorEntry {
+                    thread_id: child,
+                    label: "Curie [explorer]".to_string(),
+                    depth: 0,
+                    is_running: true,
+                    is_closed: false,
+                    status_changed_at: now,
+                },
+            ],
+            Some(root),
+        );
+        pane.insert_str("draft");
+
+        pane.handle_key_event(KeyEvent::new(KeyCode::Down, KeyModifiers::NONE));
+        assert!(rx.try_recv().is_err());
+        assert_eq!(pane.composer_text(), "draft");
     }
 
     fn exec_request() -> ApprovalRequest {

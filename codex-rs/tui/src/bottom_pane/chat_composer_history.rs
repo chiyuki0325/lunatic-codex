@@ -345,6 +345,10 @@ impl ChatComposerHistory {
         true
     }
 
+    pub(crate) fn is_navigating(&self) -> bool {
+        self.history_cursor.is_some() || self.pending_navigation_direction.is_some()
+    }
+
     /// Resets normal history navigation so the next Up key resumes from the newest entry.
     ///
     /// This also clears any active incremental search, since normal browsing and Ctrl+R search

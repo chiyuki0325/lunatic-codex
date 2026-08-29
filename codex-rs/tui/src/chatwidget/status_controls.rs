@@ -77,6 +77,19 @@ impl ChatWidget {
         self.bottom_pane.set_status_line_hyperlink(url);
     }
 
+    pub(crate) fn set_agent_selector_entries(
+        &mut self,
+        entries: Vec<crate::bottom_pane::AgentSelectorEntry>,
+        current_thread_id: Option<ThreadId>,
+    ) {
+        self.bottom_pane
+            .set_agent_selector_entries(entries, current_thread_id);
+    }
+
+    pub(crate) fn open_agent_selector(&mut self) -> bool {
+        self.bottom_pane.open_agent_selector()
+    }
+
     /// Forwards the contextual active-agent label into the bottom-pane footer pipeline.
     ///
     /// `ChatWidget` stays a pass-through here so `App` remains the owner of "which thread is the

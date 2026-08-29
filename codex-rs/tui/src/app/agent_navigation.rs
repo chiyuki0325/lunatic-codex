@@ -19,15 +19,14 @@
 //! order. Once a thread id is observed it keeps its place in the cycle even if the entry is later
 //! updated or marked closed.
 
+use crate::bottom_pane::AgentSelectorEntry;
 use crate::multi_agents::AgentPickerThreadEntry;
 use crate::multi_agents::SubAgentActivityDisplay;
 use crate::multi_agents::format_agent_picker_item_name;
-use crate::multi_agents::next_agent_shortcut;
-use crate::multi_agents::previous_agent_shortcut;
 use codex_protocol::ThreadId;
-use ratatui::text::Span;
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::time::Instant;
 use uuid::Uuid;
 
 /// Small state container for multi-agent picker ordering and labeling.
@@ -47,6 +46,8 @@ pub(crate) struct AgentNavigationState {
     order: Vec<ThreadId>,
     /// Threads with observed terminal liveness that must not be revived by delayed activity.
     stopped_threads: HashSet<ThreadId>,
+    /// Latest TUI-observed running, idle, or closed transition for each thread.
+    status_changed_at: HashMap<ThreadId, Instant>,
     /// Spawned child threads whose instructions are owned by their parent agent.
     parent_owned_threads: HashSet<ThreadId>,
     /// Coalesces root refreshes while rejecting replies from a previous session.
@@ -122,18 +123,26 @@ impl AgentNavigationState {
         if !self.threads.contains_key(&thread_id) {
             self.order.push(thread_id);
         }
-        let (previous_agent_path, previous_is_running) = self
+        let (previous_agent_path, previous_is_running, previous_is_closed) = self
             .threads
             .get(&thread_id)
-            .map(|entry| (entry.agent_path.clone(), entry.is_running))
-            .unwrap_or((None, false));
+            .map(|entry| (entry.agent_path.clone(), entry.is_running, entry.is_closed))
+            .unwrap_or((None, false, false));
+        let is_running = previous_is_running && !is_closed;
+        if previous_is_closed != is_closed || previous_is_running != is_running {
+            self.status_changed_at.insert(thread_id, Instant::now());
+        } else {
+            self.status_changed_at
+                .entry(thread_id)
+                .or_insert_with(Instant::now);
+        }
         self.threads.insert(
             thread_id,
             AgentPickerThreadEntry {
                 agent_nickname,
                 agent_role,
                 agent_path: previous_agent_path,
-                is_running: previous_is_running && !is_closed,
+                is_running,
                 is_closed,
             },
         );
@@ -154,13 +163,19 @@ impl AgentNavigationState {
                     is_closed: false,
                 });
         entry.agent_path = Some(activity.agent_path);
-        if activity.is_running_hint
+        let is_running = activity.is_running_hint
             && !entry.is_closed
-            && !self.stopped_threads.contains(&activity.thread_id)
-        {
-            entry.is_running = true;
+            && !self.stopped_threads.contains(&activity.thread_id);
+        if entry.is_running != is_running {
+            entry.is_running = is_running;
+            self.status_changed_at
+                .insert(activity.thread_id, Instant::now());
         } else {
-            entry.is_running = false;
+            self.status_changed_at
+                .entry(activity.thread_id)
+                .or_insert_with(Instant::now);
+        }
+        if !is_running {
             self.stopped_threads.insert(activity.thread_id);
         }
     }
@@ -184,7 +199,14 @@ impl AgentNavigationState {
 
     pub(crate) fn set_running(&mut self, thread_id: ThreadId, is_running: bool) {
         if let Some(entry) = self.threads.get_mut(&thread_id) {
-            entry.is_running = is_running;
+            if entry.is_running != is_running {
+                entry.is_running = is_running;
+                self.status_changed_at.insert(thread_id, Instant::now());
+            } else {
+                self.status_changed_at
+                    .entry(thread_id)
+                    .or_insert_with(Instant::now);
+            }
         }
     }
 
@@ -204,8 +226,11 @@ impl AgentNavigationState {
     /// mid-session.
     pub(crate) fn mark_closed(&mut self, thread_id: ThreadId) {
         if let Some(entry) = self.threads.get_mut(&thread_id) {
-            entry.is_closed = true;
-            entry.is_running = false;
+            if !entry.is_closed || entry.is_running {
+                entry.is_closed = true;
+                entry.is_running = false;
+                self.status_changed_at.insert(thread_id, Instant::now());
+            }
         } else {
             self.upsert(
                 thread_id, /*agent_nickname*/ None, /*agent_role*/ None,
@@ -222,6 +247,7 @@ impl AgentNavigationState {
         self.threads.clear();
         self.order.clear();
         self.stopped_threads.clear();
+        self.status_changed_at.clear();
         self.parent_owned_threads.clear();
         self.picker_refresh = None;
     }
@@ -235,6 +261,7 @@ impl AgentNavigationState {
         self.threads.remove(&thread_id);
         self.order.retain(|candidate| *candidate != thread_id);
         self.stopped_threads.remove(&thread_id);
+        self.status_changed_at.remove(&thread_id);
         self.parent_owned_threads.remove(&thread_id);
     }
 
@@ -273,6 +300,76 @@ impl AgentNavigationState {
                         .agent_path
                         .as_deref()
                         .is_some_and(|agent_path| !agent_path.trim().is_empty())
+            })
+            .collect()
+    }
+
+    pub(crate) fn selector_entries(
+        &self,
+        primary_thread_id: Option<ThreadId>,
+    ) -> Vec<AgentSelectorEntry> {
+        fn append_children<'a>(
+            parent_path: &str,
+            ordered: &[(ThreadId, &'a AgentPickerThreadEntry)],
+            visited: &mut HashSet<ThreadId>,
+            output: &mut Vec<(ThreadId, &'a AgentPickerThreadEntry)>,
+        ) {
+            for (thread_id, entry) in ordered.iter().copied() {
+                let Some(agent_path) = entry.agent_path.as_deref() else {
+                    continue;
+                };
+                if parent_agent_path(agent_path) != Some(parent_path) || !visited.insert(thread_id)
+                {
+                    continue;
+                }
+                output.push((thread_id, entry));
+                append_children(agent_path, ordered, visited, output);
+            }
+        }
+
+        let ordered = self.ordered_threads();
+        let mut visited = HashSet::new();
+        let mut hierarchical = Vec::with_capacity(ordered.len());
+        if let Some(primary_thread_id) = primary_thread_id
+            && let Some((thread_id, entry)) = ordered
+                .iter()
+                .copied()
+                .find(|(thread_id, _)| *thread_id == primary_thread_id)
+        {
+            visited.insert(thread_id);
+            hierarchical.push((thread_id, entry));
+        }
+        append_children("/root", &ordered, &mut visited, &mut hierarchical);
+        hierarchical.extend(
+            ordered
+                .into_iter()
+                .filter(|(thread_id, _)| visited.insert(*thread_id)),
+        );
+
+        hierarchical
+            .into_iter()
+            .map(|(thread_id, entry)| {
+                let is_primary = primary_thread_id == Some(thread_id);
+                AgentSelectorEntry {
+                    thread_id,
+                    label: selector_label(entry, is_primary),
+                    depth: if is_primary {
+                        0
+                    } else {
+                        entry
+                            .agent_path
+                            .as_deref()
+                            .map(agent_path_depth)
+                            .unwrap_or(0)
+                    },
+                    is_running: entry.is_running,
+                    is_closed: entry.is_closed,
+                    status_changed_at: self
+                        .status_changed_at
+                        .get(&thread_id)
+                        .copied()
+                        .unwrap_or_else(Instant::now),
+                }
             })
             .collect()
     }
@@ -338,39 +435,12 @@ impl AgentNavigationState {
         Some(
             self.threads
                 .get(&thread_id)
-                .map(|entry| {
-                    if !is_primary
-                        && let Some(agent_path) = entry
-                            .agent_path
-                            .as_deref()
-                            .filter(|agent_path| !agent_path.trim().is_empty())
-                    {
-                        return format!("`{agent_path}`");
-                    }
-                    format_agent_picker_item_name(
-                        entry.agent_nickname.as_deref(),
-                        entry.agent_role.as_deref(),
-                        is_primary,
-                    )
-                })
+                .map(|entry| selector_label(entry, is_primary))
                 .unwrap_or_else(|| {
                     format_agent_picker_item_name(
                         /*agent_nickname*/ None, /*agent_role*/ None, is_primary,
                     )
                 }),
-        )
-    }
-
-    /// Builds the `/subagents` picker subtitle from the same canonical bindings used by key handling.
-    ///
-    /// Keeping this text derived from the actual shortcut helpers prevents the picker copy from
-    /// drifting if the bindings ever change on one platform.
-    pub(crate) fn picker_subtitle() -> String {
-        let previous: Span<'static> = previous_agent_shortcut().into();
-        let next: Span<'static> = next_agent_shortcut().into();
-        format!(
-            "Select an agent to watch. {} previous, {} next.",
-            previous.content, next.content
         )
     }
 
@@ -385,6 +455,50 @@ impl AgentNavigationState {
             .map(|(thread_id, _)| thread_id)
             .collect()
     }
+}
+
+fn parent_agent_path(agent_path: &str) -> Option<&str> {
+    let trimmed = agent_path.trim_end_matches('/');
+    let separator = trimmed.rfind('/')?;
+    (separator > 0).then(|| &trimmed[..separator])
+}
+
+fn agent_path_depth(agent_path: &str) -> usize {
+    agent_path
+        .split('/')
+        .filter(|segment| !segment.is_empty())
+        .count()
+        .saturating_sub(2)
+}
+
+fn selector_label(entry: &AgentPickerThreadEntry, is_primary: bool) -> String {
+    if is_primary {
+        return format_agent_picker_item_name(
+            entry.agent_nickname.as_deref(),
+            entry.agent_role.as_deref(),
+            /*is_primary*/ true,
+        );
+    }
+
+    let nickname = entry
+        .agent_nickname
+        .as_deref()
+        .map(str::trim)
+        .filter(|nickname| !nickname.is_empty());
+    let path_name = entry
+        .agent_path
+        .as_deref()
+        .map(str::trim)
+        .filter(|path| !path.is_empty())
+        .and_then(|path| path.rsplit('/').find(|segment| !segment.is_empty()));
+    let name = nickname.or(path_name).unwrap_or("Agent");
+    let role = entry
+        .agent_role
+        .as_deref()
+        .map(str::trim)
+        .filter(|role| !role.is_empty())
+        .unwrap_or("default");
+    format!("{name} [{role}]")
 }
 
 #[cfg(test)]
@@ -491,13 +605,32 @@ mod tests {
     }
 
     #[test]
-    fn picker_subtitle_mentions_shortcuts() {
-        let previous: Span<'static> = previous_agent_shortcut().into();
-        let next: Span<'static> = next_agent_shortcut().into();
-        let subtitle = AgentNavigationState::picker_subtitle();
+    fn selector_entries_follow_agent_path_hierarchy() {
+        let (mut state, main_thread_id, first_agent_id, second_agent_id) = populated_state();
+        let grandchild_id = ThreadId::new();
+        state.set_agent_path(first_agent_id, Some("/root/research".to_string()));
+        state.set_agent_path(second_agent_id, Some("/root/verify".to_string()));
+        state.upsert(
+            grandchild_id,
+            Some("Turing".to_string()),
+            /*agent_role*/ None,
+            /*is_closed*/ false,
+        );
+        state.set_agent_path(grandchild_id, Some("/root/research/protocol".to_string()));
 
-        assert!(subtitle.contains(previous.content.as_ref()));
-        assert!(subtitle.contains(next.content.as_ref()));
+        let entries = state.selector_entries(Some(main_thread_id));
+        assert_eq!(
+            entries
+                .iter()
+                .map(|entry| (entry.thread_id, entry.label.as_str(), entry.depth))
+                .collect::<Vec<_>>(),
+            vec![
+                (main_thread_id, "Codex [default]", 0),
+                (first_agent_id, "Robie [explorer]", 0),
+                (grandchild_id, "Turing [default]", 1),
+                (second_agent_id, "Bob [worker]", 0),
+            ]
+        );
     }
 
     #[test]
@@ -510,7 +643,7 @@ mod tests {
         );
         assert_eq!(
             state.active_agent_label(Some(main_thread_id), Some(main_thread_id)),
-            Some("Main [default]".to_string())
+            Some("Codex [default]".to_string())
         );
     }
 }

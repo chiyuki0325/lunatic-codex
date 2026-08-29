@@ -72,33 +72,25 @@ pub(crate) struct SpawnRequestSummary {
     pub(crate) reasoning_effort: ReasoningEffortConfig,
 }
 
-pub(crate) fn agent_picker_status_dot_spans(is_closed: bool) -> Vec<Span<'static>> {
-    let dot = if is_closed {
-        "•".into()
-    } else {
-        "•".green()
-    };
-    vec![dot, " ".into()]
-}
-
 pub(crate) fn format_agent_picker_item_name(
     agent_nickname: Option<&str>,
     agent_role: Option<&str>,
     is_primary: bool,
 ) -> String {
     if is_primary {
-        return "Main [default]".to_string();
+        return "Codex [default]".to_string();
     }
 
     let agent_nickname = agent_nickname
         .map(str::trim)
         .filter(|nickname| !nickname.is_empty());
-    let agent_role = agent_role.map(str::trim).filter(|role| !role.is_empty());
-    match (agent_nickname, agent_role) {
-        (Some(agent_nickname), Some(agent_role)) => format!("{agent_nickname} [{agent_role}]"),
-        (Some(agent_nickname), None) => agent_nickname.to_string(),
-        (None, Some(agent_role)) => format!("[{agent_role}]"),
-        (None, None) => "Agent".to_string(),
+    let agent_role = agent_role
+        .map(str::trim)
+        .filter(|role| !role.is_empty())
+        .unwrap_or("default");
+    match agent_nickname {
+        Some(agent_nickname) => format!("{agent_nickname} [{agent_role}]"),
+        None => format!("Agent [{agent_role}]"),
     }
 }
 
@@ -315,7 +307,7 @@ pub(crate) fn sub_agent_activity_history_cell(item: &ThreadItem) -> Option<Plain
 
 pub(crate) fn sub_agent_activity_summary(kind: SubAgentActivityKind, agent_path: &str) -> String {
     match kind {
-        SubAgentActivityKind::Started => format!("Started `{agent_path}`"),
+        SubAgentActivityKind::Started => format!("启动了一个 subagent `{agent_path}`"),
         SubAgentActivityKind::Interacted => format!("Interacted with `{agent_path}`"),
         SubAgentActivityKind::Interrupted => format!("Interrupted `{agent_path}`"),
     }
@@ -323,7 +315,7 @@ pub(crate) fn sub_agent_activity_summary(kind: SubAgentActivityKind, agent_path:
 
 fn sub_agent_activity_title(kind: SubAgentActivityKind, agent_path: &str) -> Line<'static> {
     let (prefix, path) = match kind {
-        SubAgentActivityKind::Started => ("Started ", agent_path),
+        SubAgentActivityKind::Started => ("启动了一个 subagent ", agent_path),
         SubAgentActivityKind::Interacted => ("Interacted with ", agent_path),
         SubAgentActivityKind::Interrupted => ("Interrupted ", agent_path),
     };
@@ -689,6 +681,23 @@ mod tests {
         };
 
         assert_eq!(sub_agent_activity_display(&item), None);
+    }
+
+    #[test]
+    fn started_sub_agent_activity_uses_chinese_label() {
+        let item = ThreadItem::SubAgentActivity {
+            id: "activity-1".to_string(),
+            kind: SubAgentActivityKind::Started,
+            agent_thread_id: ThreadId::new().to_string(),
+            agent_path: "/root/child".to_string(),
+        };
+        let cell = sub_agent_activity_history_cell(&item).expect("activity renders");
+        let summary = sub_agent_activity_summary(SubAgentActivityKind::Started, "/root/child");
+
+        assert_snapshot!(format!("{}\n{summary}", cell_to_text(&cell)), @r###"
+        • 启动了一个 subagent `/root/child`
+        启动了一个 subagent `/root/child`
+        "###);
     }
 
     #[test]

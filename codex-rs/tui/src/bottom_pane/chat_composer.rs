@@ -48,7 +48,8 @@
 //! (local image paths + remote image URLs).
 //! When recalling a persistent entry, only the text is restored.
 //! Recalled entries move the cursor to end-of-line so repeated Up/Down presses keep shell-like
-//! history traversal semantics instead of dropping to column 0.
+//! history traversal semantics instead of dropping to column 0. An empty composer can yield Down to
+//! the inline agent selector only when no popup, paste, or history interaction owns the key.
 //! `Ctrl+R` opens a reverse incremental search mode. The footer becomes the search input; once the
 //! query is non-empty, the composer body previews the current match. `Enter` accepts the preview as
 //! an editable draft and `Esc` restores the draft that was active when search started.
@@ -4340,6 +4341,14 @@ impl ChatComposer {
         }
         self.footer.side_conversation_context_label = label;
         true
+    }
+
+    pub(crate) fn can_open_agent_selector(&self) -> bool {
+        self.is_empty()
+            && !self.is_in_paste_burst()
+            && self.history_search.is_none()
+            && !self.history.is_navigating()
+            && matches!(self.popups.active, ActivePopup::None)
     }
 
     /// Replaces the contextual footer label for the currently viewed agent.

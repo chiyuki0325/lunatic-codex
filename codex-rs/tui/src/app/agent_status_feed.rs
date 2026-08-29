@@ -170,7 +170,7 @@ fn activity_summary(item: &ThreadItem) -> Option<String> {
             kind, agent_path, ..
         } => {
             let action = match kind {
-                SubAgentActivityKind::Started => "Started",
+                SubAgentActivityKind::Started => "启动了一个 subagent",
                 SubAgentActivityKind::Interacted => "Contacted",
                 SubAgentActivityKind::Interrupted => "Interrupted",
             };
