@@ -24,6 +24,7 @@ use super::ActivePopup;
 use super::ChatComposer;
 use super::InputResult;
 use super::QueuedInputAction;
+use super::SubmissionMode;
 use super::parent_owned_command_is_allowed;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -295,7 +296,7 @@ impl ChatComposer {
                     }
                 }
                 if self.is_task_running {
-                    return self.handle_submission(/*should_queue*/ true);
+                    return self.handle_submission(SubmissionMode::Queue);
                 }
                 (InputResult::None, true)
             }

@@ -206,9 +206,6 @@ impl SlashCommand {
             | SlashCommand::Fork
             | SlashCommand::Init
             | SlashCommand::Compact
-            | SlashCommand::Export
-            | SlashCommand::Keymap
-            | SlashCommand::Vim
             | SlashCommand::ElevateSandbox
             | SlashCommand::SandboxReadRoot
             | SlashCommand::Experimental
@@ -224,6 +221,11 @@ impl SlashCommand {
             SlashCommand::Diff
             | SlashCommand::Resume
             | SlashCommand::Model
+            | SlashCommand::Export
+            | SlashCommand::Keymap
+            | SlashCommand::Vim
+            | SlashCommand::Theme
+            | SlashCommand::Pets
             | SlashCommand::Personality
             | SlashCommand::Permissions
             | SlashCommand::Copy
@@ -255,7 +257,6 @@ impl SlashCommand {
             SlashCommand::Rollout => true,
             SlashCommand::TestApproval => true,
             SlashCommand::Agents | SlashCommand::MultiAgents => true,
-            SlashCommand::Theme | SlashCommand::Pets => false,
         }
     }
 
@@ -303,14 +304,43 @@ mod tests {
 
     #[test]
     fn certain_commands_are_available_during_task() {
-        assert!(SlashCommand::Goal.available_during_task());
-        assert!(SlashCommand::Ide.available_during_task());
-        assert!(SlashCommand::Title.available_during_task());
-        assert!(SlashCommand::Statusline.available_during_task());
-        assert!(SlashCommand::Raw.available_during_task());
+        for command in [
+            SlashCommand::Ps,
+            SlashCommand::Model,
+            SlashCommand::Permissions,
+            SlashCommand::Personality,
+            SlashCommand::Resume,
+            SlashCommand::Export,
+            SlashCommand::Keymap,
+            SlashCommand::Vim,
+            SlashCommand::Theme,
+            SlashCommand::Pets,
+            SlashCommand::Goal,
+            SlashCommand::Ide,
+            SlashCommand::Title,
+            SlashCommand::Statusline,
+            SlashCommand::Raw,
+            SlashCommand::App,
+        ] {
+            assert!(command.available_during_task(), "{command:?}");
+        }
         assert!(SlashCommand::Raw.available_in_side_conversation());
         assert!(SlashCommand::Raw.supports_inline_args());
-        assert!(SlashCommand::App.available_during_task());
+    }
+
+    #[test]
+    fn lifecycle_commands_are_unavailable_during_task() {
+        for command in [
+            SlashCommand::Init,
+            SlashCommand::Compact,
+            SlashCommand::Review,
+            SlashCommand::New,
+            SlashCommand::Clear,
+            SlashCommand::Fork,
+            SlashCommand::Cd,
+        ] {
+            assert!(!command.available_during_task(), "{command:?}");
+        }
     }
 
     #[test]

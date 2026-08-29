@@ -634,7 +634,35 @@ impl App {
         self.chat_widget
             .set_queue_submissions_until_session_configured(/*queue*/ false);
         match result {
-            Ok(started) => {
+            Ok(mut started) => {
+                started.session.model = self.chat_widget.current_model().to_string();
+                started.session.reasoning_effort = self.chat_widget.current_reasoning_effort();
+                started.session.service_tier =
+                    self.chat_widget.current_service_tier().map(str::to_string);
+                started.session.approval_policy = codex_app_server_protocol::AskForApproval::from(
+                    self.chat_widget
+                        .config_ref()
+                        .permissions
+                        .approval_policy
+                        .value(),
+                );
+                started.session.approvals_reviewer =
+                    self.chat_widget.config_ref().approvals_reviewer;
+                started.session.permission_profile = self
+                    .chat_widget
+                    .config_ref()
+                    .permissions
+                    .permission_profile()
+                    .clone();
+                started.session.active_permission_profile = self
+                    .chat_widget
+                    .config_ref()
+                    .permissions
+                    .active_permission_profile();
+                started.session.personality = self.chat_widget.config_ref().personality;
+                started.session.collaboration_mode = Some(Box::new(
+                    self.chat_widget.current_collaboration_mode().clone(),
+                ));
                 let thread_id = started.session.thread_id;
                 self.pending_primary_events.retain(|event| match event {
                     ThreadBufferedEvent::Notification(notification) => matches!(

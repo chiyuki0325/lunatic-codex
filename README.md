@@ -18,7 +18,7 @@
 
 - [x] 界面全部中文化（`chinese-translation`）
 - [ ] 输入框、工作中分行、更新屏蔽等界面定制和改善（`ui-customization`）
-- [ ] /ps /model 等命令改为即时查看、异步提交（`async-commands`）
+- [x] /ps /model 等命令改为即时查看、异步提交（`async-commands`）
 - [ ] /context 上下文窗口占用查看（`cc-context`）
 - [ ] /rewind 回滚当前会话到先前位点（`cc-rewind`）
 - [ ] Worktree 工具调用强制隔离（`worktree-isolation`）

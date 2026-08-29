@@ -492,6 +492,7 @@ See the Codex keymap documentation for supported actions and examples."
             pending_primary_events: VecDeque::new(),
             pending_app_server_requests: PendingAppServerRequests::default(),
             pending_startup_thread_start,
+            settings_updates: thread_settings::SettingsUpdateState::new(),
             startup_protected_input_boundary: true,
             startup_pending_protected_request: false,
             rate_limit_hard_stop_generation: 0,

@@ -73,6 +73,7 @@ pub(super) async fn make_test_app() -> App {
         pending_primary_events: VecDeque::new(),
         pending_app_server_requests: PendingAppServerRequests::default(),
         pending_startup_thread_start: false,
+        settings_updates: super::thread_settings::SettingsUpdateState::new(),
         startup_protected_input_boundary: false,
         startup_pending_protected_request: false,
         rate_limit_hard_stop_generation: 0,

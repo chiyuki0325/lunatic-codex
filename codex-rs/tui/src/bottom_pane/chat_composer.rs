@@ -69,9 +69,9 @@
 //!
 //! # Submission and Prompt Expansion
 //!
-//! `Enter` submits immediately. `Tab` requests queuing while a task is running; if no task is
-//! running, `Tab` submits just like Enter so input is never dropped.
-//! `Tab` does not submit when entering a `!` shell command.
+//! While a task is running, `Enter` dispatches slash commands immediately and queues messages;
+//! `Tab` explicitly queues either kind of input. If no task is running, both keys submit so input
+//! is never dropped. `Tab` does not submit when entering a `!` shell command.
 //!
 //! On submit/queue paths, the composer:
 //!
@@ -433,6 +433,13 @@ pub enum QueuedInputAction {
 enum PendingPasteHandling {
     Expand,
     Preserve,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum SubmissionMode {
+    Submit,
+    Queue,
+    QueueMessages,
 }
 
 /// Feature flags for reusing the chat composer in other bottom-pane surfaces.
@@ -3032,9 +3039,8 @@ impl ChatComposer {
     }
 
     /// Common logic for handling message submission/queuing.
-    /// Returns the appropriate InputResult based on `should_queue`.
-    fn handle_submission(&mut self, should_queue: bool) -> (InputResult, bool) {
-        let result = self.handle_submission_with_time(should_queue, Instant::now());
+    fn handle_submission(&mut self, mode: SubmissionMode) -> (InputResult, bool) {
+        let result = self.handle_submission_with_time(mode, Instant::now());
         self.reset_vim_mode_after_successful_dispatch(&result.0);
         result
     }
@@ -3054,7 +3060,7 @@ impl ChatComposer {
 
     fn handle_submission_with_time(
         &mut self,
-        should_queue: bool,
+        mode: SubmissionMode,
         now: Instant,
     ) -> (InputResult, bool) {
         // Preserve newlines that are part of a paste before applying parent-owned submission
@@ -3070,6 +3076,11 @@ impl ChatComposer {
                     .next()
                     .unwrap_or("")
                     .starts_with('/'));
+        let should_queue = match mode {
+            SubmissionMode::Submit => false,
+            SubmissionMode::Queue => true,
+            SubmissionMode::QueueMessages => !in_slash_context,
+        };
         if !should_queue
             && !self.draft.disable_paste_burst
             && self.draft.paste_burst.is_active()
@@ -3312,7 +3323,7 @@ impl ChatComposer {
     }
 
     fn reject_slash_command_if_unavailable(&self, command: &SlashCommandItem) -> bool {
-        if !self.is_task_running || command.available_during_task() {
+        if (!self.is_task_running && !self.queue_submissions) || command.available_during_task() {
             return false;
         }
         let message = format!("任务进行期间已禁用 '/{}'。", command.command());
@@ -3447,11 +3458,21 @@ impl ChatComposer {
         if self.queue_keys.is_pressed(key_event)
             && (self.is_task_running || self.queue_submissions || !self.is_bang_shell_command())
         {
-            return self.handle_submission(self.is_task_running || self.queue_submissions);
+            let mode = if self.is_task_running || self.queue_submissions {
+                SubmissionMode::Queue
+            } else {
+                SubmissionMode::Submit
+            };
+            return self.handle_submission(mode);
         }
 
         if self.submit_keys.is_pressed(key_event) {
-            return self.handle_submission(self.queue_submissions);
+            let mode = if self.is_task_running || self.queue_submissions {
+                SubmissionMode::QueueMessages
+            } else {
+                SubmissionMode::Submit
+            };
+            return self.handle_submission(mode);
         }
 
         if let KeyEvent {
@@ -5007,7 +5028,7 @@ mod tests {
             composer.set_text_content(command.to_string(), Vec::new(), Vec::new());
 
             assert_eq!(
-                composer.handle_submission(/*should_queue*/ false).0,
+                composer.handle_submission(SubmissionMode::Submit).0,
                 InputResult::Command(expected)
             );
         }
@@ -6332,7 +6353,7 @@ mod tests {
 
         composer.handle_key_event(KeyEvent::new(KeyCode::Char('i'), KeyModifiers::NONE));
         composer.set_text_content("queued".to_string(), Vec::new(), Vec::new());
-        let (result, _) = composer.handle_submission(/*should_queue*/ true);
+        let (result, _) = composer.handle_submission(SubmissionMode::Queue);
 
         assert_eq!(
             composer.vim_mode_indicator_span(),
@@ -8567,8 +8588,7 @@ mod tests {
             );
             now += step;
 
-            let (result, _) =
-                composer.handle_submission_with_time(/*should_queue*/ false, now);
+            let (result, _) = composer.handle_submission_with_time(SubmissionMode::Submit, now);
             assert!(
                 matches!(result, InputResult::None),
                 "Enter during a burst should insert newline, not submit"
@@ -8619,7 +8639,7 @@ mod tests {
         }
         assert!(composer.is_in_paste_burst());
 
-        let (result, _) = composer.handle_submission_with_time(/*should_queue*/ true, now);
+        let (result, _) = composer.handle_submission_with_time(SubmissionMode::Queue, now);
 
         assert_eq!(
             result,
@@ -9631,7 +9651,43 @@ mod tests {
     }
 
     #[test]
-    fn enter_queues_when_queue_submissions_is_enabled() {
+    fn startup_uses_task_command_availability() {
+        use crossterm::event::KeyCode;
+        use crossterm::event::KeyEvent;
+        use crossterm::event::KeyModifiers;
+
+        let (tx, mut rx) = unbounded_channel::<AppEvent>();
+        let sender = AppEventSender::new(tx);
+        let mut composer = ChatComposer::new(
+            /*has_input_focus*/ true,
+            sender,
+            /*enhanced_keys_supported*/ false,
+            "Ask Codex to do anything".to_string(),
+            /*disable_paste_burst*/ false,
+        );
+        composer.set_queue_submissions(/*queue_submissions*/ true);
+        composer.draft.textarea.set_text_clearing_elements("/model");
+
+        let (result, _needs_redraw) =
+            composer.handle_key_event(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
+
+        assert_eq!(InputResult::Command(SlashCommand::Model), result);
+        assert!(composer.draft.textarea.is_empty());
+
+        composer
+            .draft
+            .textarea
+            .set_text_clearing_elements("/review");
+        let (result, _needs_redraw) =
+            composer.handle_key_event(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
+
+        assert_eq!(InputResult::None, result);
+        assert_eq!("/review", composer.draft.textarea.text());
+        assert!(rx.try_recv().is_ok(), "expected disabled-command error");
+    }
+
+    #[test]
+    fn enter_queues_messages_when_queue_submissions_is_enabled() {
         use crossterm::event::KeyCode;
         use crossterm::event::KeyEvent;
         use crossterm::event::KeyModifiers;
@@ -9653,6 +9709,82 @@ mod tests {
 
         let (result, _needs_redraw) =
             composer.handle_key_event(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
+
+        assert_eq!(
+            result,
+            InputResult::Queued {
+                text: "queued before session".to_string(),
+                text_elements: Vec::new(),
+                action: QueuedInputAction::Plain,
+                pending_pastes: Vec::new(),
+            }
+        );
+    }
+
+    #[test]
+    fn enter_dispatches_commands_and_queues_messages_while_task_running() {
+        use crossterm::event::KeyCode;
+        use crossterm::event::KeyEvent;
+        use crossterm::event::KeyModifiers;
+
+        let (tx, _rx) = unbounded_channel::<AppEvent>();
+        let sender = AppEventSender::new(tx);
+        let mut composer = ChatComposer::new(
+            /*has_input_focus*/ true,
+            sender,
+            /*enhanced_keys_supported*/ false,
+            "Ask Codex to do anything".to_string(),
+            /*disable_paste_burst*/ false,
+        );
+        composer.set_task_running(/*running*/ true);
+        composer.draft.textarea.set_text_clearing_elements("/model");
+
+        let (result, _needs_redraw) =
+            composer.handle_key_event(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
+
+        assert_eq!(InputResult::Command(SlashCommand::Model), result);
+
+        composer
+            .draft
+            .textarea
+            .set_text_clearing_elements("follow-up message");
+        let (result, _needs_redraw) =
+            composer.handle_key_event(KeyEvent::new(KeyCode::Enter, KeyModifiers::NONE));
+
+        assert_eq!(
+            InputResult::Queued {
+                text: "follow-up message".to_string(),
+                text_elements: Vec::new(),
+                action: QueuedInputAction::Plain,
+                pending_pastes: Vec::new(),
+            },
+            result,
+        );
+    }
+
+    #[test]
+    fn tab_queues_when_queue_submissions_is_enabled() {
+        use crossterm::event::KeyCode;
+        use crossterm::event::KeyEvent;
+        use crossterm::event::KeyModifiers;
+
+        let (tx, _rx) = unbounded_channel::<AppEvent>();
+        let sender = AppEventSender::new(tx);
+        let mut composer = ChatComposer::new(
+            /*has_input_focus*/ true,
+            sender,
+            /*enhanced_keys_supported*/ false,
+            "Ask Codex to do anything".to_string(),
+            /*disable_paste_burst*/ false,
+        );
+        composer.set_queue_submissions(/*queue_submissions*/ true);
+        composer
+            .draft
+            .textarea
+            .set_text_clearing_elements("queued before session");
+
+        let (result, _needs_redraw) =
+            composer.handle_key_event(KeyEvent::new(KeyCode::Tab, KeyModifiers::NONE));
 
         assert_eq!(
             result,

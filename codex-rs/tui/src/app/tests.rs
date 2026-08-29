@@ -5298,6 +5298,7 @@ async fn make_test_app() -> App {
         pending_primary_events: VecDeque::new(),
         pending_app_server_requests: PendingAppServerRequests::default(),
         pending_startup_thread_start: false,
+        settings_updates: thread_settings::SettingsUpdateState::new(),
         startup_protected_input_boundary: false,
         startup_pending_protected_request: false,
         rate_limit_hard_stop_generation: 0,
@@ -5375,6 +5376,7 @@ async fn make_test_app_with_channels() -> (
             pending_primary_events: VecDeque::new(),
             pending_app_server_requests: PendingAppServerRequests::default(),
             pending_startup_thread_start: false,
+            settings_updates: thread_settings::SettingsUpdateState::new(),
             startup_protected_input_boundary: false,
             startup_pending_protected_request: false,
             rate_limit_hard_stop_generation: 0,
@@ -7767,6 +7769,65 @@ async fn override_turn_context_sends_thread_settings_update() {
 }
 
 #[tokio::test]
+async fn model_update_during_active_turn_waits_for_turn_completion() {
+    Box::pin(async {
+        let mut app = make_test_app().await;
+        let mut app_server =
+            crate::start_embedded_app_server_for_picker(app.chat_widget.config_ref())
+                .await
+                .expect("embedded app server");
+        let started = app_server
+            .start_thread(app.chat_widget.config_ref())
+            .await
+            .expect("thread/start should succeed");
+        let thread_id = started.session.thread_id;
+        app.enqueue_primary_thread_session(started.session, started.turns)
+            .await
+            .expect("primary thread should be registered");
+        app.handle_thread_event_now(ThreadBufferedEvent::Notification(Box::new(
+            turn_started_notification(thread_id, "turn-1"),
+        )));
+        assert!(app.chat_widget.is_agent_turn_running());
+
+        let mut tui = crate::tui::test_support::make_test_tui().expect("test tui");
+        Box::pin(app.handle_event(
+            &mut tui,
+            &mut app_server,
+            AppEvent::UpdateModel("gpt-5.4".to_string()),
+        ))
+        .await
+        .expect("model selection should succeed");
+
+        assert!(
+            time::timeout(
+                std::time::Duration::from_millis(/*millis*/ 500),
+                Box::pin(next_thread_settings_updated(&mut app_server, thread_id)),
+            )
+            .await
+            .is_err(),
+            "active turn should retain its thread settings"
+        );
+
+        Box::pin(app.handle_active_thread_event(
+            &mut tui,
+            &mut app_server,
+            ThreadBufferedEvent::Notification(Box::new(turn_completed_notification(
+                thread_id,
+                "turn-1",
+                TurnStatus::Completed,
+            ))),
+        ))
+        .await
+        .expect("turn completion should succeed");
+        assert!(!app.chat_widget.is_agent_turn_running());
+
+        let notification = Box::pin(next_thread_settings_updated(&mut app_server, thread_id)).await;
+        assert_eq!(notification.thread_settings.model, "gpt-5.4");
+    })
+    .await;
+}
+
+#[tokio::test]
 async fn selecting_cyber_model_defaults_active_thread_to_auto_review() {
     Box::pin(async {
         let mut app = make_test_app().await;
@@ -7838,7 +7899,7 @@ async fn selecting_cyber_model_defaults_active_thread_to_auto_review() {
 #[tokio::test]
 async fn changing_cyber_model_reasoning_preserves_selected_permissions() {
     Box::pin(async {
-        let mut app = make_test_app().await;
+        let (mut app, mut app_event_rx, _op_rx) = make_test_app_with_channels().await;
         let model_name = app.chat_widget.current_model().to_string();
         let mut model = app
             .model_catalog
@@ -7874,6 +7935,7 @@ async fn changing_cyber_model_reasoning_preserves_selected_permissions() {
             .await
             .expect("primary thread should be registered");
 
+        while app_event_rx.try_recv().is_ok() {}
         let mut tui = crate::tui::test_support::make_test_tui().expect("test tui");
         for effort in [ReasoningEffortConfig::High, ReasoningEffortConfig::Ultra] {
             if effort == ReasoningEffortConfig::Ultra {
@@ -7935,6 +7997,22 @@ async fn changing_cyber_model_reasoning_preserves_selected_permissions() {
                 app.chat_widget.effective_collaboration_mode().mode
             );
             assert_eq!(settings.collaboration_mode.settings.model, model_name);
+
+            let completion = loop {
+                let event = time::timeout(
+                    std::time::Duration::from_secs(/*secs*/ 2),
+                    app_event_rx.recv(),
+                )
+                .await
+                .expect("settings update completion should arrive")
+                .expect("app event stream should remain open");
+                if matches!(event, AppEvent::SettingsUpdateCompleted { .. }) {
+                    break event;
+                }
+            };
+            Box::pin(app.handle_event(&mut tui, &mut app_server, completion))
+                .await
+                .expect("settings update completion should succeed");
         }
     })
     .await;
