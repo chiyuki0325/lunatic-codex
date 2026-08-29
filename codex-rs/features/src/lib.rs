@@ -1492,11 +1492,9 @@ pub const FEATURES: &[FeatureSpec] = &[
     FeatureSpec {
         id: Feature::PreventIdleSleep,
         key: "prevent_idle_sleep",
-        stage: if cfg!(any(
-            target_os = "macos",
-            target_os = "linux",
-            target_os = "windows"
-        )) {
+        stage: if cfg!(any(target_os = "macos", target_os = "linux")) {
+            Stage::Stable
+        } else if cfg!(target_os = "windows") {
             Stage::Experimental {
                 name: "Prevent sleep while running",
                 menu_description: "Keep your computer awake while Codex is running a thread.",
@@ -1505,7 +1503,7 @@ pub const FEATURES: &[FeatureSpec] = &[
         } else {
             Stage::UnderDevelopment
         },
-        default_enabled: false,
+        default_enabled: cfg!(any(target_os = "macos", target_os = "linux")),
     },
     FeatureSpec {
         id: Feature::WorkspaceOwnerUsageNudge,
