@@ -28,7 +28,7 @@
 - [ ] 批准工具调用后可快捷提权（`yes-then-yolo`）
 - [ ] 自带 MCP 提供的代码智能支持，像 CC 一样提示安装 LSP（`mcp-lsp-bridge`）
 - [ ] 上下文压缩抑制尝试（`suppress-autocompact`）
-- [ ] 工作运行时阻止自动睡眠和锁屏（平台相关  Linux / macOS）（`caffeine`）
+- [x] 工作运行时阻止自动睡眠和锁屏（平台相关  Linux / macOS）（`caffeine`）
 - [ ] 维护缓存率，底栏显示，大规模 miss 时弹信息可观测（`cache-observability`）
 - [ ] 系统提示词模型身份感知（`system-prompt-model-id`）
 - [ ] 思考时 Esc 结束思考直接回到输入态（`interrupt-back-to-input`）
