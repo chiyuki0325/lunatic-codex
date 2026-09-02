@@ -25,6 +25,7 @@ use ratatui::style::Stylize;
 use ratatui::text::Line;
 
 use super::ChatWidget;
+use super::context_usage::ContextUsageQueueState;
 use crate::app_event::AppEvent;
 use crate::history_cell::CompositeHistoryCell;
 use crate::history_cell::HistoryCell;
@@ -258,6 +259,10 @@ impl ChatWidget {
     /// the insertion barriers without directly owning the completed output.
     pub(crate) fn request_pending_usage_output_insertion(&self) {
         if self.completed_token_activity_output.is_some()
+            || self
+                .pending_context_usage_outputs
+                .iter()
+                .any(|output| matches!(output.state, ContextUsageQueueState::Ready(_)))
             || self.pending_rate_limit_reset_hint().is_some()
         {
             self.app_event_tx.send(AppEvent::CommitPendingUsageOutput);
@@ -266,6 +271,10 @@ impl ChatWidget {
 
     pub(crate) fn request_pending_usage_output_insertion_after_stream_shutdown(&self) {
         if self.completed_token_activity_output.is_some()
+            || self
+                .pending_context_usage_outputs
+                .iter()
+                .any(|output| matches!(output.state, ContextUsageQueueState::Ready(_)))
             || self.pending_rate_limit_reset_hint().is_some()
         {
             self.app_event_tx

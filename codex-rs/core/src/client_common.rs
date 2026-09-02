@@ -7,12 +7,65 @@ use codex_protocol::models::ResponseItem;
 use codex_tools::ToolSpec;
 use futures::Stream;
 use serde_json::Value;
+use std::path::PathBuf;
 use std::pin::Pin;
 use std::sync::Arc;
 use std::task::Context;
 use std::task::Poll;
 use tokio::sync::mpsc;
 use tokio_util::sync::CancellationToken;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum PromptInputUsageCategory {
+    Instructions,
+    Skills,
+    Messages,
+    Other,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct PromptInputUsageDetail {
+    pub(crate) label: String,
+    pub(crate) path: Option<PathBuf>,
+    pub(crate) category: PromptInputUsageCategory,
+    pub(crate) input_index: usize,
+    pub(crate) content_index: usize,
+    pub(crate) weight_tokens: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) enum PromptToolUsageOrigin {
+    BuiltIn,
+    Mcp {
+        public_label: String,
+        source_identity: String,
+    },
+    Unknown,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum PromptToolLoadState {
+    Available,
+    Deferred,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub(crate) struct PromptUnloadedMcpTool {
+    pub(crate) public_label: String,
+    pub(crate) source_identity: String,
+    pub(crate) load_state: PromptToolLoadState,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub(crate) struct PromptUsageSidecar {
+    /// One category vector per original prompt item. Message vectors align with content items;
+    /// every other item has exactly one category.
+    pub(crate) input_categories: Vec<Vec<PromptInputUsageCategory>>,
+    pub(crate) input_details: Vec<PromptInputUsageDetail>,
+    pub(crate) tool_origins: Vec<PromptToolUsageOrigin>,
+    pub(crate) unloaded_mcp_tools: Vec<PromptUnloadedMcpTool>,
+    pub(crate) complete: bool,
+}
 
 /// API request payload for a single model turn
 #[derive(Debug, Clone)]
@@ -34,6 +87,9 @@ pub struct Prompt {
 
     /// Whether the Responses API should strictly validate `output_schema`.
     pub output_schema_strict: bool,
+
+    /// Non-serialized usage provenance captured alongside the model-visible prompt.
+    pub(crate) usage_sidecar: PromptUsageSidecar,
 }
 
 impl Default for Prompt {
@@ -45,6 +101,7 @@ impl Default for Prompt {
             base_instructions: BaseInstructions::default(),
             output_schema: None,
             output_schema_strict: true,
+            usage_sidecar: PromptUsageSidecar::default(),
         }
     }
 }
@@ -107,6 +164,13 @@ pub struct ResponseStream {
     /// Signals the mapper task that the consumer stopped polling before the
     /// provider stream reached its own terminal event.
     pub(crate) consumer_dropped: CancellationToken,
+    pub(crate) context_usage_snapshot_id: Option<String>,
+}
+
+impl ResponseStream {
+    pub(crate) fn context_usage_snapshot_id(&self) -> Option<&str> {
+        self.context_usage_snapshot_id.as_deref()
+    }
 }
 
 impl Stream for ResponseStream {

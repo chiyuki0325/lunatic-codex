@@ -38,6 +38,8 @@ use pretty_assertions::assert_eq;
 use serde_json::json;
 use tokio_util::sync::CancellationToken;
 
+use super::ModelVisibleToolLoadState;
+use super::ModelVisibleToolOrigin;
 use super::ToolCall;
 use super::ToolCallSource;
 use super::ToolRouter;
@@ -472,8 +474,9 @@ async fn specs_filter_deferred_dynamic_tools() -> anyhow::Result<()> {
         &dynamic_tools,
     );
     let visible_specs = router.model_visible_specs();
+    let visible_tools = router.model_visible_tools();
 
-    assert!(Arc::ptr_eq(&visible_specs, &router.model_visible_specs()));
+    assert_eq!(visible_specs.len(), visible_tools.len());
     assert_eq!(
         namespace_function_names(&visible_specs, "codex_app"),
         vec![visible_tool.to_string()]
@@ -525,6 +528,65 @@ fn mcp_runtime(tool_info: codex_mcp::ToolInfo) -> RegisteredTool {
         exposure: runtime.exposure(),
         runtime,
     }
+}
+
+#[test]
+fn model_visible_tools_report_aligned_origins() {
+    let router = ToolRouter::from_parts(
+        crate::tools::registry::ToolRegistry::empty_for_test(),
+        vec![
+            super::ModelVisibleToolSpec {
+                spec: ToolSpec::Function(codex_tools::ResponsesApiTool {
+                    name: "shell".to_string(),
+                    description: "shell".to_string(),
+                    strict: true,
+                    parameters: codex_extension_api::parse_tool_input_schema(&json!({
+                        "type": "object",
+                        "properties": {},
+                        "additionalProperties": false,
+                    }))
+                    .expect("schema should parse"),
+                    output_schema: None,
+                    defer_loading: None,
+                }),
+                origin: ModelVisibleToolOrigin::BuiltIn,
+            },
+            super::ModelVisibleToolSpec {
+                spec: ToolSpec::Function(codex_tools::ResponsesApiTool {
+                    name: "calendar__create".to_string(),
+                    description: "calendar".to_string(),
+                    strict: true,
+                    parameters: codex_extension_api::parse_tool_input_schema(&json!({
+                        "type": "object",
+                        "properties": {},
+                        "additionalProperties": false,
+                    }))
+                    .expect("schema should parse"),
+                    output_schema: None,
+                    defer_loading: None,
+                }),
+                origin: ModelVisibleToolOrigin::Mcp(super::McpModelVisibleToolOrigin {
+                    public_label: "Calendar".to_string(),
+                    source_identity: "calendar".to_string(),
+                    load_state: ModelVisibleToolLoadState::Deferred,
+                }),
+            },
+        ],
+    );
+
+    let visible_tools = router.model_visible_tools();
+    assert_eq!(visible_tools.len(), 2);
+    assert_eq!(visible_tools[0].spec.name(), "shell");
+    assert_eq!(visible_tools[0].origin, ModelVisibleToolOrigin::BuiltIn);
+    assert_eq!(visible_tools[1].spec.name(), "calendar__create");
+    assert_eq!(
+        visible_tools[1].origin,
+        ModelVisibleToolOrigin::Mcp(super::McpModelVisibleToolOrigin {
+            public_label: "Calendar".to_string(),
+            source_identity: "calendar".to_string(),
+            load_state: ModelVisibleToolLoadState::Deferred,
+        })
+    );
 }
 
 #[tokio::test]

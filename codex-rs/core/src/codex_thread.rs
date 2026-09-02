@@ -491,6 +491,10 @@ impl CodexThread {
         self.session.token_usage_info().await
     }
 
+    pub async fn context_usage(&self) -> Option<crate::ContextUsageReadSnapshot> {
+        self.session.context_usage_snapshot().await
+    }
+
     /// Records a user-role session-prefix message without creating a new user turn boundary.
     pub(crate) async fn inject_user_message_without_turn(&self, message: String) {
         let item = ResponseItem::Message {

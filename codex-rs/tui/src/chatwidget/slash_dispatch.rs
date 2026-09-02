@@ -465,6 +465,16 @@ impl ChatWidget {
                     );
                 }
             }
+            SlashCommand::Context => {
+                let request_id = self.next_context_usage_request_id;
+                self.next_context_usage_request_id =
+                    self.next_context_usage_request_id.wrapping_add(1);
+                self.start_context_usage_refresh(request_id, self.thread_id);
+                self.app_event_tx.send(AppEvent::RefreshContextUsage {
+                    request_id,
+                    thread_id: self.thread_id,
+                });
+            }
             SlashCommand::Cd => {
                 self.dispatch_command_with_args(SlashCommand::Cd, "~".to_string(), Vec::new());
             }
@@ -1122,6 +1132,7 @@ impl ChatWidget {
         match cmd {
             SlashCommand::Ide
             | SlashCommand::Status
+            | SlashCommand::Context
             | SlashCommand::Pwd
             | SlashCommand::Usage
             | SlashCommand::DebugConfig

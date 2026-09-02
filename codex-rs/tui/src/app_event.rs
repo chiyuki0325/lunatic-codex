@@ -31,6 +31,7 @@ use codex_app_server_protocol::PluginReadResponse;
 use codex_app_server_protocol::PluginUninstallResponse;
 use codex_app_server_protocol::SkillsListResponse;
 use codex_app_server_protocol::Thread;
+use codex_app_server_protocol::ThreadContextUsageResponse;
 use codex_app_server_protocol::ThreadGoalStatus;
 use codex_app_server_protocol::ThreadItemsListResponse;
 use codex_connectors::AppInfo;
@@ -504,6 +505,19 @@ pub(crate) enum AppEvent {
     RefreshThreadUsage {
         thread_id: ThreadId,
         request_id: u64,
+    },
+
+    /// Start a `/context` app-level RPC lifecycle for one target thread.
+    RefreshContextUsage {
+        request_id: u64,
+        thread_id: Option<ThreadId>,
+    },
+
+    /// Result of fetching `/context` usage data for a specific target thread.
+    ContextUsageLoaded {
+        request_id: u64,
+        thread_id: ThreadId,
+        result: Result<ThreadContextUsageResponse, String>,
     },
 
     /// Result of fetching backend-estimated usage for a specific thread.

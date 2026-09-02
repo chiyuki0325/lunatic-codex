@@ -11,9 +11,11 @@ use crate::tools::handlers::ToolSearchHandlerCache;
 use crate::tools::registry::AnyToolResult;
 use crate::tools::registry::CoreToolRuntime;
 use crate::tools::registry::ToolArgumentDiffConsumer;
+use crate::tools::registry::ToolExposure;
 use crate::tools::registry::ToolRegistry;
 #[cfg(test)]
 use crate::tools::spec_plan::finalize_tool_router;
+use codex_mcp::ToolInfo as McpToolInfo;
 use codex_protocol::models::ResponseItem;
 use codex_protocol::models::SearchToolCallParams;
 use codex_tools::DiscoverableTool;
@@ -65,9 +67,74 @@ pub(crate) fn tool_log_payload<'a>(
     payload.log_payload()
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) enum ModelVisibleToolOrigin {
+    BuiltIn,
+    Mcp(McpModelVisibleToolOrigin),
+    Unknown,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct McpModelVisibleToolOrigin {
+    pub(crate) public_label: String,
+    /// Stable MCP routing identity. This remains separate from the user-facing label.
+    pub(crate) source_identity: String,
+    pub(crate) load_state: ModelVisibleToolLoadState,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum ModelVisibleToolLoadState {
+    Loaded,
+    Available,
+    Deferred,
+}
+
+impl From<ToolExposure> for ModelVisibleToolLoadState {
+    fn from(value: ToolExposure) -> Self {
+        match value {
+            ToolExposure::Direct | ToolExposure::DirectModelOnly => Self::Loaded,
+            ToolExposure::Deferred | ToolExposure::DeferredModelOnly => Self::Deferred,
+            ToolExposure::CodeModeOnly | ToolExposure::Hidden => Self::Available,
+        }
+    }
+}
+
+#[derive(Clone, Debug, PartialEq)]
+pub(crate) struct ModelVisibleToolSpec {
+    pub(crate) spec: ToolSpec,
+    pub(crate) origin: ModelVisibleToolOrigin,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct UnloadedMcpTool {
+    pub(crate) public_label: String,
+    pub(crate) source_identity: String,
+    pub(crate) load_state: ModelVisibleToolLoadState,
+}
+
 pub struct ToolRouter {
     registry: ToolRegistry,
-    model_visible_specs: Arc<[ToolSpec]>,
+    model_visible_tools: Arc<[ModelVisibleToolSpec]>,
+    unloaded_mcp_tools: Arc<[UnloadedMcpTool]>,
+}
+
+pub(crate) fn public_mcp_tool_label(tool_info: &McpToolInfo) -> String {
+    tool_info
+        .connector_name
+        .as_deref()
+        .map(str::trim)
+        .filter(|label| !label.is_empty())
+        .map(str::to_string)
+        .or_else(|| {
+            tool_info
+                .tool
+                .title
+                .as_deref()
+                .map(str::trim)
+                .filter(|label| !label.is_empty())
+                .map(str::to_string)
+        })
+        .unwrap_or_else(|| tool_info.canonical_tool_name().to_string())
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -99,15 +166,40 @@ impl ToolRouter {
         .expect("test tool registry should not contain duplicate tools")
     }
 
-    pub(crate) fn from_parts(registry: ToolRegistry, model_visible_specs: Vec<ToolSpec>) -> Self {
+    #[cfg(test)]
+    pub(crate) fn from_parts(
+        registry: ToolRegistry,
+        model_visible_tools: Vec<ModelVisibleToolSpec>,
+    ) -> Self {
+        Self::from_parts_with_unloaded_mcp_tools(registry, model_visible_tools, Vec::new())
+    }
+
+    pub(crate) fn from_parts_with_unloaded_mcp_tools(
+        registry: ToolRegistry,
+        model_visible_tools: Vec<ModelVisibleToolSpec>,
+        unloaded_mcp_tools: Vec<UnloadedMcpTool>,
+    ) -> Self {
         Self {
             registry,
-            model_visible_specs: model_visible_specs.into(),
+            model_visible_tools: model_visible_tools.into(),
+            unloaded_mcp_tools: unloaded_mcp_tools.into(),
         }
     }
 
     pub(crate) fn model_visible_specs(&self) -> Arc<[ToolSpec]> {
-        Arc::clone(&self.model_visible_specs)
+        self.model_visible_tools
+            .iter()
+            .map(|tool| tool.spec.clone())
+            .collect::<Vec<_>>()
+            .into()
+    }
+
+    pub(crate) fn model_visible_tools(&self) -> Arc<[ModelVisibleToolSpec]> {
+        Arc::clone(&self.model_visible_tools)
+    }
+
+    pub(crate) fn unloaded_mcp_tools(&self) -> Arc<[UnloadedMcpTool]> {
+        Arc::clone(&self.unloaded_mcp_tools)
     }
 
     pub(crate) fn deferred_tool_namespaces(&self) -> BTreeMap<String, String> {

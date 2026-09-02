@@ -4,6 +4,7 @@
 //! focused sibling test modules without making `app/tests.rs` the only practical place to test
 //! app-owned behavior.
 
+use super::context_usage::ContextUsageRequests;
 use super::*;
 use crate::chatwidget::tests::make_chatwidget_manual_with_sender;
 use codex_models_manager::test_support::construct_model_info_offline_for_tests;
@@ -37,6 +38,7 @@ pub(super) async fn make_test_app() -> App {
         last_rendered_history_tail: None,
         last_thread_usage_status_cell: None,
         pending_thread_usage_history_refresh: false,
+        context_usage_requests: ContextUsageRequests::default(),
         overlay: None,
         deferred_history_lines: Vec::new(),
         has_emitted_history_lines: false,

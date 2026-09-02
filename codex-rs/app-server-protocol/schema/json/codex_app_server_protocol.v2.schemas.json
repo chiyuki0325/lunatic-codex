@@ -5676,6 +5676,198 @@
       "title": "ContextCompactedNotification",
       "type": "object"
     },
+    "ContextUsageActualSource": {
+      "enum": [
+        "currentRequest",
+        "previousCompletedRequest",
+        "localEstimate"
+      ],
+      "type": "string"
+    },
+    "ContextUsageActualUsage": {
+      "properties": {
+        "snapshotId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "usage": {
+          "$ref": "#/definitions/TokenUsageBreakdown"
+        }
+      },
+      "required": [
+        "usage"
+      ],
+      "type": "object"
+    },
+    "ContextUsageCategory": {
+      "properties": {
+        "estimatedTokens": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "kind": {
+          "$ref": "#/definitions/ContextUsageCategoryKind"
+        }
+      },
+      "required": [
+        "estimatedTokens",
+        "kind"
+      ],
+      "type": "object"
+    },
+    "ContextUsageCategoryKind": {
+      "enum": [
+        "systemPrompt",
+        "builtInTools",
+        "mcpTools",
+        "instructions",
+        "skills",
+        "messages",
+        "other",
+        "unattributed"
+      ],
+      "type": "string"
+    },
+    "ContextUsageCompleteness": {
+      "enum": [
+        "complete",
+        "partial",
+        "unavailable"
+      ],
+      "type": "string"
+    },
+    "ContextUsageDetail": {
+      "properties": {
+        "estimatedTokens": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "label": {
+          "type": "string"
+        },
+        "loadState": {
+          "$ref": "#/definitions/ContextUsageDetailLoadState"
+        },
+        "path": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "estimatedTokens",
+        "label",
+        "loadState"
+      ],
+      "type": "object"
+    },
+    "ContextUsageDetailLoadState": {
+      "enum": [
+        "loaded",
+        "available",
+        "deferred"
+      ],
+      "type": "string"
+    },
+    "ContextUsageSnapshot": {
+      "properties": {
+        "autoCompactThreshold": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "categories": {
+          "items": {
+            "$ref": "#/definitions/ContextUsageCategory"
+          },
+          "type": "array"
+        },
+        "completeness": {
+          "$ref": "#/definitions/ContextUsageCompleteness"
+        },
+        "estimatedTotalTokens": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "generatedAt": {
+          "format": "int64",
+          "type": "integer"
+        },
+        "instructionDetails": {
+          "items": {
+            "$ref": "#/definitions/ContextUsageDetail"
+          },
+          "type": "array"
+        },
+        "mcpToolDetails": {
+          "items": {
+            "$ref": "#/definitions/ContextUsageDetail"
+          },
+          "type": "array"
+        },
+        "model": {
+          "type": "string"
+        },
+        "modelContextWindow": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "requestConfigVersion": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "requestSequence": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": "integer"
+        },
+        "reservedTokens": {
+          "format": "uint64",
+          "minimum": 0.0,
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "skillDetails": {
+          "items": {
+            "$ref": "#/definitions/ContextUsageDetail"
+          },
+          "type": "array"
+        },
+        "snapshotId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "categories",
+        "completeness",
+        "estimatedTotalTokens",
+        "generatedAt",
+        "instructionDetails",
+        "mcpToolDetails",
+        "model",
+        "requestConfigVersion",
+        "requestSequence",
+        "skillDetails",
+        "snapshotId"
+      ],
+      "type": "object"
+    },
     "ConversationTextRole": {
       "enum": [
         "user",

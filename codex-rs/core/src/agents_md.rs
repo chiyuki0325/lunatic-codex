@@ -461,6 +461,19 @@ impl LoadedAgentsMd {
             )
     }
 
+    pub(crate) fn instruction_entries_for_context_usage(&self) -> Vec<LoadedInstructionEntry> {
+        let mut entries = self
+            .user_instructions
+            .iter()
+            .map(|instructions| LoadedInstructionEntry {
+                text: instructions.text.clone(),
+                path: Some(PathUri::from_abs_path(&instructions.source)),
+            })
+            .collect::<Vec<_>>();
+        entries.extend(self.entries.iter().map(InstructionEntry::for_context_usage));
+        entries
+    }
+
     fn has_multiple_project_environments(&self) -> bool {
         let mut first_environment_id = None;
         self.entries.iter().any(|entry| {
@@ -487,6 +500,12 @@ impl LoadedAgentsMd {
     }
 }
 
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct LoadedInstructionEntry {
+    pub(crate) text: String,
+    pub(crate) path: Option<PathUri>,
+}
+
 /// One model-visible instruction and its provenance.
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct InstructionEntry {
@@ -509,6 +528,15 @@ enum InstructionProvenance {
 
     /// Instructions without a file source, including internally defined guidance.
     Internal,
+}
+
+impl InstructionEntry {
+    fn for_context_usage(&self) -> LoadedInstructionEntry {
+        LoadedInstructionEntry {
+            text: self.contents.clone(),
+            path: self.provenance.path(),
+        }
+    }
 }
 
 impl InstructionProvenance {

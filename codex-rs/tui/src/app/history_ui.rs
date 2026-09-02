@@ -186,6 +186,9 @@ impl App {
     }
 
     fn insert_pending_usage_output(&mut self, tui: &mut tui::Tui) {
+        while let Some(cell) = self.chat_widget.take_completed_context_usage_output() {
+            self.insert_history_cell(tui, Box::new(cell));
+        }
         if let Some(cell) = self.chat_widget.take_completed_token_activity_output() {
             self.insert_history_cell(tui, Box::new(cell));
         }

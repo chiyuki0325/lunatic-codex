@@ -655,6 +655,12 @@ client_request_definitions! {
         serialization: thread_id(params.thread_id),
         response: v2::ThreadShellCommandResponse,
     },
+    #[experimental("thread/contextUsage")]
+    ThreadContextUsage => "thread/contextUsage" {
+        params: v2::ThreadContextUsageParams,
+        serialization: thread_id(params.thread_id),
+        response: v2::ThreadContextUsageResponse,
+    },
     ThreadApproveGuardianDeniedAction => "thread/approveGuardianDeniedAction" {
         params: v2::ThreadApproveGuardianDeniedActionParams,
         serialization: thread_id(params.thread_id),
