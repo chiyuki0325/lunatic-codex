@@ -32,6 +32,7 @@
 - [ ] 维护缓存率，底栏显示，大规模 miss 时弹信息可观测（`cache-observability`）
 - [ ] 系统提示词模型身份感知（`system-prompt-model-id`）
 - [ ] 思考时 Esc 结束思考直接回到输入态（`interrupt-back-to-input`）
+- [ ] cd 命令，带参数切换文件夹，不带参数则刷新文件夹和分支（`cd-update-path`）
 
 对于任何编码智能体：当在 Linux arm64 平台上开发时，禁止本机编译（本机性能不足，编译 Codex 需要至少 32G 内存），必须参考 `building-codex-in-devbox.txt` 在远端开发机编译。
 
