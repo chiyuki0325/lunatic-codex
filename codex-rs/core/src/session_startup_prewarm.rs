@@ -192,6 +192,14 @@ impl Session {
                     warn!("startup auth prewarm failed: {err:#}");
                 }
             });
+            let estimate_session = Arc::clone(self);
+            tokio::spawn(async move {
+                if let Err(err) =
+                    schedule_startup_prewarm_inner(estimate_session, base_instructions).await
+                {
+                    warn!("startup context usage estimate failed: {err:#}");
+                }
+            });
             return;
         }
 
@@ -310,9 +318,10 @@ async fn schedule_startup_prewarm_inner(
             CodexResponsesRequestKind::Prewarm,
         );
     let mut client_session = session.services.model_client.new_session();
+    let context_usage_capture = session.context_usage_request_capture(&startup_turn_context);
     let websocket_warmup_started_at = Instant::now();
     client_session
-        .prewarm_websocket(
+        .prewarm_websocket_with_context_usage(
             &startup_prompt,
             &step_context.model_info,
             &step_context.session_telemetry,
@@ -320,6 +329,7 @@ async fn schedule_startup_prewarm_inner(
             step_context.reasoning_summary,
             step_context.service_tier.clone(),
             &responses_metadata,
+            &context_usage_capture,
         )
         .await?;
     startup_turn_context.session_telemetry.record_startup_phase(

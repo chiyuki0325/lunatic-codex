@@ -1140,6 +1140,12 @@ impl App {
             } => {
                 self.refresh_thread_usage(app_server, thread_id, request_id);
             }
+            AppEvent::RefreshContextUsage {
+                request_id,
+                thread_id,
+            } => {
+                self.refresh_context_usage(app_server, request_id, thread_id);
+            }
             AppEvent::RefreshStatusLineWorkspaceHeadline { request_id } => {
                 self.refresh_status_line_workspace_headline(app_server, request_id);
             }
@@ -1364,6 +1370,13 @@ impl App {
                     // provisional transcript cells have been consolidated.
                     self.insert_pending_usage_output_if_ready(tui);
                 }
+            }
+            AppEvent::ContextUsageLoaded {
+                request_id,
+                thread_id,
+                result,
+            } => {
+                self.finish_context_usage_refresh(tui, request_id, thread_id, result);
             }
             AppEvent::ThreadUsageLoaded {
                 thread_id,

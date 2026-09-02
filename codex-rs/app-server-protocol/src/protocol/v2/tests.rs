@@ -73,6 +73,162 @@ fn test_absolute_path() -> AbsolutePathBuf {
 }
 
 #[test]
+fn thread_context_usage_params_round_trip() {
+    let params = ThreadContextUsageParams {
+        thread_id: "thread-123".to_string(),
+    };
+
+    let value = serde_json::to_value(&params).expect("serialize thread/contextUsage params");
+    assert_eq!(
+        value,
+        json!({
+            "threadId": "thread-123",
+        })
+    );
+
+    let decoded = serde_json::from_value::<ThreadContextUsageParams>(value)
+        .expect("deserialize thread/contextUsage params");
+    assert_eq!(decoded, params);
+}
+
+#[test]
+fn thread_context_usage_response_round_trip() {
+    let response = ThreadContextUsageResponse {
+        snapshot: ContextUsageSnapshot {
+            snapshot_id: "snapshot-1".to_string(),
+            request_sequence: 42,
+            generated_at: 1_787_987_289,
+            model: "gpt-5.6".to_string(),
+            model_context_window: Some(272_000),
+            auto_compact_threshold: Some(260_000),
+            reserved_tokens: Some(12_000),
+            categories: vec![
+                ContextUsageCategory {
+                    kind: ContextUsageCategoryKind::SystemPrompt,
+                    estimated_tokens: 8_200,
+                },
+                ContextUsageCategory {
+                    kind: ContextUsageCategoryKind::Messages,
+                    estimated_tokens: 53_000,
+                },
+                ContextUsageCategory {
+                    kind: ContextUsageCategoryKind::Unattributed,
+                    estimated_tokens: 400,
+                },
+            ],
+            mcp_tool_details: vec![ContextUsageDetail {
+                label: "server.tool".to_string(),
+                path: Some(absolute_path_string("mcp/tool.json")),
+                load_state: ContextUsageDetailLoadState::Deferred,
+                estimated_tokens: 1_200,
+            }],
+            instruction_details: vec![ContextUsageDetail {
+                label: "AGENTS.md".to_string(),
+                path: Some(absolute_path_string("repo/AGENTS.md")),
+                load_state: ContextUsageDetailLoadState::Loaded,
+                estimated_tokens: 2_400,
+            }],
+            skill_details: vec![ContextUsageDetail {
+                label: "skill-name".to_string(),
+                path: None,
+                load_state: ContextUsageDetailLoadState::Available,
+                estimated_tokens: 620,
+            }],
+            estimated_total_tokens: 61_600,
+            completeness: ContextUsageCompleteness::Partial,
+            request_config_version: 7,
+        },
+        actual_usage: Some(ContextUsageActualUsage {
+            usage: TokenUsageBreakdown {
+                total_tokens: 86_000,
+                input_tokens: 60_000,
+                cached_input_tokens: 8_000,
+                cache_write_input_tokens: 500,
+                output_tokens: 24_000,
+                reasoning_output_tokens: 3_000,
+            },
+            snapshot_id: Some("snapshot-0".to_string()),
+        }),
+        actual_source: ContextUsageActualSource::PreviousCompletedRequest,
+        last_completed_snapshot_id: Some("snapshot-0".to_string()),
+    };
+
+    let value = serde_json::to_value(&response).expect("serialize thread/contextUsage response");
+    assert_eq!(
+        value,
+        json!({
+            "snapshot": {
+                "snapshotId": "snapshot-1",
+                "requestSequence": 42,
+                "generatedAt": 1787987289i64,
+                "model": "gpt-5.6",
+                "modelContextWindow": 272000,
+                "autoCompactThreshold": 260000,
+                "reservedTokens": 12000,
+                "categories": [
+                    {
+                        "kind": "systemPrompt",
+                        "estimatedTokens": 8200,
+                    },
+                    {
+                        "kind": "messages",
+                        "estimatedTokens": 53000,
+                    },
+                    {
+                        "kind": "unattributed",
+                        "estimatedTokens": 400,
+                    }
+                ],
+                "mcpToolDetails": [
+                    {
+                        "label": "server.tool",
+                        "path": absolute_path_string("mcp/tool.json"),
+                        "loadState": "deferred",
+                        "estimatedTokens": 1200,
+                    }
+                ],
+                "instructionDetails": [
+                    {
+                        "label": "AGENTS.md",
+                        "path": absolute_path_string("repo/AGENTS.md"),
+                        "loadState": "loaded",
+                        "estimatedTokens": 2400,
+                    }
+                ],
+                "skillDetails": [
+                    {
+                        "label": "skill-name",
+                        "path": null,
+                        "loadState": "available",
+                        "estimatedTokens": 620,
+                    }
+                ],
+                "estimatedTotalTokens": 61600,
+                "completeness": "partial",
+                "requestConfigVersion": 7,
+            },
+            "actualUsage": {
+                "usage": {
+                    "totalTokens": 86000,
+                    "inputTokens": 60000,
+                    "cachedInputTokens": 8000,
+                    "cacheWriteInputTokens": 500,
+                    "outputTokens": 24000,
+                    "reasoningOutputTokens": 3000,
+                },
+                "snapshotId": "snapshot-0",
+            },
+            "actualSource": "previousCompletedRequest",
+            "lastCompletedSnapshotId": "snapshot-0",
+        })
+    );
+
+    let decoded = serde_json::from_value::<ThreadContextUsageResponse>(value)
+        .expect("deserialize thread/contextUsage response");
+    assert_eq!(decoded, response);
+}
+
+#[test]
 fn external_agent_config_detect_response_defaults_connectors_for_older_servers() {
     let response = serde_json::from_value::<ExternalAgentConfigDetectResponse>(json!({
         "items": [],

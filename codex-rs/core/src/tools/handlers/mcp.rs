@@ -245,6 +245,10 @@ impl CoreToolRuntime for McpHandler {
         Some(&self.tool_info.server_name)
     }
 
+    fn mcp_public_label(&self) -> Option<String> {
+        Some(crate::tools::router::public_mcp_tool_label(&self.tool_info))
+    }
+
     fn on_tool_result_accepted(&self, invocation: &ToolInvocation, result: &dyn ToolOutput) {
         let ToolCallSource::CodeMode { cell_id, .. } = &invocation.source else {
             return;

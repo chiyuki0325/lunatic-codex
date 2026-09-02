@@ -115,6 +115,7 @@ use crate::attestation::X_OAI_ATTESTATION_HEADER;
 use crate::client_common::Prompt;
 use crate::client_common::ResponseEvent;
 use crate::client_common::ResponseStream;
+use crate::context_usage::ContextUsageRequestCapture;
 use crate::feedback_tags;
 use crate::responses_metadata::CodexResponsesMetadata;
 use crate::responses_metadata::subagent_header_value;
@@ -1447,6 +1448,7 @@ impl ModelClientSession {
         service_tier: Option<String>,
         responses_metadata: &CodexResponsesMetadata,
         inference_trace: &InferenceTraceContext,
+        context_usage: Option<&ContextUsageRequestCapture<'_>>,
     ) -> Result<ResponseStream> {
         let auth_manager = self.client.state.provider.auth_manager();
         let mut auth_recovery = auth_manager
@@ -1499,6 +1501,8 @@ impl ModelClientSession {
             }
             self.client
                 .prepare_response_items_for_request(&mut request.input);
+            let context_usage_snapshot_id =
+                context_usage.map(|capture| capture.publish(prompt, &request));
             let request_session_telemetry =
                 session_telemetry_for_request(session_telemetry, &request);
             let inference_trace_attempt = inference_trace.start_attempt();
@@ -1514,12 +1518,13 @@ impl ModelClientSession {
 
             match stream_result {
                 Ok(stream) => {
-                    let (stream, _) = map_response_stream(
+                    let (mut stream, _) = map_response_stream(
                         stream,
                         request_session_telemetry,
                         inference_trace_attempt,
                         Arc::clone(&self.client.state.provider),
                     );
+                    stream.context_usage_snapshot_id = context_usage_snapshot_id;
                     return Ok(stream);
                 }
                 Err(ApiError::Transport(unauthorized_transport))
@@ -1590,6 +1595,7 @@ impl ModelClientSession {
         warmup: bool,
         request_trace: Option<W3cTraceContext>,
         inference_trace: &InferenceTraceContext,
+        context_usage: Option<&ContextUsageRequestCapture<'_>>,
     ) -> Result<WebsocketStreamOutcome> {
         let provider = Arc::clone(&self.client.state.provider);
         let auth_manager = provider.auth_manager();
@@ -1704,6 +1710,11 @@ impl ModelClientSession {
                     .prepare_response_items_for_request(&mut request.input);
                 Some(original_item_ids)
             };
+            let mut context_usage_request = request.clone();
+            self.client
+                .prepare_response_items_for_request(&mut context_usage_request.input);
+            let context_usage_snapshot_id =
+                context_usage.map(|capture| capture.publish(prompt, &context_usage_request));
             let ws_payload = ResponseCreateWsRequest {
                 previous_response_id,
                 input: incremental_items.as_deref().unwrap_or(&request.input),
@@ -1750,12 +1761,13 @@ impl ModelClientSession {
                 );
                 err
             })?;
-            let (stream, last_request_rx) = map_response_stream(
+            let (mut stream, last_request_rx) = map_response_stream(
                 stream_result,
                 request_session_telemetry,
                 inference_trace_attempt,
                 Arc::clone(&self.client.state.provider),
             );
+            stream.context_usage_snapshot_id = context_usage_snapshot_id;
             self.websocket_session.last_response_rx = Some(last_request_rx);
             return Ok(WebsocketStreamOutcome::Stream(stream));
         }
@@ -1807,7 +1819,70 @@ impl ModelClientSession {
         service_tier: Option<String>,
         responses_metadata: &CodexResponsesMetadata,
     ) -> Result<()> {
+        self.prewarm_websocket_inner(
+            prompt,
+            model_info,
+            session_telemetry,
+            effort,
+            summary,
+            service_tier,
+            responses_metadata,
+            None,
+        )
+        .await
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) async fn prewarm_websocket_with_context_usage(
+        &mut self,
+        prompt: &Prompt,
+        model_info: &ModelInfo,
+        session_telemetry: &SessionTelemetry,
+        effort: Option<ReasoningEffortConfig>,
+        summary: ReasoningSummaryConfig,
+        service_tier: Option<String>,
+        responses_metadata: &CodexResponsesMetadata,
+        context_usage: &ContextUsageRequestCapture<'_>,
+    ) -> Result<()> {
+        self.prewarm_websocket_inner(
+            prompt,
+            model_info,
+            session_telemetry,
+            effort,
+            summary,
+            service_tier,
+            responses_metadata,
+            Some(context_usage),
+        )
+        .await
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    async fn prewarm_websocket_inner(
+        &mut self,
+        prompt: &Prompt,
+        model_info: &ModelInfo,
+        session_telemetry: &SessionTelemetry,
+        effort: Option<ReasoningEffortConfig>,
+        summary: ReasoningSummaryConfig,
+        service_tier: Option<String>,
+        responses_metadata: &CodexResponsesMetadata,
+        context_usage: Option<&ContextUsageRequestCapture<'_>>,
+    ) -> Result<()> {
         if !self.client.responses_websocket_enabled() {
+            if let Some(context_usage) = context_usage {
+                let mut request = self.client.build_responses_request(
+                    prompt,
+                    model_info,
+                    effort,
+                    summary,
+                    service_tier,
+                    responses_metadata,
+                )?;
+                self.client
+                    .prepare_response_items_for_request(&mut request.input);
+                context_usage.publish(prompt, &request);
+            }
             return Ok(());
         }
         if self.websocket_session.last_request.is_some() {
@@ -1827,6 +1902,7 @@ impl ModelClientSession {
                 /*warmup*/ true,
                 current_span_w3c_trace_context(),
                 &disabled_trace,
+                context_usage,
             )
             .await
         {
@@ -1869,6 +1945,60 @@ impl ModelClientSession {
         responses_metadata: &CodexResponsesMetadata,
         inference_trace: &InferenceTraceContext,
     ) -> Result<ResponseStream> {
+        self.stream_inner(
+            prompt,
+            model_info,
+            session_telemetry,
+            effort,
+            summary,
+            service_tier,
+            responses_metadata,
+            inference_trace,
+            None,
+        )
+        .await
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    pub(crate) async fn stream_with_context_usage(
+        &mut self,
+        prompt: &Prompt,
+        model_info: &ModelInfo,
+        session_telemetry: &SessionTelemetry,
+        effort: Option<ReasoningEffortConfig>,
+        summary: ReasoningSummaryConfig,
+        service_tier: Option<String>,
+        responses_metadata: &CodexResponsesMetadata,
+        inference_trace: &InferenceTraceContext,
+        context_usage: &ContextUsageRequestCapture<'_>,
+    ) -> Result<ResponseStream> {
+        self.stream_inner(
+            prompt,
+            model_info,
+            session_telemetry,
+            effort,
+            summary,
+            service_tier,
+            responses_metadata,
+            inference_trace,
+            Some(context_usage),
+        )
+        .await
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    async fn stream_inner(
+        &mut self,
+        prompt: &Prompt,
+        model_info: &ModelInfo,
+        session_telemetry: &SessionTelemetry,
+        effort: Option<ReasoningEffortConfig>,
+        summary: ReasoningSummaryConfig,
+        service_tier: Option<String>,
+        responses_metadata: &CodexResponsesMetadata,
+        inference_trace: &InferenceTraceContext,
+        context_usage: Option<&ContextUsageRequestCapture<'_>>,
+    ) -> Result<ResponseStream> {
         let wire_api = self.client.state.provider.info().wire_api;
         match wire_api {
             WireApi::Responses => {
@@ -1886,6 +2016,7 @@ impl ModelClientSession {
                             /*warmup*/ false,
                             request_trace,
                             inference_trace,
+                            context_usage,
                         )
                         .await?
                     {
@@ -1905,6 +2036,7 @@ impl ModelClientSession {
                     service_tier,
                     responses_metadata,
                     inference_trace,
+                    context_usage,
                 )
                 .await
             }
@@ -2149,6 +2281,7 @@ where
         ResponseStream {
             rx_event,
             consumer_dropped: consumer_dropped_for_stream,
+            context_usage_snapshot_id: None,
         },
         rx_last_response,
     )

@@ -73,8 +73,13 @@ pub(crate) trait CoreToolRuntime: ToolExecutor<ToolInvocation> {
         None
     }
 
-    /// Returns the owning server only for MCP-backed tool runtimes.
+    /// Returns the stable routing identity only for MCP-backed tool runtimes.
     fn mcp_server_name(&self) -> Option<&str> {
+        None
+    }
+
+    /// Returns the user-facing source label only for MCP-backed tool runtimes.
+    fn mcp_public_label(&self) -> Option<String> {
         None
     }
 

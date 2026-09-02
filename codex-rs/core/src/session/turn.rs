@@ -5,6 +5,12 @@ use std::sync::atomic::Ordering;
 
 use crate::client::ModelClientSession;
 use crate::client_common::Prompt;
+use crate::client_common::PromptInputUsageCategory;
+use crate::client_common::PromptInputUsageDetail;
+use crate::client_common::PromptToolLoadState;
+use crate::client_common::PromptToolUsageOrigin;
+use crate::client_common::PromptUnloadedMcpTool;
+use crate::client_common::PromptUsageSidecar;
 use crate::client_common::ResponseEvent;
 use crate::compact::InitialContextInjection;
 use crate::compact::run_inline_auto_compact_task;
@@ -12,6 +18,7 @@ use crate::compact_remote::run_inline_remote_auto_compact_task;
 use crate::compact_remote_v2::run_inline_remote_auto_compact_task as run_inline_remote_auto_compact_task_v2;
 use crate::connectors;
 use crate::context::ContextualUserFragment;
+use crate::context::UserInstructions;
 use crate::environment_selection::TurnEnvironmentSnapshot;
 use crate::feedback_tags;
 use crate::hook_runtime::drain_async_hook_results;
@@ -52,6 +59,8 @@ use crate::tools::ToolRouter;
 use crate::tools::context::SharedTurnDiffTracker;
 use crate::tools::parallel::ToolCallRuntime;
 use crate::tools::registry::ToolArgumentDiffConsumer;
+use crate::tools::router::ModelVisibleToolLoadState;
+use crate::tools::router::ModelVisibleToolOrigin;
 use crate::tools::router::ToolSuggestCandidates;
 use crate::tools::router::ToolSuggestPresentation;
 use crate::tools::spec_plan::build_tool_router;
@@ -121,6 +130,7 @@ use codex_utils_stream_parser::AssistantTextStreamParser;
 use codex_utils_stream_parser::ProposedPlanSegment;
 use codex_utils_stream_parser::extract_proposed_plan_text;
 use codex_utils_stream_parser::strip_citations;
+use codex_utils_string::approx_token_count;
 use futures::future::BoxFuture;
 use futures::prelude::*;
 use futures::stream::FuturesOrdered;
@@ -1317,16 +1327,189 @@ pub(crate) fn build_prompt(
     base_instructions: BaseInstructions,
 ) -> Prompt {
     let turn_context = &step_context.turn;
+    let model_visible_tools = step_context.tool_router.model_visible_tools();
+    let tools = model_visible_tools
+        .iter()
+        .map(|tool| tool.spec.clone())
+        .collect::<Vec<_>>()
+        .into();
+    let usage_sidecar = build_prompt_usage_sidecar(&input, step_context, &model_visible_tools);
     Prompt {
         input,
-        tools: step_context.tool_router.model_visible_specs(),
+        tools,
         parallel_tool_calls: true,
         base_instructions,
         output_schema: turn_context.final_output_json_schema.clone(),
         output_schema_strict: !crate::guardian::is_guardian_reviewer_source(
             &turn_context.session_source,
         ),
+        usage_sidecar,
     }
+}
+
+fn build_prompt_usage_sidecar(
+    input: &[ResponseItem],
+    step_context: &StepContext,
+    model_visible_tools: &[crate::tools::router::ModelVisibleToolSpec],
+) -> PromptUsageSidecar {
+    let current_agents_fragment = step_context
+        .loaded_agents_md
+        .as_ref()
+        .map(|loaded| loaded.contextual_user_fragment().render());
+    let mut input_categories = Vec::with_capacity(input.len());
+    let mut input_details = Vec::new();
+    let mut complete = true;
+
+    for (input_index, item) in input.iter().enumerate() {
+        let categories = match item {
+            ResponseItem::Message { role, content, .. } if role == "developer" => {
+                vec![PromptInputUsageCategory::Instructions; content.len()]
+            }
+            ResponseItem::Message { role, content, .. }
+                if role == "user" || role == "assistant" =>
+            {
+                content
+                    .iter()
+                    .enumerate()
+                    .map(|(content_index, content_item)| match content_item {
+                        ContentItem::InputText { text }
+                            if codex_skills_extension::is_skill_prompt_fragment(text) =>
+                        {
+                            let label = extract_tagged_text(text, "<name>", "</name>")
+                                .unwrap_or("skill")
+                                .to_string();
+                            let path = extract_tagged_text(text, "<path>", "</path>")
+                                .map(std::path::PathBuf::from);
+                            input_details.push(PromptInputUsageDetail {
+                                label,
+                                path,
+                                category: PromptInputUsageCategory::Skills,
+                                input_index,
+                                content_index,
+                                weight_tokens: u64::try_from(approx_token_count(text))
+                                    .unwrap_or(u64::MAX),
+                            });
+                            PromptInputUsageCategory::Skills
+                        }
+                        ContentItem::InputText { text } if UserInstructions::matches_text(text) => {
+                            if current_agents_fragment.as_deref() == Some(text.as_str())
+                                && let Some(loaded) = &step_context.loaded_agents_md
+                            {
+                                input_details.extend(
+                                    loaded
+                                        .instruction_entries_for_context_usage()
+                                        .into_iter()
+                                        .filter_map(|entry| {
+                                            let path = entry.path?;
+                                            let path = std::path::PathBuf::from(
+                                                path.inferred_native_path_string(),
+                                            );
+                                            Some(PromptInputUsageDetail {
+                                                label: path.display().to_string(),
+                                                path: Some(path),
+                                                category: PromptInputUsageCategory::Instructions,
+                                                input_index,
+                                                content_index,
+                                                weight_tokens: u64::try_from(approx_token_count(
+                                                    &entry.text,
+                                                ))
+                                                .unwrap_or(u64::MAX),
+                                            })
+                                        }),
+                                );
+                            }
+                            PromptInputUsageCategory::Instructions
+                        }
+                        ContentItem::InputText { .. }
+                            if crate::context::is_contextual_user_fragment(content_item) =>
+                        {
+                            complete = false;
+                            PromptInputUsageCategory::Other
+                        }
+                        ContentItem::InputText { .. }
+                        | ContentItem::InputImage { .. }
+                        | ContentItem::InputAudio { .. }
+                        | ContentItem::OutputText { .. } => PromptInputUsageCategory::Messages,
+                    })
+                    .collect()
+            }
+            ResponseItem::Message { content, .. } => {
+                complete = false;
+                vec![PromptInputUsageCategory::Other; content.len()]
+            }
+            ResponseItem::AdditionalTools { .. } => {
+                complete = false;
+                vec![PromptInputUsageCategory::Other]
+            }
+            ResponseItem::Reasoning { .. }
+            | ResponseItem::AgentMessage { .. }
+            | ResponseItem::LocalShellCall { .. }
+            | ResponseItem::FunctionCall { .. }
+            | ResponseItem::ToolSearchCall { .. }
+            | ResponseItem::FunctionCallOutput { .. }
+            | ResponseItem::CustomToolCall { .. }
+            | ResponseItem::CustomToolCallOutput { .. }
+            | ResponseItem::ToolSearchOutput { .. }
+            | ResponseItem::WebSearchCall { .. }
+            | ResponseItem::ImageGenerationCall { .. }
+            | ResponseItem::Compaction { .. }
+            | ResponseItem::CompactionTrigger { .. }
+            | ResponseItem::ContextCompaction { .. } => {
+                vec![PromptInputUsageCategory::Messages]
+            }
+            ResponseItem::Other => {
+                complete = false;
+                vec![PromptInputUsageCategory::Other]
+            }
+        };
+        input_categories.push(categories);
+    }
+
+    let tool_origins = model_visible_tools
+        .iter()
+        .map(|tool| match &tool.origin {
+            ModelVisibleToolOrigin::BuiltIn => PromptToolUsageOrigin::BuiltIn,
+            ModelVisibleToolOrigin::Mcp(origin) => PromptToolUsageOrigin::Mcp {
+                public_label: origin.public_label.clone(),
+                source_identity: origin.source_identity.clone(),
+            },
+            ModelVisibleToolOrigin::Unknown => {
+                complete = false;
+                PromptToolUsageOrigin::Unknown
+            }
+        })
+        .collect();
+    let unloaded_mcp_tools = step_context
+        .tool_router
+        .unloaded_mcp_tools()
+        .iter()
+        .filter_map(|tool| {
+            let load_state = match tool.load_state {
+                ModelVisibleToolLoadState::Available => PromptToolLoadState::Available,
+                ModelVisibleToolLoadState::Deferred => PromptToolLoadState::Deferred,
+                ModelVisibleToolLoadState::Loaded => return None,
+            };
+            Some(PromptUnloadedMcpTool {
+                public_label: tool.public_label.clone(),
+                source_identity: tool.source_identity.clone(),
+                load_state,
+            })
+        })
+        .collect();
+
+    PromptUsageSidecar {
+        input_categories,
+        input_details,
+        tool_origins,
+        unloaded_mcp_tools,
+        complete,
+    }
+}
+
+fn extract_tagged_text<'a>(text: &'a str, open_tag: &str, close_tag: &str) -> Option<&'a str> {
+    let start = text.find(open_tag)? + open_tag.len();
+    let end = text[start..].find(close_tag)? + start;
+    Some(text[start..end].trim())
 }
 
 #[allow(clippy::too_many_arguments)]
@@ -2209,8 +2392,9 @@ async fn try_run_sampling_request(
         .features
         .enabled(Feature::ConcurrentReasoningSummaries)
         && turn_context.provider.info().is_openai();
+    let context_usage_capture = sess.context_usage_request_capture(&turn_context);
     let mut stream = client_session
-        .stream(
+        .stream_with_context_usage(
             prompt,
             &step_context.model_info,
             &step_context.session_telemetry,
@@ -2219,10 +2403,12 @@ async fn try_run_sampling_request(
             step_context.service_tier.clone(),
             responses_metadata,
             &inference_trace,
+            &context_usage_capture,
         )
         .instrument(trace_span!("stream_request"))
         .or_cancel(&cancellation_token)
         .await??;
+    let context_usage_snapshot_id = stream.context_usage_snapshot_id().map(str::to_string);
     let mut in_flight: FuturesOrdered<BoxFuture<'static, CodexResult<ResponseInputItem>>> =
         FuturesOrdered::new();
     let mut needs_follow_up = false;
@@ -2568,6 +2754,11 @@ async fn try_run_sampling_request(
                     }),
                 )
                 .await;
+                if let (Some(snapshot_id), Some(token_usage)) =
+                    (context_usage_snapshot_id.as_deref(), token_usage.as_ref())
+                {
+                    sess.mark_context_usage_request_completed(snapshot_id, token_usage);
+                }
                 let budget_result = sess
                     .record_token_usage_info(&turn_context, token_usage.as_ref())
                     .await;

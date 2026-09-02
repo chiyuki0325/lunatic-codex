@@ -216,6 +216,7 @@ pub(crate) mod app_server_requests;
 mod background_requests;
 mod config_persistence;
 mod connector_mentions;
+mod context_usage;
 mod event_dispatch;
 mod file_change_approvals;
 mod history_pagination;
@@ -545,6 +546,7 @@ pub(crate) struct App {
     last_rendered_history_tail: Option<history_ui::RenderedHistoryTail>,
     last_thread_usage_status_cell: Option<history_ui::ThreadUsageStatusHistory>,
     pub(crate) pending_thread_usage_history_refresh: bool,
+    pub(crate) context_usage_requests: context_usage::ContextUsageRequests,
 
     // Pager overlay state (Transcript or Static like Diff)
     pub(crate) overlay: Option<Overlay>,

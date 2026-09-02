@@ -55,9 +55,12 @@ use crate::tools::handlers::WaitForEnvironmentHandler;
 use crate::tools::handlers::multi_agents_spec::MULTI_AGENT_V1_NAMESPACE;
 use crate::tools::registry::CoreToolRuntime;
 use crate::tools::registry::RegisteredTool;
+use crate::tools::router::ModelVisibleToolLoadState;
+use crate::tools::router::ModelVisibleToolOrigin;
 use crate::tools::router::ToolRouter;
 use crate::tools::router::ToolSuggestCandidates;
 use crate::tools::router::ToolSuggestPresentation;
+use crate::tools::router::UnloadedMcpTool;
 use crate::tools::spec_plan::append_source_tools;
 use crate::tools::spec_plan::build_core_tool_registry;
 
@@ -74,6 +77,8 @@ struct ToolPlanInputs {
 
 struct ToolPlanProbe {
     visible_specs: Vec<ToolSpec>,
+    visible_origins: Vec<ModelVisibleToolOrigin>,
+    unloaded_mcp_tools: Arc<[UnloadedMcpTool]>,
     visible_names: Vec<String>,
     namespace_functions: BTreeMap<String, Vec<String>>,
     registered_names: Vec<String>,
@@ -82,7 +87,16 @@ struct ToolPlanProbe {
 
 impl ToolPlanProbe {
     fn from_router(router: ToolRouter) -> Self {
-        let visible_specs = router.model_visible_specs().to_vec();
+        let visible_tools = router.model_visible_tools();
+        let visible_specs = visible_tools
+            .iter()
+            .map(|tool| tool.spec.clone())
+            .collect::<Vec<_>>();
+        let visible_origins = visible_tools
+            .iter()
+            .map(|tool| tool.origin.clone())
+            .collect::<Vec<_>>();
+        let unloaded_mcp_tools = router.unloaded_mcp_tools();
         let visible_names = visible_specs
             .iter()
             .map(|spec| spec.name().to_string())
@@ -123,6 +137,8 @@ impl ToolPlanProbe {
 
         Self {
             visible_specs,
+            visible_origins,
+            unloaded_mcp_tools,
             visible_names,
             namespace_functions,
             registered_names,
@@ -1355,6 +1371,37 @@ async fn strict_namespace_ownership_requires_tool_namespace_inventory_opt_in() {
             assert!(result.is_ok(), "existing strict behavior should not change");
         }
     }
+}
+
+#[tokio::test]
+async fn model_visible_tools_preserve_explicit_mcp_origin_metadata() {
+    let mut calendar_tool = mcp_tool("calendar", "calendar", "create");
+    calendar_tool.connector_name = Some("calendar".to_string());
+    let calendar_runtime = RegisteredTool {
+        runtime: Arc::new(McpHandler::new(calendar_tool).expect("MCP tool spec should build")),
+        exposure: ToolExposure::Deferred,
+    };
+    let plan = probe_with(
+        |_turn| {},
+        ToolPlanInputs {
+            tool_runtimes: vec![calendar_runtime],
+            tool_suggest_candidates: None,
+            extension_tool_executors: Vec::new(),
+            wait_for_environment_tool_config: None,
+            dynamic_tools: Vec::new(),
+        },
+    )
+    .await;
+
+    assert_eq!(plan.visible_specs.len(), plan.visible_origins.len());
+    assert_eq!(
+        plan.unloaded_mcp_tools.as_ref(),
+        [UnloadedMcpTool {
+            public_label: "calendar".to_string(),
+            source_identity: "calendar".to_string(),
+            load_state: ModelVisibleToolLoadState::Deferred,
+        }]
+    );
 }
 
 #[tokio::test]

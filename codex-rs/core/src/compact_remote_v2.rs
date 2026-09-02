@@ -375,8 +375,9 @@ async fn run_remote_compaction_request_v2(
         .min(MAX_REMOTE_COMPACTION_V2_STREAM_RETRIES);
     let mut retry_state = ResponsesStreamRetryState::default();
     loop {
+        let context_usage_capture = sess.context_usage_request_capture(turn_context);
         let result = match client_session
-            .stream(
+            .stream_with_context_usage(
                 prompt,
                 &turn_context.model_info,
                 &turn_context.session_telemetry,
@@ -385,10 +386,20 @@ async fn run_remote_compaction_request_v2(
                 turn_context.config.service_tier.clone(),
                 responses_metadata,
                 &InferenceTraceContext::disabled(),
+                &context_usage_capture,
             )
             .await
         {
-            Ok(stream) => collect_compaction_output(stream).await,
+            Ok(stream) => {
+                let snapshot_id = stream.context_usage_snapshot_id().map(str::to_string);
+                let result = collect_compaction_output(stream).await;
+                if let (Ok(output), Some(snapshot_id)) = (&result, snapshot_id)
+                    && let Some(token_usage) = &output.token_usage
+                {
+                    sess.mark_context_usage_request_completed(&snapshot_id, token_usage);
+                }
+                result
+            }
             Err(err) => Err(err),
         };
 
@@ -820,6 +831,7 @@ mod tests {
         ResponseStream {
             rx_event,
             consumer_dropped: CancellationToken::new(),
+            context_usage_snapshot_id: None,
         }
     }
 

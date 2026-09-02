@@ -66,6 +66,8 @@ pub(crate) struct Session {
     pub(super) git_enrichment_policy: GitEnrichmentPolicy,
     pub(super) fork_persistence: ForkPersistence,
     pub(super) next_internal_sub_id: AtomicU64,
+    pub(crate) context_usage_store: crate::context_usage::ContextUsageStore,
+    pub(crate) next_context_usage_request_sequence: AtomicU64,
 }
 
 #[derive(Clone)]
@@ -1424,6 +1426,8 @@ impl Session {
                 turn_environments: Arc::clone(&turn_environments),
             };
             let (mcp_prewarm_tx, mcp_prewarm_rx) = async_channel::bounded(1);
+            let context_usage_store = crate::context_usage::ContextUsageStore::default();
+            context_usage_store.publish_unavailable(&model_info);
             let sess = Arc::new(Session {
                 thread_id,
                 installation_id,
@@ -1449,6 +1453,8 @@ impl Session {
                 git_enrichment_policy,
                 fork_persistence,
                 next_internal_sub_id: AtomicU64::new(0),
+                context_usage_store,
+                next_context_usage_request_sequence: AtomicU64::new(0),
             });
             if let Some(network_policy_decider_session) = network_policy_decider_session {
                 let mut guard = network_policy_decider_session.write().await;

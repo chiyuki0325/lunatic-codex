@@ -290,6 +290,18 @@ mod tests {
     }
 
     #[test]
+    fn context_command_is_listed_with_exact_chinese_description() {
+        let command = builtins_for_input(all_enabled_flags())
+            .into_iter()
+            .find(|(_, command)| *command == SlashCommand::Context);
+        assert_eq!(command, Some(("context", SlashCommand::Context)));
+        assert_eq!(
+            SlashCommand::Context.description(),
+            "查看当前上下文窗口占用"
+        );
+    }
+
+    #[test]
     fn side_conversation_hides_commands_without_side_flag() {
         let commands = builtins_for_input(BuiltinCommandFlags {
             side_conversation_active: true,

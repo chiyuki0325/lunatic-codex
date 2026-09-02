@@ -6006,6 +6006,8 @@ pub(crate) async fn make_session_and_context() -> (Session, TurnContext) {
         git_enrichment_policy: GitEnrichmentPolicy::Fresh,
         fork_persistence: ForkPersistence::Copied,
         next_internal_sub_id: AtomicU64::new(0),
+        context_usage_store: crate::context_usage::ContextUsageStore::default(),
+        next_context_usage_request_sequence: AtomicU64::new(0),
     };
     let per_turn_config =
         session.build_per_turn_config(&session_configuration, session_configuration.cwd().clone());
@@ -8215,6 +8217,8 @@ where
         git_enrichment_policy: GitEnrichmentPolicy::Fresh,
         fork_persistence: ForkPersistence::Copied,
         next_internal_sub_id: AtomicU64::new(0),
+        context_usage_store: crate::context_usage::ContextUsageStore::default(),
+        next_context_usage_request_sequence: AtomicU64::new(0),
     });
     let per_turn_config =
         session.build_per_turn_config(&session_configuration, session_configuration.cwd().clone());

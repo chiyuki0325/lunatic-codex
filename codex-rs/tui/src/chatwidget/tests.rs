@@ -45,6 +45,11 @@ pub(super) use codex_app_server_protocol::CommandExecutionSource as ExecCommandS
 pub(super) use codex_app_server_protocol::CommandExecutionSource as AppServerCommandExecutionSource;
 pub(super) use codex_app_server_protocol::CommandExecutionStatus as AppServerCommandExecutionStatus;
 pub(super) use codex_app_server_protocol::ConfigWarningNotification;
+pub(super) use codex_app_server_protocol::ContextUsageActualSource;
+pub(super) use codex_app_server_protocol::ContextUsageCategory;
+pub(super) use codex_app_server_protocol::ContextUsageCategoryKind;
+pub(super) use codex_app_server_protocol::ContextUsageCompleteness;
+pub(super) use codex_app_server_protocol::ContextUsageSnapshot;
 pub(super) use codex_app_server_protocol::CreditsSnapshot;
 pub(super) use codex_app_server_protocol::ErrorNotification;
 pub(super) use codex_app_server_protocol::ExecPolicyAmendment;
@@ -102,6 +107,7 @@ pub(super) use codex_app_server_protocol::ServerNotification;
 pub(super) use codex_app_server_protocol::SkillMetadata;
 pub(super) use codex_app_server_protocol::SkillSummary;
 pub(super) use codex_app_server_protocol::ThreadClosedNotification;
+pub(super) use codex_app_server_protocol::ThreadContextUsageResponse;
 pub(super) use codex_app_server_protocol::ThreadItem as AppServerThreadItem;
 pub(super) use codex_app_server_protocol::ToolRequestUserInputOption;
 pub(super) use codex_app_server_protocol::ToolRequestUserInputParams;
@@ -236,6 +242,8 @@ mod approval_requests;
 mod composer_submission;
 #[path = "tests/config_errors_tests.rs"]
 mod config_errors;
+#[path = "tests/context_usage.rs"]
+mod context_usage;
 mod exec_flow;
 mod goal_menu;
 mod goal_validation;

@@ -132,6 +132,8 @@ impl ChatWidget {
             next_status_refresh_request_id: 0,
             refreshing_token_activity_output: None,
             completed_token_activity_output: None,
+            pending_context_usage_outputs: VecDeque::new(),
+            next_context_usage_request_id: 0,
             next_token_activity_request_id: 0,
             pending_rate_limit_reset_request_id: None,
             pending_rate_limit_reset_idempotency_key: None,

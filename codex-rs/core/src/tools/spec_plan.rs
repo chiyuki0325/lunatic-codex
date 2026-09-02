@@ -59,7 +59,12 @@ use crate::tools::registry::CoreToolRuntime;
 use crate::tools::registry::RegisteredTool;
 use crate::tools::registry::ToolExposure;
 use crate::tools::registry::ToolRegistry;
+use crate::tools::router::McpModelVisibleToolOrigin;
+use crate::tools::router::ModelVisibleToolLoadState;
+use crate::tools::router::ModelVisibleToolOrigin;
+use crate::tools::router::ModelVisibleToolSpec;
 use crate::tools::router::ToolRouter;
+use crate::tools::router::UnloadedMcpTool;
 use crate::tools::tool_namespaces_info::collect_tool_namespaces_info;
 use codex_extension_api::ExtensionData;
 use codex_features::Feature;
@@ -436,19 +441,28 @@ pub(crate) fn finalize_tool_router(
         }
     }
 
-    let model_visible_specs =
-        build_model_visible_specs(turn_context, &registry, &code_mode_tool_names, hosted_specs);
+    let model_visible_tools =
+        build_model_visible_tools(turn_context, &registry, &code_mode_tool_names, hosted_specs);
+    let unloaded_mcp_tools =
+        build_unloaded_mcp_tools(turn_context, &registry, &code_mode_tool_names);
     if include_tool_namespaces_info {
         turn_context
             .turn_metadata_state
             .set_tool_namespaces_info(collect_tool_namespaces_info(
                 &registry,
                 &code_mode_tool_names,
-                &model_visible_specs,
+                &model_visible_tools
+                    .iter()
+                    .map(|tool| tool.spec.clone())
+                    .collect::<Vec<_>>(),
             ));
     }
 
-    Ok(ToolRouter::from_parts(registry, model_visible_specs))
+    Ok(ToolRouter::from_parts_with_unloaded_mcp_tools(
+        registry,
+        model_visible_tools,
+        unloaded_mcp_tools,
+    ))
 }
 
 fn apply_direct_model_only_namespace_overrides(
@@ -485,13 +499,13 @@ fn apply_direct_model_only_namespace_overrides(
 }
 
 #[instrument(level = "trace", skip_all)]
-fn build_model_visible_specs(
+fn build_model_visible_tools(
     turn_context: &TurnContext,
     registry: &ToolRegistry,
     code_mode_tool_names: &BTreeMap<String, ToolName>,
     hosted_specs: Vec<ToolSpec>,
-) -> Vec<ToolSpec> {
-    let mut specs = Vec::new();
+) -> Vec<ModelVisibleToolSpec> {
+    let mut tools = Vec::new();
     for tool in registry.entries() {
         let exposure = tool.exposure;
         if !exposure.is_direct() {
@@ -504,20 +518,86 @@ fn build_model_visible_specs(
         }
 
         let spec = tool.runtime.spec();
-        specs.push(spec_for_model_request(
-            turn_context,
-            exposure,
-            &tool_name,
-            code_mode_tool_names,
-            spec,
-        ));
+        tools.push(ModelVisibleToolSpec {
+            spec: spec_for_model_request(
+                turn_context,
+                exposure,
+                &tool_name,
+                code_mode_tool_names,
+                spec,
+            ),
+            origin: model_visible_tool_origin(tool.runtime.as_ref()),
+        });
     }
-    specs.extend(hosted_specs);
+    tools.extend(hosted_specs.into_iter().map(|spec| ModelVisibleToolSpec {
+        spec,
+        origin: ModelVisibleToolOrigin::BuiltIn,
+    }));
 
-    merge_into_namespaces(specs)
+    merge_into_namespaces(tools)
         .into_iter()
-        .filter(|spec| {
-            namespace_tools_enabled(turn_context) || !matches!(spec, ToolSpec::Namespace(_))
+        .filter(|tool| {
+            namespace_tools_enabled(turn_context) || !matches!(tool.spec, ToolSpec::Namespace(_))
+        })
+        .collect()
+}
+
+fn model_visible_tool_origin(runtime: &dyn CoreToolRuntime) -> ModelVisibleToolOrigin {
+    if let Some(source_identity) = runtime.mcp_server_name() {
+        return ModelVisibleToolOrigin::Mcp(McpModelVisibleToolOrigin {
+            public_label: runtime
+                .mcp_public_label()
+                .unwrap_or_else(|| source_identity.to_string()),
+            source_identity: source_identity.to_string(),
+            load_state: ModelVisibleToolLoadState::Loaded,
+        });
+    }
+
+    ModelVisibleToolOrigin::BuiltIn
+}
+
+fn build_unloaded_mcp_tools(
+    turn_context: &TurnContext,
+    registry: &ToolRegistry,
+    code_mode_tool_names: &BTreeMap<String, ToolName>,
+) -> Vec<UnloadedMcpTool> {
+    registry
+        .entries()
+        .filter_map(|tool| {
+            let source_identity = tool.runtime.mcp_server_name()?;
+            let tool_name = tool.runtime.tool_name();
+            let is_model_visible = tool.exposure.is_direct()
+                && !is_hidden_by_code_mode_only(turn_context, &tool_name, tool.exposure)
+                && (namespace_tools_enabled(turn_context)
+                    || !matches!(
+                        spec_for_model_request(
+                            turn_context,
+                            tool.exposure,
+                            &tool_name,
+                            code_mode_tool_names,
+                            tool.runtime.spec(),
+                        ),
+                        ToolSpec::Namespace(_)
+                    ));
+            if is_model_visible {
+                return None;
+            }
+            let load_state = if matches!(
+                tool.exposure,
+                ToolExposure::Deferred | ToolExposure::DeferredModelOnly
+            ) {
+                ModelVisibleToolLoadState::Deferred
+            } else {
+                ModelVisibleToolLoadState::Available
+            };
+            Some(UnloadedMcpTool {
+                public_label: tool
+                    .runtime
+                    .mcp_public_label()
+                    .unwrap_or_else(|| source_identity.to_string()),
+                source_identity: source_identity.to_string(),
+                load_state,
+            })
         })
         .collect()
 }
@@ -815,15 +895,17 @@ fn register_code_mode_executors(
     code_mode_tool_names
 }
 
-#[instrument(level = "trace", skip_all, fields(tool_spec_count = specs.len()))]
-fn merge_into_namespaces(specs: Vec<ToolSpec>) -> Vec<ToolSpec> {
-    let mut merged_specs = Vec::with_capacity(specs.len());
+#[instrument(level = "trace", skip_all, fields(tool_spec_count = tools.len()))]
+fn merge_into_namespaces(tools: Vec<ModelVisibleToolSpec>) -> Vec<ModelVisibleToolSpec> {
+    let mut merged_tools: Vec<ModelVisibleToolSpec> = Vec::with_capacity(tools.len());
     let mut namespace_indices = BTreeMap::<String, usize>::new();
-    for spec in specs {
+    for tool in tools {
+        let ModelVisibleToolSpec { spec, origin } = tool;
         match spec {
             ToolSpec::Namespace(mut namespace) => {
                 if let Some(index) = namespace_indices.get(&namespace.name).copied() {
-                    let ToolSpec::Namespace(existing_namespace) = &mut merged_specs[index] else {
+                    let existing = &mut merged_tools[index];
+                    let ToolSpec::Namespace(existing_namespace) = &mut existing.spec else {
                         unreachable!("namespace index must point to a namespace spec");
                     };
                     if existing_namespace.description.trim().is_empty()
@@ -832,18 +914,24 @@ fn merge_into_namespaces(specs: Vec<ToolSpec>) -> Vec<ToolSpec> {
                         existing_namespace.description = namespace.description;
                     }
                     existing_namespace.tools.append(&mut namespace.tools);
+                    if existing.origin != origin {
+                        existing.origin = ModelVisibleToolOrigin::Unknown;
+                    }
                     continue;
                 }
 
-                namespace_indices.insert(namespace.name.clone(), merged_specs.len());
-                merged_specs.push(ToolSpec::Namespace(namespace));
+                namespace_indices.insert(namespace.name.clone(), merged_tools.len());
+                merged_tools.push(ModelVisibleToolSpec {
+                    spec: ToolSpec::Namespace(namespace),
+                    origin,
+                });
             }
-            spec => merged_specs.push(spec),
+            spec => merged_tools.push(ModelVisibleToolSpec { spec, origin }),
         }
     }
 
-    for spec in &mut merged_specs {
-        let ToolSpec::Namespace(namespace) = spec else {
+    for tool in &mut merged_tools {
+        let ToolSpec::Namespace(namespace) = &mut tool.spec else {
             continue;
         };
 
@@ -864,7 +952,7 @@ fn merge_into_namespaces(specs: Vec<ToolSpec>) -> Vec<ToolSpec> {
         }
     }
 
-    merged_specs
+    merged_tools
 }
 
 fn code_mode_namespace_descriptions(

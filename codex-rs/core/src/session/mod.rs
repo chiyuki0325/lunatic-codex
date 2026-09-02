@@ -3418,6 +3418,44 @@ impl Session {
         state.session_configuration.collaboration_mode.clone()
     }
 
+    pub(crate) async fn context_usage_snapshot(
+        &self,
+    ) -> Option<crate::context_usage::ContextUsageReadSnapshot> {
+        let read = self.context_usage_store.read()?;
+        let (model, config) = {
+            let state = self.state.lock().await;
+            let model = state
+                .session_configuration
+                .collaboration_mode
+                .model()
+                .to_string();
+            let config = self.build_effective_session_config(&state.session_configuration);
+            (model, config)
+        };
+        if read.latest_snapshot.model == model {
+            return Some(read);
+        }
+
+        let model_info = self
+            .services
+            .models_manager
+            .get_model_info(&model, &config.to_models_manager_config())
+            .await;
+        let model_context_window = model_info.resolved_context_window().and_then(|window| {
+            u64::try_from(window.saturating_mul(model_info.effective_context_window_percent) / 100)
+                .ok()
+        });
+        let auto_compact_threshold = model_info
+            .auto_compact_token_limit()
+            .and_then(|threshold| u64::try_from(threshold).ok());
+        Some(crate::context_usage::preview_context_usage_for_model(
+            read,
+            model,
+            model_context_window,
+            auto_compact_threshold,
+        ))
+    }
+
     pub(crate) fn multi_agent_version(&self) -> Option<MultiAgentVersion> {
         self.multi_agent_version.get().copied()
     }

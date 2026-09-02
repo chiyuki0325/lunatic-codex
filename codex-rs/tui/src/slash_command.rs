@@ -49,6 +49,7 @@ pub enum SlashCommand {
     Diff,
     Mention,
     Status,
+    Context,
     Cd,
     #[strum(to_string = "pwd", serialize = "cwd")]
     Pwd,
@@ -108,6 +109,7 @@ impl SlashCommand {
             SlashCommand::Import => "从 Claude Code 导入设置、当前项目和最近聊天",
             SlashCommand::Hooks => "查看和管理生命周期 Hook",
             SlashCommand::Status => "显示当前会话配置和 Token 用量",
+            SlashCommand::Context => "查看当前上下文窗口占用",
             SlashCommand::Cd => "切换当前工作目录",
             SlashCommand::Pwd => "显示当前工作目录",
             SlashCommand::Usage => "查看账户用量或重置用量限制",
@@ -235,6 +237,7 @@ impl SlashCommand {
             | SlashCommand::Skills
             | SlashCommand::Hooks
             | SlashCommand::Status
+            | SlashCommand::Context
             | SlashCommand::Pwd
             | SlashCommand::Usage
             | SlashCommand::DebugConfig
@@ -326,6 +329,10 @@ mod tests {
         }
         assert!(SlashCommand::Raw.available_in_side_conversation());
         assert!(SlashCommand::Raw.supports_inline_args());
+        assert!(SlashCommand::Context.available_during_task());
+        assert!(!SlashCommand::Context.available_in_side_conversation());
+        assert!(!SlashCommand::Context.supports_inline_args());
+        assert!(SlashCommand::App.available_during_task());
     }
 
     #[test]

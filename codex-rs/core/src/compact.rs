@@ -723,8 +723,9 @@ async fn drain_to_completed(
     responses_metadata: &CodexResponsesMetadata,
     prompt: &Prompt,
 ) -> CodexResult<()> {
+    let context_usage_capture = sess.context_usage_request_capture(turn_context);
     let mut stream = client_session
-        .stream(
+        .stream_with_context_usage(
             prompt,
             &turn_context.model_info,
             &turn_context.session_telemetry,
@@ -735,8 +736,10 @@ async fn drain_to_completed(
             // Rollout tracing currently models remote compaction only; local compaction streams
             // are left untraced until the reducer has a first-class local compaction lifecycle.
             &InferenceTraceContext::disabled(),
+            &context_usage_capture,
         )
         .await?;
+    let context_usage_snapshot_id = stream.context_usage_snapshot_id().map(str::to_string);
     loop {
         let maybe_event = stream.next().await;
         let Some(event) = maybe_event else {
@@ -768,6 +771,11 @@ async fn drain_to_completed(
                     }),
                 )
                 .await;
+                if let (Some(snapshot_id), Some(token_usage)) =
+                    (context_usage_snapshot_id.as_deref(), token_usage.as_ref())
+                {
+                    sess.mark_context_usage_request_completed(snapshot_id, token_usage);
+                }
                 sess.update_token_usage_info(turn_context, token_usage.as_ref())
                     .await?;
                 return Ok(());

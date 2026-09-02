@@ -1,0 +1,79 @@
+---
+source: tui/src/history_cell/context_usage_tests.rs
+assertion_line: 153
+expression: rendered
+---
+上下文用量
+
+⛀⛀
+⛀⛀
+⛀⛀
+⛀⛀
+⛀⛀
+⛀⛀
+■■
+■■
+■■
+■■
+■■
+■■
+■■
+■■
+■■
+■⛝
+⛝⛝
+⛝⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+⛶⛶
+
+gpt-5.6 · 86K/272K Token（实际已用 31.6%，剩余 68.4%）
+各分类估算用量
+⛁ 系统提示词：8.2K Token（3.0%）
+⛁ 内置工具：12.4K Token（4.6%）
+⛁ MCP 工具：4.1K Token（1.5%）
+⛁ 指令：6.3K Token（2.3%）
+⛁ Skills：2K Token（0.7%）
+■ 消息：53K Token（19.5%）
+⛝ 自动压缩预留区：12K Token（4.4%）
+⛶ 剩余空间：174K Token（64.0%）
+
+数据说明：顶部实际值与分类明细来自同一份当前快照。
+
+MCP 工具 · /mcp
+└ server.tool：1.2K Token
+
+指令文件
+└ /path/to/AGENTS.md：2.4K Token
+
+Skills · /skills
+└ skill-name：620 Token

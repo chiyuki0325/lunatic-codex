@@ -459,6 +459,7 @@ See the Codex keymap documentation for supported actions and examples."
             last_rendered_history_tail: None,
             last_thread_usage_status_cell: None,
             pending_thread_usage_history_refresh: false,
+            context_usage_requests: Default::default(),
             overlay: None,
             deferred_history_lines: Vec::new(),
             has_emitted_history_lines: false,

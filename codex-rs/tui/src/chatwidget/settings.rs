@@ -218,6 +218,7 @@ impl ChatWidget {
         // be identical across two accounts, so always invalidate account-scoped requests and data.
         self.invalidate_connector_scope();
         self.clear_pending_token_activity_refreshes();
+        self.clear_pending_context_usage_refreshes();
         self.clear_pending_rate_limit_reset_requests();
         self.codex_rate_limit_reached_type = None;
         self.codex_spend_control_reached = None;

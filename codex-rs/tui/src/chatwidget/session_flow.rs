@@ -27,7 +27,9 @@ impl ChatWidget {
         if previous_thread_id != self.thread_id {
             self.review.recent_auto_review_denials = RecentAutoReviewDenials::default();
             self.clear_thread_usage_state();
+            self.clear_pending_context_usage_refreshes();
         }
+        self.bind_pending_context_usage_to_thread(session.thread_id);
         self.refresh_plan_mode_nudge();
         self.turn_lifecycle.reset_thread();
         self.clear_safety_buffering();
